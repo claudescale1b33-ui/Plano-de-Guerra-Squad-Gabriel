@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano de Guerra · Junho 2026 · Gabriel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0a0a;--surface:#111;--surface2:#161616;--surface3:#1c1c1c;
+    --border:#1e1e1e;--border2:#2a2a2a;
+    --cyan:#00e5c3;--cyan-dark:#003d35;
+    --red:#ff4d4d;--red-dark:#2d0000;
+    --yellow:#f5c400;--yellow-dark:#2d2300;
+    --green:#22c55e;--green-dark:#052010;
+    --purple:#a78bfa;
+    --text:#f0f0f0;--text2:#666;--text3:#333;
+    --mono:'DM Mono',monospace;--display:'Syne',sans-serif;
+  }
+  body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh}
+
+  /* LOADING */
+  #loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px}
+  .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-txt{font-size:11px;color:var(--text2);letter-spacing:2px;text-transform:uppercase}
+  #loading.hidden{display:none}
+
+  .dash{padding:22px 20px;max-width:1400px;margin:0 auto}
+
+  /* HEADER */
+  .hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;border-bottom:0.5px solid var(--border2);padding-bottom:14px}
+  .hdr-tag{font-size:10px;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+  .hdr-title{font-family:var(--display);font-size:24px;font-weight:800;line-height:1}
+  .hdr-sub{font-size:10px;color:var(--text2);margin-top:3px}
+  .hdr-right{text-align:right;display:flex;align-items:center;gap:12px}
+  .hdr-meta{font-size:10px;color:var(--text2);line-height:1.6}
+  .refresh-btn{background:transparent;border:0.5px solid var(--border2);border-radius:6px;color:var(--cyan);font-family:var(--mono);font-size:10px;padding:6px 12px;cursor:pointer;letter-spacing:1px}
+  .refresh-btn:hover{background:var(--surface2)}
+
+  /* TABS */
+  .tab-bar{display:flex;gap:2px;margin-bottom:20px;border-bottom:0.5px solid var(--border2)}
+  .tab{background:transparent;border:none;color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:8px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab:hover{color:var(--text)}
+  .tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+  .tab-content{display:none}
+  .tab-content.active{display:block}
+
+  /* SECTION */
+  .sec{font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;margin-top:18px}
+  .divider{border:none;border-top:0.5px solid var(--border);margin:18px 0}
+
+  /* GRIDS */
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+
+  /* CARDS */
+  .card{background:var(--surface);border:0.5px solid var(--border);border-radius:10px;padding:14px 16px}
+  .card.at{border-top:2px solid var(--cyan)}
+  .card.ar{border-top:2px solid var(--red)}
+  .card.ay{border-top:2px solid var(--yellow)}
+  .card.ag{border-top:2px solid var(--green)}
+  .mlbl{font-size:9px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+  .mval{font-family:var(--display);font-size:21px;font-weight:800;line-height:1}
+  .msub{font-size:10px;color:var(--text2);margin-top:4px}
+  .mbar{height:3px;border-radius:2px;background:var(--surface3);margin-top:8px;overflow:hidden}
+  .mbar-f{height:100%;border-radius:2px;transition:width 1s ease}
+
+  /* BAR DIST */
+  .bar-wrap{display:flex;flex-direction:column;gap:5px}
+  .bar-row{display:flex;align-items:center;gap:8px}
+  .bar-lbl{font-size:9px;color:var(--text2);min-width:105px;text-align:right}
+  .bar-track{flex:1;background:var(--surface3);border-radius:3px;height:16px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:6px;transition:width 1s ease}
+  .bar-txt{font-size:9px;font-weight:500}
+
+  /* WEEKLY */
+  .weeks{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .wk{background:var(--surface);border:0.5px solid var(--border);border-radius:10px;overflow:hidden}
+  .wk-head{padding:10px 12px 8px;border-bottom:0.5px solid var(--border)}
+  .wk-lbl{font-size:9px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:1px}
+  .wk-dates{font-size:10px;font-weight:500}
+  .wk-body{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+  .wk-mlbl{font-size:8px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
+  .wk-mval{font-family:var(--display);font-size:14px;font-weight:800;line-height:1}
+  .wk-bar{height:3px;border-radius:2px;background:var(--surface3);margin-top:4px;overflow:hidden}
+  .wk-bar-f{height:100%;border-radius:2px}
+  .wk-div{border:none;border-top:0.5px solid var(--border)}
+  .wk-input{width:100%;background:transparent;border:none;border-bottom:0.5px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:10px;padding:4px 2px;outline:none}
+  .wk-input::placeholder{color:var(--text3)}
+  .wk-input:focus{border-bottom-color:var(--cyan)}
+  .wk-flbl{font-size:8px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+  .wk-foot{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;background:var(--surface2);border-top:0.5px solid var(--border)}
+  .wk-gap-lbl{font-size:9px;color:var(--text2)}
+  .wk-gap-val{font-family:var(--display);font-size:12px;font-weight:700}
+  .toggle-btn{background:transparent;border:none;color:var(--text2);font-family:var(--mono);font-size:8px;cursor:pointer;padding:0;letter-spacing:1px;text-transform:uppercase}
+  .toggle-btn:hover{color:var(--cyan)}
+  .cl-list{display:none;margin-top:4px}
+  .cl-item{font-size:9px;padding:3px 0;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;gap:4px}
+  .cl-item:last-child{border-bottom:none}
+  .cl-name{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:85px}
+  .cl-val{color:var(--text2);white-space:nowrap}
+  .sdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:2px}
+
+  /* DEBRIEFING */
+  .deb5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .deb-card{background:var(--surface);border:0.5px dashed var(--border2);border-radius:8px;padding:12px}
+  .deb-num{font-family:var(--display);font-size:18px;font-weight:800;color:var(--cyan);margin-bottom:4px}
+  .deb-title{font-size:10px;font-weight:500;margin-bottom:8px;line-height:1.4}
+  .deb-ta{width:100%;background:transparent;border:none;border-bottom:0.5px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:10px;padding:4px 2px;outline:none;resize:none;line-height:1.5}
+  .deb-ta::placeholder{color:var(--text3)}
+  .deb-ta:focus{border-bottom-color:var(--cyan)}
+
+  /* MET CARDS */
+  .met3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .met-card{background:var(--surface);border:0.5px dashed var(--border2);border-radius:10px;padding:14px}
+  .met-head{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+  .met-dot{width:9px;height:9px;border-radius:50%}
+  .met-title{font-family:var(--display);font-size:13px;font-weight:700}
+  .met-badge{font-size:9px;padding:2px 6px;border-radius:3px;margin-left:auto}
+  .flbl{font-size:8px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;margin-top:10px}
+  .flbl:first-child{margin-top:0}
+  .finput{width:100%;background:transparent;border:none;border-bottom:0.5px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:10px;padding:5px 2px;outline:none}
+  .finput::placeholder{color:var(--text3)}
+  .finput:focus{border-bottom-color:var(--cyan)}
+  .fta{width:100%;background:transparent;border:none;border-bottom:0.5px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:10px;padding:5px 2px;outline:none;resize:none;line-height:1.5}
+  .fta::placeholder{color:var(--text3)}
+  .fta:focus{border-bottom-color:var(--cyan)}
+
+  /* GESTORES */
+  .gestor-wrap{display:flex;flex-direction:column;gap:20px}
+  .gestor-block{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden}
+  .gestor-head{padding:14px 18px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:12px}
+  .gestor-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:13px;font-weight:800;flex-shrink:0}
+  .gestor-name{font-family:var(--display);font-size:14px;font-weight:700}
+  .gestor-sub{font-size:10px;color:var(--text2);margin-top:1px}
+  .gestor-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:0.5px solid var(--border)}
+  .gstat{padding:12px 18px;border-right:0.5px solid var(--border)}
+  .gstat:last-child{border-right:none}
+  .gstat-lbl{font-size:8px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+  .gstat-val{font-family:var(--display);font-size:18px;font-weight:800}
+  .gstat-sub{font-size:9px;color:var(--text2);margin-top:2px}
+  .gestor-body{padding:14px 18px}
+  .gtable{width:100%;border-collapse:collapse}
+  .gtable th{font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;text-align:left;padding:0 0 8px 0;border-bottom:0.5px solid var(--border)}
+  .gtable th:last-child{text-align:right}
+  .gtable td{font-size:10px;padding:7px 0;border-bottom:0.5px solid var(--border);vertical-align:middle}
+  .gtable tr:last-child td{border-bottom:none}
+  .gtable td:last-child{text-align:right}
+  .st-pill{font-size:9px;padding:2px 7px;border-radius:3px;display:inline-block}
+
+  .footer{font-size:9px;color:var(--text3);text-align:center;margin-top:20px;padding-top:12px;border-top:0.5px solid var(--border)}
+  .updated-at{font-size:9px;color:var(--text3);margin-top:2px}
+
+  @media(max-width:900px){
+    .weeks{grid-template-columns:repeat(2,1fr)}
+    .g3,.g4,.met3,.deb5{grid-template-columns:1fr 1fr}
+    .gestor-stats{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:600px){
+    .weeks,.g3,.g4,.met3,.deb5,.gestor-stats{grid-template-columns:1fr}
+    .hdr{flex-direction:column;gap:8px;align-items:flex-start}
+    .hdr-right{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <div class="loading-txt">Carregando dados do Monday...</div>
+</div>
+
+<div class="dash" id="app" style="display:none">
+
+  <div class="hdr">
+    <div>
+      <div class="hdr-tag">Plano de Guerra · MO 2.0</div>
+      <div class="hdr-title">Junho 2026</div>
+      <div class="hdr-sub">Estrategista Gabriel dos Santos · Squad MO 2.0</div>
+    </div>
+    <div class="hdr-right">
+      <div>
+        <div class="hdr-meta">Monday.com · CLIENTES ATIVOS - FIXO</div>
+        <div class="updated-at" id="updated-at">—</div>
+      </div>
+      <button class="refresh-btn" onclick="loadData()">↺ Atualizar</button>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('plano',this)">Plano de Guerra</button>
+    <button class="tab" onclick="switchTab('gestores',this)">Gestores de Resultados</button>
+  </div>
+
+  <!-- ABA PLANO -->
+  <div class="tab-content active" id="tab-plano">
+
+    <div class="sec">2.3 · NRR — Projetado · Meta · Base</div>
+    <div class="g3" style="margin-bottom:10px">
+      <div class="card at">
+        <div class="mlbl">MRR Projetado</div>
+        <div class="mval" style="color:var(--cyan)" id="c-proj">—</div>
+        <div class="msub" id="c-proj-sub">— clientes · grupo ativo</div>
+        <div class="mbar"><div class="mbar-f" style="width:100%;background:var(--cyan)"></div></div>
+      </div>
+      <div class="card ay">
+        <div class="mlbl">Meta NRR (87,5%)</div>
+        <div class="mval" style="color:var(--yellow)" id="c-meta">—</div>
+        <div class="msub">Mínimo a atingir em junho</div>
+        <div class="mbar"><div class="mbar-f" id="bar-meta" style="background:var(--yellow)"></div></div>
+      </div>
+      <div class="card ag">
+        <div class="mlbl">MRR Recebido</div>
+        <div class="mval" style="color:var(--green)" id="c-rec">—</div>
+        <div class="msub" id="c-rec-sub">—% do projetado</div>
+        <div class="mbar"><div class="mbar-f" id="bar-rec" style="background:var(--green)"></div></div>
+      </div>
+    </div>
+    <div class="g4" style="margin-bottom:10px">
+      <div class="card">
+        <div class="mlbl">Total clientes</div>
+        <div class="mval" id="c-total">—</div>
+        <div class="msub">Grupo ativo</div>
+      </div>
+      <div class="card ar">
+        <div class="mlbl">Churn no grupo</div>
+        <div class="mval" style="color:var(--red)" id="c-churn-n">—</div>
+        <div class="msub" id="c-churn-mrr">R$ — em receita perdida</div>
+      </div>
+      <div class="card ay">
+        <div class="mlbl">Inadimplentes</div>
+        <div class="mval" style="color:var(--yellow)" id="c-inadim-n">—</div>
+        <div class="msub" id="c-inadim-mrr">R$ — em risco</div>
+      </div>
+      <div class="card">
+        <div class="mlbl">TCV (sem cobrança)</div>
+        <div class="mval" style="color:var(--text2)" id="c-tcv">—</div>
+        <div class="msub">Contrato antecipado</div>
+      </div>
+    </div>
+
+    <div class="bar-wrap" id="bar-dist" style="margin-bottom:4px"></div>
+
+    <div class="divider"></div>
+
+    <div class="sec">2.2 · Debriefing do mês passado — 5 perguntas obrigatórias</div>
+    <div class="deb5">
+      <div class="deb-card"><div class="deb-num">01</div><div class="deb-title">Qual foi o NRR realizado?</div><textarea class="deb-ta" rows="3" placeholder="Número + % da meta..."></textarea></div>
+      <div class="deb-card"><div class="deb-num">02</div><div class="deb-title">Por que cada métrica deu o que deu?</div><textarea class="deb-ta" rows="3" placeholder="Churn / Inadimplência / Expansão..."></textarea></div>
+      <div class="deb-card"><div class="deb-num">03</div><div class="deb-title">Qual foi o Churn médio?</div><textarea class="deb-ta" rows="3" placeholder="Número + % da base..."></textarea></div>
+      <div class="deb-card"><div class="deb-num">04</div><div class="deb-title">Quais foram os motivos do Churn?</div><textarea class="deb-ta" rows="3" placeholder="Específicos — não 'não engajou'..."></textarea></div>
+      <div class="deb-card"><div class="deb-num">05</div><div class="deb-title">Quais planos de melhoria nasceram daqui?</div><textarea class="deb-ta" rows="3" placeholder="2–3 ações pro mês novo..."></textarea></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sec">Controle Semanal Financeiro · Junho 2026</div>
+    <div class="weeks" id="weeks-wrap"></div>
+
+    <div class="divider"></div>
+
+    <div class="sec">2.4 · Destrinchamento NRR — As 3 métricas com plano</div>
+    <div class="met3">
+      <div class="met-card" style="border-top:2px solid var(--red)">
+        <div class="met-head"><div class="met-dot" style="background:var(--red)"></div><div class="met-title" style="color:var(--red)">Churn</div><div class="met-badge" style="background:var(--red-dark);color:var(--red)">O que pode sair</div></div>
+        <div class="flbl">Churn limite do mês</div><input class="finput" placeholder="Teto aceitável (R$ + nº clientes)...">
+        <div class="flbl">Possíveis churns</div><textarea class="fta" rows="4" placeholder="Cliente X · semana provável&#10;Cliente Y · semana provável"></textarea>
+        <div class="flbl">Limite por semana</div><input class="finput" placeholder="Quantos no máximo antes de soar alarme...">
+        <div class="flbl">Plano de retomada</div><textarea class="fta" rows="3" placeholder="Por cliente: o que fazer pra reter..."></textarea>
+      </div>
+      <div class="met-card" style="border-top:2px solid var(--yellow)">
+        <div class="met-head"><div class="met-dot" style="background:var(--yellow)"></div><div class="met-title" style="color:var(--yellow)">Inadimplência</div><div class="met-badge" style="background:var(--yellow-dark);color:var(--yellow)">O que pode atrasar</div></div>
+        <div class="flbl">Benchmark do mês passado</div><input class="finput" placeholder="Quanto foi de inadimplência?">
+        <div class="flbl">Limite do mês</div><input class="finput" placeholder="Teto aceitável...">
+        <div class="flbl">Riscos</div><textarea class="fta" rows="3" placeholder="Clientes com histórico de atraso..."></textarea>
+        <div class="flbl">Plano de ação</div><textarea class="fta" rows="3" placeholder="Cadência de cobrança + escalação..."></textarea>
+      </div>
+      <div class="met-card" style="border-top:2px solid var(--green)">
+        <div class="met-head"><div class="met-dot" style="background:var(--green)"></div><div class="met-title" style="color:var(--green)">Expansão</div><div class="met-badge" style="background:var(--green-dark);color:var(--green)">O que pode entrar</div></div>
+        <div class="flbl">Oportunidades</div><input class="finput" placeholder="Cross Sell / Indicações / Upgrades...">
+        <div class="flbl">Clientes-alvo</div><textarea class="fta" rows="4" placeholder="Lista nominal de quem tem perfil..."></textarea>
+        <div class="flbl">Plano de ação</div><textarea class="fta" rows="3" placeholder="Quem aborda · quando · qual oferta..."></textarea>
+        <div class="flbl">Meta Cross Sell</div><input class="finput" placeholder="Meta do mês + acumulado + gap...">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sec">2.5 · Cenários — Gatilho + Ação</div>
+    <div class="met3">
+      <div class="met-card" style="border-top:2px solid var(--red)">
+        <div class="met-head" style="margin-bottom:12px"><div class="met-dot" style="background:var(--red)"></div><div class="met-title" style="color:var(--red)">Pessimista</div></div>
+        <div class="flbl">Valor projetado</div><input class="finput" placeholder="R$ ...">
+        <div class="flbl">Condição</div><input class="finput" placeholder="Churn no teto · inadimplência alta...">
+        <div class="flbl">Gatilho</div><input class="finput" placeholder="O que dispara esse cenário...">
+        <div class="flbl">Ação</div><textarea class="fta" rows="2" placeholder="O que a squad faz imediatamente..."></textarea>
+      </div>
+      <div class="met-card" style="border-top:2px solid var(--yellow)">
+        <div class="met-head" style="margin-bottom:12px"><div class="met-dot" style="background:var(--yellow)"></div><div class="met-title" style="color:var(--yellow)">Bom</div></div>
+        <div class="flbl">Valor projetado</div><input class="finput" placeholder="R$ ...">
+        <div class="flbl">Condição</div><input class="finput" placeholder="Churn no limite · inadimplência controlada...">
+        <div class="flbl">Gatilho</div><input class="finput" placeholder="O que dispara esse cenário...">
+        <div class="flbl">Ação</div><textarea class="fta" rows="2" placeholder="O que a squad faz imediatamente..."></textarea>
+      </div>
+      <div class="met-card" style="border-top:2px solid var(--green)">
+        <div class="met-head" style="margin-bottom:12px"><div class="met-dot" style="background:var(--green)"></div><div class="met-title" style="color:var(--green)">Ótimo</div></div>
+        <div class="flbl">Valor projetado</div><input class="finput" placeholder="R$ ...">
+        <div class="flbl">Condição</div><input class="finput" placeholder="Churn abaixo · inadimplência zero...">
+        <div class="flbl">Gatilho</div><input class="finput" placeholder="O que dispara esse cenário...">
+        <div class="flbl">Ação</div><textarea class="fta" rows="2" placeholder="O que a squad faz imediatamente..."></textarea>
+      </div>
+    </div>
+
+  </div><!-- end tab-plano -->
+
+  <!-- ABA GESTORES -->
+  <div class="tab-content" id="tab-gestores">
+    <div class="gestor-wrap" id="gestor-wrap"></div>
+  </div>
+
+  <div class="footer">
+    Monday.com · Controle Clientes MO 2.0 · CLIENTES ATIVOS - FIXO · Estrategista Gabriel dos Santos
+    <br><span id="footer-updated"></span>
+  </div>
+
+</div><!-- end dash -->
+
+<script>
+const TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjY2NDU4MTczMiwiYWFpIjoxMSwidWlkIjo2MDc0MzQ5NiwiaWFkIjoiMjAyNi0wNS0yOVQxMzozODoyMC41MjZaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTYxOTU1NjYsInJnbiI6InVzZTEifQ.HYvRVkjb74jWZhmFP-Acv9QYL6qotD9BKQVZmlkOC1Y';
+const BOARD_ID = '5619363426';
+const GROUP_ID = 'duplicate_of_clientes_ativos___mkkzpmkx';
+const GESTOR_ID = 'person-60743496';
+
+const WEEKS = [
+  {lbl:'Week 01',dates:'01–07 Jun',color:'#00e5c3',min:1,max:7},
+  {lbl:'Week 02',dates:'08–14 Jun',color:'#f5c400',min:8,max:14},
+  {lbl:'Week 03',dates:'15–21 Jun',color:'#aaaaaa',min:15,max:21},
+  {lbl:'Week 04',dates:'22–28 Jun',color:'#22c55e',min:22,max:28},
+  {lbl:'Week 05',dates:'29–30 Jun',color:'#a78bfa',min:29,max:31},
+];
+
+const SKIP_ST = ['TCV','1º Pagamento','Primeiro Pagamento'];
+
+function fmt(v){return 'R$ '+Math.round(v||0).toLocaleString('pt-BR')}
+
+function stColor(s){
+  if(!s) return '#333';
+  s = s.toLowerCase();
+  if(s.includes('pago')||s.includes('recorrente')) return '#22c55e';
+  if(s.includes('churn')||s.includes('perda')) return '#ff4d4d';
+  if(s.includes('inadim')||s.includes('parcial')) return '#f5c400';
+  return '#333';
+}
+
+function dayFromLabel(label){
+  if(!label) return null;
+  const m = label.match(/\d+/);
+  return m ? parseInt(m[0]) : null;
+}
+
+async function monday(query){
+  const r = await fetch('https://api.monday.com/v2', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization': TOKEN,'API-Version':'2024-01'},
+    body: JSON.stringify({query})
+  });
+  return r.json();
+}
+
+async function loadData(){
+  document.getElementById('loading').classList.remove('hidden');
+  document.getElementById('app').style.display = 'none';
+
+  try {
+    // Busca todos os clientes do grupo ativo filtrado pelo Gabriel
+    const query = `{
+      boards(ids: [${BOARD_ID}]) {
+        items_page(limit: 200, query_params: {
+          operator: and,
+          rules: [
+            {column_id: "dup__of_gestor", compare_value: ["${GESTOR_ID}"], operator: any_of},
+            {column_id: "group", compare_value: ["${GROUP_ID}"], operator: any_of}
+          ]
+        }) {
+          items {
+            name
+            column_values(ids: ["numeric_mkzmzj33","numeric_mm121vht","color_mm0ejcfw","color_mkwr8dhs","pessoas"]) {
+              id
+              text
+            }
+          }
+        }
+      }
+    }`;
+
+    const data = await monday(query);
+    const items = data?.data?.boards?.[0]?.items_page?.items || [];
+
+    const clients = items.map(item => {
+      const cv = {};
+      item.column_values.forEach(c => { cv[c.id] = c.text; });
+      return {
+        name: item.name,
+        proj: parseFloat(cv['numeric_mkzmzj33']) || 0,
+        rec: parseFloat(cv['numeric_mm121vht']) || 0,
+        st: cv['color_mm0ejcfw'] || '',
+        venc: cv['color_mkwr8dhs'] || '',
+        gestor: cv['pessoas'] || 'Sem gestor',
+        day: dayFromLabel(cv['color_mkwr8dhs'])
+      };
+    });
+
+    renderDashboard(clients);
+
+    const now = new Date().toLocaleString('pt-BR');
+    document.getElementById('updated-at').textContent = 'Atualizado: ' + now;
+    document.getElementById('footer-updated').textContent = now;
+
+  } catch(e) {
+    console.error(e);
+    alert('Erro ao carregar dados do Monday. Verifique o token e tente novamente.');
+  }
+
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('app').style.display = 'block';
+}
+
+function renderDashboard(clients){
+  // Filtra clientes que não entram no cálculo
+  const isSkip = c => SKIP_ST.some(s => c.st.toLowerCase().includes(s.toLowerCase()));
+  const isChurn = c => c.st.toLowerCase().includes('churn') || c.st.toLowerCase().includes('perda');
+  const isInadim = c => c.st.toLowerCase().includes('inadim');
+  const isRecorrente = c => c.st.toLowerCase().includes('recorrente');
+
+  // Para recorrente: rec = proj
+  clients.forEach(c => { if(isRecorrente(c)) c.rec = c.proj; });
+
+  const billable = clients.filter(c => !isSkip(c));
+  const totalProj = billable.reduce((a,c) => a + c.proj, 0);
+  const totalRec = clients.reduce((a,c) => a + c.rec, 0); // Monday soma direta
+  const meta = totalProj * 0.875;
+  const pctRec = totalProj > 0 ? Math.round(totalRec/totalProj*100) : 0;
+
+  const churns = clients.filter(isChurn);
+  const inadims = clients.filter(isInadim);
+  const tcvs = clients.filter(c => c.st.toLowerCase().includes('tcv'));
+  const pagos = clients.filter(c => c.st.toLowerCase() === 'pago');
+  const recorrentes = clients.filter(isRecorrente);
+  const primeiros = clients.filter(c => c.st.toLowerCase().includes('primeiro') || c.st.toLowerCase().includes('1º'));
+
+  const churnMrr = churns.reduce((a,c) => a+c.proj, 0);
+  const inadimMrr = inadims.reduce((a,c) => a+c.proj, 0);
+  const pagoRec = pagos.reduce((a,c) => a+c.rec, 0);
+
+  // Cards
+  document.getElementById('c-proj').textContent = fmt(totalProj);
+  document.getElementById('c-proj-sub').textContent = clients.length + ' clientes · grupo ativo';
+  document.getElementById('c-meta').textContent = fmt(meta);
+  document.getElementById('c-rec').textContent = fmt(totalRec);
+  document.getElementById('c-rec-sub').textContent = pctRec + '% do projetado';
+  document.getElementById('bar-meta').style.width = '87.5%';
+  document.getElementById('bar-rec').style.width = Math.min(pctRec,100) + '%';
+  document.getElementById('c-total').textContent = clients.length;
+  document.getElementById('c-churn-n').textContent = churns.length;
+  document.getElementById('c-churn-mrr').textContent = fmt(churnMrr) + ' em receita perdida';
+  document.getElementById('c-inadim-n').textContent = inadims.length;
+  document.getElementById('c-inadim-mrr').textContent = fmt(inadimMrr) + ' em risco';
+  document.getElementById('c-tcv').textContent = tcvs.length;
+
+  // Bar dist
+  const maxBar = clients.length;
+  const barData = [
+    {lbl:'Pago', n:pagos.length, val:pagoRec, color:'var(--green)', txtColor:'#052010'},
+    {lbl:'Recorrente', n:recorrentes.length, val:recorrentes.reduce((a,c)=>a+c.proj,0), color:'#00b89a', txtColor:'#001a15'},
+    {lbl:'TCV', n:tcvs.length, val:null, color:'#222', txtColor:'#888'},
+    {lbl:'1º Pagamento', n:primeiros.length, val:null, color:'#1a1a00', txtColor:'#888'},
+    {lbl:'Churn', n:churns.length, val:churnMrr, color:'var(--red-dark)', txtColor:'var(--red)'},
+    {lbl:'Inadimplente', n:inadims.length, val:inadimMrr, color:'var(--yellow-dark)', txtColor:'var(--yellow)'},
+  ].filter(b => b.n > 0);
+
+  document.getElementById('bar-dist').innerHTML = barData.map(b => `
+    <div class="bar-row">
+      <div class="bar-lbl">${b.lbl}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.max(b.n/maxBar*100,4)}%;background:${b.color}">
+        <span class="bar-txt" style="color:${b.txtColor}">${b.n}${b.val ? ' · ' + fmt(b.val) : ' clientes'}</span>
+      </div></div>
+    </div>`).join('');
+
+  // Semanas
+  const wWrap = document.getElementById('weeks-wrap');
+  wWrap.innerHTML = '';
+  WEEKS.forEach(w => {
+    const wc = clients.filter(c => c.day && c.day >= w.min && c.day <= w.max);
+    const bill = wc.filter(c => !isSkip(c));
+    const proj = bill.reduce((a,c) => a+c.proj, 0);
+    const rec = bill.reduce((a,c) => a+c.rec, 0);
+    const pct = proj > 0 ? Math.round(rec/proj*100) : 0;
+    const pc = pct >= 87 ? '#22c55e' : pct >= 60 ? '#f5c400' : '#ff4d4d';
+    const gap = rec - proj;
+
+    const clRows = bill.map(c => `
+      <div class="cl-item">
+        <span style="display:flex;align-items:center;gap:4px">
+          <span class="sdot" style="background:${stColor(c.st)}"></span>
+          <span class="cl-name">${c.name}</span>
+        </span>
+        <span class="cl-val">${c.proj ? fmt(c.proj) : '—'}</span>
+      </div>`).join('');
+
+    const el = document.createElement('div');
+    el.className = 'wk';
+    el.style.borderTop = `2px solid ${w.color}`;
+    el.innerHTML = `
+      <div class="wk-head">
+        <div class="wk-lbl">${w.lbl}</div>
+        <div class="wk-dates" style="color:${w.color}">${w.dates}</div>
+      </div>
+      <div class="wk-body">
+        <div><div class="wk-mlbl">Projetado</div><div class="wk-mval" style="color:${w.color}">${fmt(proj)}</div><div class="wk-bar"><div class="wk-bar-f" style="width:100%;background:${w.color}33"></div></div></div>
+        <div><div class="wk-mlbl">Recebido <span style="font-size:8px;padding:1px 4px;border-radius:3px;background:${pc}22;color:${pc};margin-left:4px">${pct}%</span></div><div class="wk-mval" style="color:${pc}">${fmt(rec)}</div><div class="wk-bar"><div class="wk-bar-f" style="width:${Math.min(pct,100)}%;background:${pc}"></div></div></div>
+        <hr class="wk-div">
+        <div><div class="wk-flbl">Receita perdida (churn)</div><input class="wk-input" placeholder="R$ 0"></div>
+        <div><div class="wk-flbl">Expansão</div><input class="wk-input" placeholder="R$ 0 · descrever..."></div>
+        <hr class="wk-div">
+        <div>
+          <button class="toggle-btn" onclick="const l=this.nextElementSibling;l.style.display=l.style.display==='block'?'none':'block';this.textContent=l.style.display==='block'?'▾ clientes':'▸ clientes'">▸ clientes</button>
+          <div class="cl-list">${clRows || '<span style="font-size:9px;color:#333">Sem clientes com cobrança</span>'}</div>
+        </div>
+      </div>
+      <div class="wk-foot">
+        <span class="wk-gap-lbl">Gap</span>
+        <span class="wk-gap-val" style="color:${gap>=0?'#22c55e':'#ff4d4d'}">${gap>=0?'+':''}${fmt(gap)}</span>
+      </div>`;
+    wWrap.appendChild(el);
+  });
+
+  // Gestores
+  const gestores = [...new Set(clients.map(c => c.gestor))].filter(g => g && g !== 'Sem gestor');
+  const gColors = ['#00e5c3','#a78bfa','#f5c400','#22c55e'];
+  const gWrap = document.getElementById('gestor-wrap');
+  gWrap.innerHTML = '';
+
+  gestores.forEach((g, gi) => {
+    const gc = clients.filter(c => c.gestor === g);
+    const gcBill = gc.filter(c => !isSkip(c));
+    const gChurns = gc.filter(isChurn);
+    const gInadims = gc.filter(isInadim);
+    const gProj = gcBill.reduce((a,c) => a+c.proj, 0);
+    const gRec = gc.reduce((a,c) => a+c.rec, 0);
+    const gChurnMrr = gChurns.reduce((a,c) => a+c.proj, 0);
+    const gInadimMrr = gInadims.reduce((a,c) => a+c.proj, 0);
+    const gPct = gProj > 0 ? Math.round(gRec/gProj*100) : 0;
+    const col = gColors[gi % gColors.length];
+    const initials = g.split(' ').map(n=>n[0]).slice(0,2).join('');
+
+    const churnRows = gChurns.map(c => `
+      <tr>
+        <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:var(--red);display:inline-block"></span>${c.name}</span></td>
+        <td><span class="st-pill" style="background:var(--red-dark);color:var(--red)">${c.st}</span></td>
+        <td>${fmt(c.proj)}</td>
+      </tr>`).join('');
+
+    const inadimRows = gInadims.map(c => `
+      <tr>
+        <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:var(--yellow);display:inline-block"></span>${c.name}</span></td>
+        <td><span class="st-pill" style="background:var(--yellow-dark);color:var(--yellow)">Inadimplente</span></td>
+        <td>${fmt(c.proj)}</td>
+      </tr>`).join('');
+
+    const block = document.createElement('div');
+    block.className = 'gestor-block';
+    block.style.borderTop = `2px solid ${col}`;
+    block.innerHTML = `
+      <div class="gestor-head">
+        <div class="gestor-avatar" style="background:${col}22;color:${col}">${initials}</div>
+        <div>
+          <div class="gestor-name">${g}</div>
+          <div class="gestor-sub">Gestor de Resultados · ${gc.length} clientes na carteira</div>
+        </div>
+      </div>
+      <div class="gestor-stats">
+        <div class="gstat"><div class="gstat-lbl">MRR Projetado</div><div class="gstat-val" style="color:${col}">${fmt(gProj)}</div><div class="gstat-sub">Carteira ativa</div></div>
+        <div class="gstat"><div class="gstat-lbl">MRR Recebido</div><div class="gstat-val" style="color:var(--green)">${fmt(gRec)}</div><div class="gstat-sub">${gPct}% do projetado</div></div>
+        <div class="gstat"><div class="gstat-lbl">Churn</div><div class="gstat-val" style="color:var(--red)">${gChurns.length} clientes</div><div class="gstat-sub">${fmt(gChurnMrr)} perdidos</div></div>
+        <div class="gstat"><div class="gstat-lbl">Inadimplência</div><div class="gstat-val" style="color:var(--yellow)">${gInadims.length} clientes</div><div class="gstat-sub">${fmt(gInadimMrr)} em risco</div></div>
+      </div>
+      <div class="gestor-body">
+        ${gChurns.length > 0 ? `
+          <div class="sec" style="margin-top:0;margin-bottom:8px">Churn</div>
+          <table class="gtable" style="margin-bottom:16px">
+            <thead><tr><th>Cliente</th><th>Status</th><th style="text-align:right">MRR Perdido</th></tr></thead>
+            <tbody>${churnRows}</tbody>
+          </table>` : ''}
+        ${gInadims.length > 0 ? `
+          <div class="sec" style="margin-top:0;margin-bottom:8px">Inadimplência</div>
+          <table class="gtable">
+            <thead><tr><th>Cliente</th><th>Status</th><th style="text-align:right">MRR em Risco</th></tr></thead>
+            <tbody>${inadimRows}</tbody>
+          </table>` : ''}
+        ${gChurns.length === 0 && gInadims.length === 0 ? `<div style="font-size:11px;color:var(--text2);text-align:center;padding:16px 0">Sem churn ou inadimplência registrados</div>` : ''}
+      </div>`;
+    gWrap.appendChild(block);
+  });
+}
+
+function switchTab(id, btn){
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+loadData();
+</script>
+</body>
+</html>
