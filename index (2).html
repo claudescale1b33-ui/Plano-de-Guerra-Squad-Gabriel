@@ -544,15 +544,6 @@ async function loadData(){
     document.getElementById('updated-at').textContent='Atualizado '+ts;
     document.getElementById('footer-txt').textContent=`Monday.com · Controle Clientes MO 2.0 · ${mesNome} ${year} · ${ts}`;
   }catch(e){console.error(e);alert('Erro ao carregar dados.');}
-
-  // TCV %
-  const tcvs=clients.filter(c=>c.st.toLowerCase().includes('tcv'));
-  const pagantes=clients.filter(c=>c.st.toLowerCase()==='pago'||c.st.toLowerCase().includes('recorrente'));
-  const tcvPct=clients.length>0?Math.round(tcvs.length/clients.length*100):0;
-  const pagPct=clients.length>0?Math.round(pagantes.length/clients.length*100):0;
-  document.getElementById('c-tcv-pct').textContent=tcvPct+'%';
-  document.getElementById('c-tcv-sub').textContent=tcvs.length+' clientes TCV';
-  document.getElementById('c-pag-pct').textContent=pagPct+'%';
   document.getElementById('c-pag-sub').textContent=pagantes.length+' clientes pagaram';
 
   setTimeout(()=>{
@@ -583,6 +574,16 @@ function render(clients, weeks, mesNome, year){
   document.getElementById('c-churn-mrr-sub').textContent=churns.length+' clientes confirmados';
   document.getElementById('c-inadim-n').textContent=inadims.length;
   document.getElementById('c-inadim-mrr').textContent=fmt(inadimMrr)+' em risco';
+
+  // TCV e Pagantes %
+  const tcvs=clients.filter(c=>c.st.toLowerCase().includes('tcv'));
+  const pagantes=clients.filter(c=>c.st.toLowerCase()==='pago'||c.st.toLowerCase().includes('recorrente'));
+  const tcvPct=clients.length>0?Math.round(tcvs.length/clients.length*100):0;
+  const pagPct=clients.length>0?Math.round(pagantes.length/clients.length*100):0;
+  document.getElementById('c-tcv-pct').textContent=tcvPct+'%';
+  document.getElementById('c-tcv-sub').textContent=tcvs.length+' clientes TCV';
+  document.getElementById('c-pag-pct').textContent=pagPct+'%';
+  document.getElementById('c-pag-sub').textContent=pagantes.length+' clientes pagaram';
 
   document.getElementById('ring-pct').textContent=pct+'%';
   document.getElementById('ring-pct').style.color=pc;
