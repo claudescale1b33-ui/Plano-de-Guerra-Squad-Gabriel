@@ -488,9 +488,13 @@ function formatExp(el){
 }
 
 async function monday(query){
-  const r=await fetch('/api/monday',{
+  const r=await fetch('https://api.monday.com/v2',{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjY2NDU5NTIyMiwiYWFpIjoxMSwidWlkIjo2MDc0MzQ5NiwiaWFkIjoiMjAyNi0wNS0yOVQxNDowMzo0Ny45MjVaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTYxOTU1NjYsInJnbiI6InVzZTEifQ.u35YRjIc8AwN0fMQso44-RnphvwOACXR1XV4IStgnXk',
+      'API-Version':'2024-01'
+    },
     body:JSON.stringify({query})
   });
   return r.json();
