@@ -73,6 +73,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 /* METRIC CARD */
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px}
 
 .mcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;position:relative;overflow:hidden;transition:border-color 0.25s,transform 0.25s}
 .mcard:hover{border-color:var(--border2);transform:translateY(-2px)}
@@ -218,7 +219,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .gcm-input:focus{border-color:var(--red);box-shadow:0 0 0 2px #ff4d4d10}
 .footer{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;margin-top:40px;padding-top:16px;border-top:1px solid var(--border)}
 
-@media(max-width:1050px){.g3,.g4,.met3,.sc3,.deb5{grid-template-columns:1fr 1fr}.gest-stats{grid-template-columns:1fr 1fr}}
+@media(max-width:1200px){.g5{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1050px){.g3,.g4,.g5,.met3,.sc3,.deb5{grid-template-columns:1fr 1fr}.gest-stats{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){.g3,.g4,.met3,.sc3,.deb5{grid-template-columns:1fr}.header{flex-direction:column;align-items:flex-start;gap:14px}.ring-card{flex-direction:column}}
 </style>
 </head>
@@ -258,7 +260,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
   <!-- OVERVIEW -->
   <div class="tab-pane active" id="tab-overview">
     <div class="sec">NRR do Mês</div>
-    <div class="g4" style="margin-bottom:12px">
+    <div class="g5" style="margin-bottom:12px">
       <div class="mcard cyan"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
         <div class="mcard-lbl">MRR Projetado</div>
         <div class="mcard-val" id="c-proj">—</div>
@@ -289,32 +291,47 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
           <div class="ring-info-bar"><div class="ring-info-bar-f" id="ring-bar" style="width:0%"></div></div>
         </div>
       </div>
-      <div class="exp-card"><div class="exp-card-stripe"></div><div class="exp-card-bg"></div>
-        <div class="exp-lbl">Expansão do Mês</div>
-        <input class="exp-input" id="exp-input" type="text" placeholder="R$ 0" oninput="formatExp(this)">
-        <div class="exp-sub">Preencha manualmente</div>
-        <div class="exp-bar"></div>
+      <div class="mcard yellow"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
+        <div class="mcard-lbl">Inadimplentes</div>
+        <div class="mcard-val" id="c-inadim-n">—</div>
+        <div class="mcard-sub" id="c-inadim-mrr">— em risco</div>
+        <div class="mcard-bar"><div class="mcard-bar-f" id="bar-inadim" style="width:0%"></div></div>
+      </div>
+      <div class="mcard red"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
+        <div class="mcard-lbl">Churn · MRR Perdido</div>
+        <div class="mcard-val" id="c-churn-mrr-val">—</div>
+        <div class="mcard-sub" id="c-churn-mrr-sub">— clientes confirmados</div>
+        <div class="mcard-bar"><div class="mcard-bar-f" id="bar-churn" style="width:0%"></div></div>
       </div>
     </div>
 
-    <div class="sec">Saúde da Carteira</div>
-    <div class="g3" style="margin-bottom:28px">
+    <div class="sec">Carteira</div>
+    <div class="g5" style="margin-bottom:28px">
       <div class="mcard blue"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
         <div class="mcard-lbl">Clientes Ativos</div>
         <div class="mcard-val" id="c-total">—</div>
         <div class="mcard-sub">Grupo CLIENTES ATIVOS - FIXO</div>
       </div>
       <div class="mcard red"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
-        <div class="mcard-lbl">Churn Confirmado</div>
+        <div class="mcard-lbl">Nº Churn</div>
         <div class="mcard-val" id="c-churn-n">—</div>
-        <div class="mcard-sub" id="c-churn-mrr">— em receita perdida</div>
-        <div class="mcard-bar"><div class="mcard-bar-f" id="bar-churn" style="width:0%"></div></div>
+        <div class="mcard-sub">Clientes confirmados</div>
       </div>
-      <div class="mcard yellow"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
-        <div class="mcard-lbl">Inadimplentes</div>
-        <div class="mcard-val" id="c-inadim-n">—</div>
-        <div class="mcard-sub" id="c-inadim-mrr">— em risco</div>
-        <div class="mcard-bar"><div class="mcard-bar-f" id="bar-inadim" style="width:0%"></div></div>
+      <div class="exp-card"><div class="exp-card-stripe"></div><div class="exp-card-bg"></div>
+        <div class="exp-lbl">Expansão do Mês</div>
+        <input class="exp-input" id="exp-input" type="text" placeholder="R$ 0" oninput="formatExp(this)">
+        <div class="exp-sub">Preencha manualmente</div>
+        <div class="exp-bar"></div>
+      </div>
+      <div class="mcard purple"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
+        <div class="mcard-lbl">% TCV da Carteira</div>
+        <div class="mcard-val" id="c-tcv-pct">—</div>
+        <div class="mcard-sub" id="c-tcv-sub">— clientes TCV</div>
+      </div>
+      <div class="mcard green"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
+        <div class="mcard-lbl">% Pagantes do Mês</div>
+        <div class="mcard-val" id="c-pag-pct">—</div>
+        <div class="mcard-sub" id="c-pag-sub">— clientes pagaram</div>
       </div>
     </div>
 
@@ -515,7 +532,7 @@ async function loadData(){
         gestor:cv['pessoas']||'Sem gestor',
         day:dayFrom(cv['color_mkwr8dhs'])
       };
-      if(isRec(c))c.rec=c.proj;
+
       return c;
     });
     render(clients, weeks, mesNome, year);
@@ -523,6 +540,16 @@ async function loadData(){
     document.getElementById('updated-at').textContent='Atualizado '+ts;
     document.getElementById('footer-txt').textContent=`Monday.com · Controle Clientes MO 2.0 · ${mesNome} ${year} · ${ts}`;
   }catch(e){console.error(e);alert('Erro ao carregar dados.');}
+
+  // TCV %
+  const tcvs=clients.filter(c=>c.st.toLowerCase().includes('tcv'));
+  const pagantes=clients.filter(c=>c.st.toLowerCase()==='pago'||c.st.toLowerCase().includes('recorrente'));
+  const tcvPct=clients.length>0?Math.round(tcvs.length/clients.length*100):0;
+  const pagPct=clients.length>0?Math.round(pagantes.length/clients.length*100):0;
+  document.getElementById('c-tcv-pct').textContent=tcvPct+'%';
+  document.getElementById('c-tcv-sub').textContent=tcvs.length+' clientes TCV';
+  document.getElementById('c-pag-pct').textContent=pagPct+'%';
+  document.getElementById('c-pag-sub').textContent=pagantes.length+' clientes pagaram';
 
   setTimeout(()=>{
     L.classList.add('out');
@@ -548,7 +575,8 @@ function render(clients, weeks, mesNome, year){
   document.getElementById('c-meta').textContent=fmt(meta);
   document.getElementById('c-total').textContent=clients.length;
   document.getElementById('c-churn-n').textContent=churns.length;
-  document.getElementById('c-churn-mrr').textContent=fmt(churnMrr)+' em receita perdida';
+  document.getElementById('c-churn-mrr-val').textContent=fmt(churnMrr);
+  document.getElementById('c-churn-mrr-sub').textContent=churns.length+' clientes confirmados';
   document.getElementById('c-inadim-n').textContent=inadims.length;
   document.getElementById('c-inadim-mrr').textContent=fmt(inadimMrr)+' em risco';
 
