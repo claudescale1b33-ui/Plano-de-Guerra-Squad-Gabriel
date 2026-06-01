@@ -544,7 +544,6 @@ async function loadData(){
     document.getElementById('updated-at').textContent='Atualizado '+ts;
     document.getElementById('footer-txt').textContent=`Monday.com · Controle Clientes MO 2.0 · ${mesNome} ${year} · ${ts}`;
   }catch(e){console.error(e);alert('Erro ao carregar dados.');}
-  document.getElementById('c-pag-sub').textContent=pagantes.length+' clientes pagaram';
 
   setTimeout(()=>{
     L.classList.add('out');
