@@ -329,7 +329,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         <div class="mcard-sub" id="c-tcv-sub">— clientes TCV</div>
       </div>
       <div class="mcard green"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
-        <div class="mcard-lbl">% Pagantes do Mês</div>
+        <div class="mcard-lbl">% com Cobrança no Mês</div>
         <div class="mcard-val" id="c-pag-pct">—</div>
         <div class="mcard-sub" id="c-pag-sub">— clientes pagaram</div>
       </div>
@@ -576,13 +576,14 @@ function render(clients, weeks, mesNome, year){
 
   // TCV e Pagantes %
   const tcvs=clients.filter(c=>c.st.toLowerCase().includes('tcv'));
-  const pagantes=clients.filter(c=>c.st.toLowerCase()==='pago'||c.st.toLowerCase().includes('recorrente'));
+  // Clientes que TÊM cobrança no mês = excluindo TCV e Primeiro Pagamento
+  const comCobranca=clients.filter(c=>!c.st.toLowerCase().includes('tcv')&&!c.st.toLowerCase().includes('primeiro pagamento')&&!c.st.toLowerCase().includes('1º pagamento'));
   const tcvPct=clients.length>0?Math.round(tcvs.length/clients.length*100):0;
-  const pagPct=clients.length>0?Math.round(pagantes.length/clients.length*100):0;
+  const pagPct=clients.length>0?Math.round(comCobranca.length/clients.length*100):0;
   document.getElementById('c-tcv-pct').textContent=tcvPct+'%';
   document.getElementById('c-tcv-sub').textContent=tcvs.length+' clientes TCV';
   document.getElementById('c-pag-pct').textContent=pagPct+'%';
-  document.getElementById('c-pag-sub').textContent=pagantes.length+' clientes pagaram';
+  document.getElementById('c-pag-sub').textContent=comCobranca.length+' têm cobrança este mês';
 
   document.getElementById('ring-pct').textContent=pct+'%';
   document.getElementById('ring-pct').style.color=pc;
