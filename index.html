@@ -299,8 +299,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
       </div>
       <div class="mcard red"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
         <div class="mcard-lbl">Churn · MRR Perdido</div>
-        <div class="mcard-val" id="c-churn-mrr-val">—</div>
-        <div class="mcard-sub" id="c-churn-mrr-sub">— clientes confirmados</div>
+        <div class="mcard-val" id="c-churn-mrr-val">R$ 0</div>
+        <div class="mcard-sub" id="c-churn-mrr-sub">Soma das semanas</div>
         <div class="mcard-bar"><div class="mcard-bar-f" id="bar-churn" style="width:0%"></div></div>
       </div>
     </div>
@@ -319,8 +319,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
       </div>
       <div class="exp-card"><div class="exp-card-stripe"></div><div class="exp-card-bg"></div>
         <div class="exp-lbl">Expansão do Mês</div>
-        <input class="exp-input" id="exp-input" type="text" placeholder="R$ 0" oninput="formatExp(this)">
-        <div class="exp-sub">Preencha manualmente</div>
+        <div class="exp-input" id="exp-total" style="font-family:var(--display);font-size:26px;font-weight:800;color:var(--green);letter-spacing:-0.5px;line-height:1;margin-bottom:6px">R$ 0</div>
+        <div class="exp-sub">Soma das semanas</div>
         <div class="exp-bar"></div>
       </div>
       <div class="mcard purple"><div class="mcard-stripe"></div><div class="mcard-bg"></div>
@@ -482,11 +482,6 @@ function stDot(s){
   return'#444';
 }
 
-function formatExp(el){
-  let v=el.value.replace(/\D/g,'');
-  if(v)el.value='R$ '+parseInt(v).toLocaleString('pt-BR');
-}
-
 async function monday(query){
   const r=await fetch('https://api.monday.com/v2',{
     method:'POST',
@@ -498,6 +493,32 @@ async function monday(query){
     body:JSON.stringify({query})
   });
   return r.json();
+}
+
+function parseVal(str){
+  // Parse "R$ 1.234" or "1234" or "R$ 0 · desc" -> number
+  const n = str.replace(/[^0-9,]/g,'').replace(',','.');
+  return parseFloat(n) || 0;
+}
+
+function updateTotals(){
+  const expInputs = document.querySelectorAll('.wk-exp-input');
+  const churnInputs = document.querySelectorAll('.wk-churn-input');
+  
+  let totalExp = 0;
+  expInputs.forEach(el => { totalExp += parseVal(el.value); });
+  
+  let totalChurn = 0;
+  churnInputs.forEach(el => { totalChurn += parseVal(el.value); });
+
+  const expEl = document.getElementById('exp-total');
+  if(expEl) expEl.textContent = 'R$ ' + Math.round(totalExp).toLocaleString('pt-BR');
+
+  const churnEl = document.getElementById('c-churn-mrr-val');
+  if(churnEl) churnEl.textContent = 'R$ ' + Math.round(totalChurn).toLocaleString('pt-BR');
+
+  const churnSub = document.getElementById('c-churn-mrr-sub');
+  if(churnSub) churnSub.textContent = totalChurn > 0 ? 'Soma das semanas' : 'Preencha no controle semanal';
 }
 
 async function loadData(){
@@ -645,8 +666,8 @@ function render(clients, weeks, mesNome, year){
           <div class="wk-bar"><div class="wk-bar-f" style="width:${Math.min(pct2,100)}%;background:${pc2}"></div></div>
         </div>
         <hr class="wk-sep">
-        <div><div class="wk-flbl">Receita perdida (churn)</div><input class="wk-input" placeholder="R$ 0"></div>
-        <div><div class="wk-flbl">Expansão</div><input class="wk-input" placeholder="R$ 0 · descrever..."></div>
+        <div><div class="wk-flbl">Receita perdida (churn)</div><input class="wk-input wk-churn-input" placeholder="R$ 0" oninput="updateTotals()"></div>
+        <div><div class="wk-flbl">Expansão</div><input class="wk-input wk-exp-input" placeholder="R$ 0" oninput="updateTotals()"></div>
         <hr class="wk-sep">
         <div>
           <button class="tbtn" onclick="const l=this.nextElementSibling;l.style.display=l.style.display==='block'?'none':'block';this.textContent=l.style.display==='block'?'▾ clientes':'▸ clientes'">▸ clientes</button>
