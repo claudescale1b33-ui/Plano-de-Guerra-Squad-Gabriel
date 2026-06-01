@@ -417,7 +417,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 </div>
 
 <script>
-// Token moved to server-side proxy /api/monday
+
 const BOARD='5619363426';
 const GROUP='duplicate_of_clientes_ativos___mkkzpmkx';
 const GESTOR='person-60743496';
@@ -488,9 +488,13 @@ function formatExp(el){
 }
 
 async function monday(query){
-  const r=await fetch('/api/monday',{
+  const r=await fetch('https://api.monday.com/v2',{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjY2NDU5NTIyMiwiYWFpIjoxMSwidWlkIjo2MDc0MzQ5NiwiaWFkIjoiMjAyNi0wNS0yOVQxNDowMzo0Ny45MjVaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTYxOTU1NjYsInJnbiI6InVzZTEifQ.u35YRjIc8AwN0fMQso44-RnphvwOACXR1XV4IStgnXk',
+      'API-Version':'2024-01'
+    },
     body:JSON.stringify({query})
   });
   return r.json();
