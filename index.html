@@ -279,7 +279,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
     </div>
 
     <div class="sec">Carteira</div>
-    <div class="g5" style="margin-bottom:12px">
+    <div class="g6" style="margin-bottom:12px">
       <div class="mcard">
         <div class="mcard-lbl">Clientes Ativos</div>
         <div class="mcard-val" id="c-total" style="color:var(--blue)">—</div>
@@ -304,6 +304,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         <div class="mcard-lbl">Churn · NRR Recebido</div>
         <div class="mcard-val" id="c-churn-rec" style="color:var(--red)">—</div>
         <div class="mcard-sub">Receita já recebida de clientes em churn</div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-lbl">LTV Médio</div>
+        <div class="mcard-val" id="c-ltv" style="color:var(--blue)">—</div>
+        <div class="mcard-sub" id="c-ltv-sub">média em meses</div>
       </div>
     </div>
 
@@ -630,6 +635,19 @@ function renderDashboard(){
   document.getElementById('c-pag-pct').textContent=(clients.length>0?Math.round(comCobranca.length/clients.length*100):0)+'%';
   document.getElementById('c-pag-sub').textContent=comCobranca.length+' têm cobrança este mês';
   document.getElementById('c-churn-rec').textContent=fmt(churnRec);
+
+  // LTV médio — data_1 (Data Início) vs hoje
+  const now2 = new Date();
+  const clientsComData = clients.filter(c => c.dataInicio);
+  const ltvMedia = clientsComData.length > 0
+    ? Math.round(clientsComData.reduce((a, c) => {
+        const start = new Date(c.dataInicio);
+        const meses = (now2.getFullYear() - start.getFullYear()) * 12 + (now2.getMonth() - start.getMonth());
+        return a + Math.max(0, meses);
+      }, 0) / clientsComData.length)
+    : 0;
+  document.getElementById('c-ltv').textContent = ltvMedia + ' meses';
+  document.getElementById('c-ltv-sub').textContent = `média de ${clientsComData.length} clientes com data`;
 
 
   setTimeout(()=>{
