@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Plano de Guerra · MO 2.0</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
@@ -242,19 +242,28 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
   <!-- OVERVIEW -->
   <div class="tab-pane active" id="tab-overview">
     <div class="sec">NRR do Mês</div>
-    <div class="g6" style="margin-bottom:12px">
+    <div class="cards-grid">
+      <!-- 1 -->
+      <div class="mcard">
+        <div class="mcard-lbl">Clientes Ativos</div>
+        <div class="mcard-val" id="c-total" style="color:var(--blue)">—</div>
+        <div class="mcard-sub">Grupo ativo</div>
+      </div>
+      <!-- 2 -->
       <div class="mcard">
         <div class="mcard-lbl">MRR Projetado</div>
         <div class="mcard-val" id="c-proj" style="color:var(--cyan)">—</div>
         <div class="mcard-sub" id="c-proj-sub">—</div>
         <div class="mcard-bar"><div class="mcard-bar-f" style="width:100%;background:var(--cyan)"></div></div>
       </div>
+      <!-- 3 -->
       <div class="mcard">
         <div class="mcard-lbl">Meta NRR (87,5%)</div>
         <div class="mcard-val" id="c-meta" style="color:var(--yellow)">—</div>
         <div class="mcard-sub">Mínimo a atingir</div>
         <div class="mcard-bar"><div class="mcard-bar-f" style="width:87.5%;background:var(--yellow)"></div></div>
       </div>
+      <!-- 4 MRR Recebido ring -->
       <div class="ring-card">
         <div class="ring-wrap">
           <svg class="ring-svg" width="80" height="80" viewBox="0 0 80 80">
@@ -273,69 +282,71 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
           <div class="ring-info-bar"><div class="ring-info-bar-f" id="ring-bar" style="width:0%"></div></div>
         </div>
       </div>
+      <!-- 5 -->
       <div class="mcard">
         <div class="mcard-lbl">Inadimplentes</div>
         <div class="mcard-val" id="c-inadim-n" style="color:var(--yellow)">—</div>
         <div class="mcard-sub" id="c-inadim-mrr">—</div>
         <div class="mcard-bar"><div class="mcard-bar-f" id="bar-inadim" style="width:0%;background:var(--yellow)"></div></div>
       </div>
-      <div class="mcard">
-        <div class="mcard-lbl">Churn · MRR Perdido</div>
-        <div class="mcard-val" id="c-churn-mrr-val" style="color:var(--red)">R$ 0</div>
-        <div class="mcard-sub" id="c-churn-mrr-sub">Preencha no controle semanal</div>
-      </div>
-      <div class="exp-card">
-        <div class="exp-lbl">Expansão do Mês</div>
-        <div class="exp-val" id="exp-total">R$ 0</div>
-        <div class="exp-sub">Soma das semanas</div>
-      </div>
-    </div>
-
-    <div class="sec">Carteira</div>
-    <div class="g8" style="display:grid;grid-template-columns:repeat(8,1fr);gap:12px;margin-bottom:12px">
-      <div class="mcard">
-        <div class="mcard-lbl">Clientes Ativos</div>
-        <div class="mcard-val" id="c-total" style="color:var(--blue)">—</div>
-        <div class="mcard-sub">Grupo ativo</div>
-      </div>
+      <!-- 6 -->
       <div class="mcard">
         <div class="mcard-lbl">Nº Churn</div>
         <div class="mcard-val" id="c-churn-n" style="color:var(--red)">—</div>
         <div class="mcard-sub">Churn Confirmado</div>
       </div>
-      <div class="mcard">
-        <div class="mcard-lbl">% TCV da Carteira</div>
-        <div class="mcard-val" id="c-tcv-pct" style="color:var(--purple)">—</div>
-        <div class="mcard-sub" id="c-tcv-sub">—</div>
+      <!-- 7 Solicitação de Churn -->
+      <div class="risco-card">
+        <div class="risco-card-lbl">Solicitação de Churn</div>
+        <div class="risco-card-val" id="c-sol-churn-n" style="color:#f97316">—</div>
+        <div class="risco-card-sub">clientes solicitaram churn</div>
+        <button class="churn-sol-btn" id="c-sol-btn" onclick="document.getElementById('c-sol-list').classList.toggle('open');this.textContent=document.getElementById('c-sol-list').classList.contains('open')?'▾ Ocultar clientes':'▸ Ver clientes'">▸ Ver clientes</button>
+        <div class="churn-sol-list" id="c-sol-list"></div>
       </div>
+      <!-- 8 -->
       <div class="mcard">
-        <div class="mcard-lbl">% com Cobrança</div>
-        <div class="mcard-val" id="c-pag-pct" style="color:var(--green)">—</div>
-        <div class="mcard-sub" id="c-pag-sub">—</div>
+        <div class="mcard-lbl">Churn · MRR Perdido</div>
+        <div class="mcard-val" id="c-churn-mrr-val" style="color:var(--red)">R$ 0</div>
+        <div class="mcard-sub" id="c-churn-mrr-sub">Preencha no controle semanal</div>
       </div>
+      <!-- 9 -->
       <div class="mcard">
         <div class="mcard-lbl">Churn · NRR Recebido</div>
         <div class="mcard-val" id="c-churn-rec" style="color:var(--red)">—</div>
         <div class="mcard-sub">Receita já recebida de clientes em churn</div>
       </div>
+      <!-- 10 -->
+      <div class="exp-card">
+        <div class="exp-lbl">Expansão do Mês</div>
+        <div class="exp-val" id="exp-total">R$ 0</div>
+        <div class="exp-sub">Soma das semanas</div>
+      </div>
+      <!-- 11 -->
+      <div class="mcard">
+        <div class="mcard-lbl">% TCV da Carteira</div>
+        <div class="mcard-val" id="c-tcv-pct" style="color:var(--purple)">—</div>
+        <div class="mcard-sub" id="c-tcv-sub">—</div>
+      </div>
+      <!-- 12 -->
       <div class="mcard">
         <div class="mcard-lbl">LTV Médio</div>
         <div class="mcard-val" id="c-ltv" style="color:var(--blue)">—</div>
         <div class="mcard-sub" id="c-ltv-sub">média em meses</div>
       </div>
+      <!-- 13 -->
       <div class="risco-card">
         <div class="risco-card-lbl">% da Base em Risco</div>
         <div class="risco-card-val" id="c-risco-pct" style="color:var(--yellow)">—</div>
         <div class="risco-card-sub" id="c-risco-sub">Crítico + Atenção</div>
       </div>
-      <div class="risco-card">
-        <div class="risco-card-lbl">Solicitação de Churn</div>
-        <div class="risco-card-val" id="c-sol-churn-n" style="color:var(--orange,#f97316)">—</div>
-        <div class="risco-card-sub">clientes solicitaram churn</div>
-        <button class="churn-sol-btn" id="c-sol-btn" onclick="document.getElementById('c-sol-list').classList.toggle('open');this.textContent=document.getElementById('c-sol-list').classList.contains('open')?'▾ Ocultar clientes':'▸ Ver clientes'">▸ Ver clientes</button>
-        <div class="churn-sol-list" id="c-sol-list"></div>
+      <!-- 14 -->
+      <div class="mcard">
+        <div class="mcard-lbl">% com Cobrança</div>
+        <div class="mcard-val" id="c-pag-pct" style="color:var(--green)">—</div>
+        <div class="mcard-sub" id="c-pag-sub">—</div>
       </div>
     </div>
+
 
   </div>
 
