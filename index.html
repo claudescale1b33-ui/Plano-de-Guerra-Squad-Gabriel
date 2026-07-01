@@ -17,6 +17,7 @@
   --green:#12b76a;--green-light:#ecfdf3;
   --purple:#7c3aed;--purple-light:#f5f3ff;
   --blue:#2563eb;--blue-light:#eff6ff;
+  --orange:#f97316;--orange-light:#fff7ed;
   --sans:'Inter',sans-serif;--display:'Syne',sans-serif;
   --radius:14px;--radius-sm:8px;
   --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
@@ -183,6 +184,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .tbl-select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;padding:6px 8px;outline:none;cursor:pointer;transition:border-color .2s}
 .tbl-select:focus{border-color:var(--cyan)}
 
+.risco-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s}
+.risco-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.risco-card-lbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.risco-card-val{font-family:var(--display);font-size:24px;font-weight:800;letter-spacing:-1px;line-height:1;margin-bottom:4px}
+.risco-card-sub{font-size:11px;color:var(--text3)}
+.churn-sol-list{display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:10px}
+.churn-sol-list.open{display:block}
+.churn-sol-item{font-size:11px;color:var(--text);padding:5px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.churn-sol-item:last-child{border-bottom:none}
+.churn-sol-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);flex-shrink:0}
+.churn-sol-btn{font-size:10px;color:var(--cyan);cursor:pointer;background:none;border:none;padding:0;font-weight:600;margin-top:4px;display:block}
+.churn-sol-btn:hover{text-decoration:underline}
 .footer{font-size:10px;color:var(--text3);text-align:center;margin-top:36px;padding-top:14px;border-top:1px solid var(--border)}
 
 @media(max-width:1200px){.g6{grid-template-columns:repeat(3,1fr)}.gest-stats{grid-template-columns:repeat(3,1fr)}}
@@ -279,7 +292,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
     </div>
 
     <div class="sec">Carteira</div>
-    <div class="g6" style="margin-bottom:12px">
+    <div class="g8" style="display:grid;grid-template-columns:repeat(8,1fr);gap:12px;margin-bottom:12px">
       <div class="mcard">
         <div class="mcard-lbl">Clientes Ativos</div>
         <div class="mcard-val" id="c-total" style="color:var(--blue)">—</div>
@@ -309,6 +322,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         <div class="mcard-lbl">LTV Médio</div>
         <div class="mcard-val" id="c-ltv" style="color:var(--blue)">—</div>
         <div class="mcard-sub" id="c-ltv-sub">média em meses</div>
+      </div>
+      <div class="risco-card">
+        <div class="risco-card-lbl">% da Base em Risco</div>
+        <div class="risco-card-val" id="c-risco-pct" style="color:var(--yellow)">—</div>
+        <div class="risco-card-sub" id="c-risco-sub">Crítico + Atenção</div>
+      </div>
+      <div class="risco-card">
+        <div class="risco-card-lbl">Solicitação de Churn</div>
+        <div class="risco-card-val" id="c-sol-churn-n" style="color:var(--orange,#f97316)">—</div>
+        <div class="risco-card-sub">clientes solicitaram churn</div>
+        <button class="churn-sol-btn" id="c-sol-btn" onclick="document.getElementById('c-sol-list').classList.toggle('open');this.textContent=document.getElementById('c-sol-list').classList.contains('open')?'▾ Ocultar clientes':'▸ Ver clientes'">▸ Ver clientes</button>
+        <div class="churn-sol-list" id="c-sol-list"></div>
       </div>
     </div>
 
@@ -649,6 +674,24 @@ function renderDashboard(){
   document.getElementById('c-ltv').textContent = ltvMedia + ' meses';
   document.getElementById('c-ltv-sub').textContent = `média de ${clientsComData.length} clientes com data`;
 
+  // % Base em Risco (Crítico + Atenção na Saúde do Cliente)
+  const emRisco=clients.filter(c=>{const s=(c.saude||'').toLowerCase();return s.includes('crítico')||s.includes('critico')||s.includes('atenção')||s.includes('atencao')||s.includes('aten');});
+  const riscoPct=clients.length>0?Math.round(emRisco.length/clients.length*100):0;
+  document.getElementById('c-risco-pct').textContent=riscoPct+'%';
+  document.getElementById('c-risco-sub').textContent=emRisco.length+' clientes (Crítico + Atenção)';
+
+  // Solicitação de Churn
+  const solChurn=clients.filter(c=>(c.saude||'').toLowerCase().includes('solicitou churn'));
+  document.getElementById('c-sol-churn-n').textContent=solChurn.length;
+  const solList=document.getElementById('c-sol-list');
+  if(solList){
+    solList.innerHTML=solChurn.length>0
+      ?solChurn.map(c=>`<div class="churn-sol-item"><span class="churn-sol-dot"></span>${c.name}</div>`).join('')
+      :'<div style="font-size:11px;color:var(--text3);padding:4px 0">Nenhuma solicitação no momento</div>';
+  }
+  const solBtn=document.getElementById('c-sol-btn');
+  if(solBtn) solBtn.style.display=solChurn.length>0?'block':'none';
+
 
   setTimeout(()=>{
     const circ=207.3;
@@ -821,6 +864,16 @@ function renderDashboard(){
         },0)/gLtvCount)
       :0;
 
+    // % Base em Risco do gestor
+    const gRisco=gc.filter(c=>{const s=(c.saude||'').toLowerCase();return s.includes('crítico')||s.includes('critico')||s.includes('atenção')||s.includes('atencao')||s.includes('aten');});
+    const gRiscoN=gRisco.length;
+    const gRiscoPct=gc.length>0?Math.round(gRiscoN/gc.length*100):0;
+
+    // Solicitação de Churn do gestor
+    const gSolChurnList=gc.filter(c=>(c.saude||'').toLowerCase().includes('solicitou churn'));
+    const gSolChurn=gSolChurnList.length;
+    const gSolNames=gSolChurnList.map(c=>`<div style="padding:2px 0;border-bottom:1px solid var(--border)">${c.name}</div>`).join('');
+
     const chRows=gCh.map(c=>`<tr>
       <td><span style="display:inline-flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:var(--red);display:inline-block;flex-shrink:0"></span>${c.name}</span></td>
       <td><span class="st-pill" style="background:var(--red-light);color:var(--red)">${c.saude||c.st}</span></td>
@@ -837,13 +890,15 @@ function renderDashboard(){
         <div class="gest-avatar" style="background:${colLight};color:${col}">${init}</div>
         <div><div class="gest-name">${gName}</div><div class="gest-role">Gestor de Resultados · ${gc.length} clientes</div></div>
       </div>
-      <div class="gest-stats" style="grid-template-columns:repeat(6,1fr)">
+      <div class="gest-stats" style="grid-template-columns:repeat(8,1fr)">
         <div class="gstat"><div class="gstat-lbl">NRR Projetado</div><div class="gstat-val" style="color:${col}">${fmt(gProj)}</div><div class="gstat-sub">${gc.length} clientes</div></div>
         <div class="gstat"><div class="gstat-lbl">NRR Recebido</div><div class="gstat-val" style="color:${gPc}">${fmt(gRec)}</div><div class="gstat-sub">${gPct}% do projetado</div></div>
         <div class="gstat"><div class="gstat-lbl">Churn</div><div class="gstat-val" style="color:var(--red)">${gCh.length} clientes</div><div class="gstat-sub">${fmt(gChMrr)} MRR perdido</div></div>
         <div class="gstat"><div class="gstat-lbl">Inadimplência</div><div class="gstat-val" style="color:var(--yellow)">${gIn.length} clientes</div><div class="gstat-sub">${fmt(gInMrr)} em risco</div></div>
         <div class="gstat"><div class="gstat-lbl">Reuniões Mês</div><div class="gstat-val" style="color:var(--green)">${gReun}</div><div class="gstat-sub">realizadas</div></div>
-        <div class="gstat" style="border-right:none"><div class="gstat-lbl">LTV Médio</div><div class="gstat-val" style="color:var(--blue)">${gLtv} meses</div><div class="gstat-sub">${gLtvCount} clientes c/ data</div></div>
+        <div class="gstat"><div class="gstat-lbl">LTV Médio</div><div class="gstat-val" style="color:var(--blue)">${gLtv} meses</div><div class="gstat-sub">${gLtvCount} c/ data</div></div>
+        <div class="gstat"><div class="gstat-lbl">% Base em Risco</div><div class="gstat-val" style="color:var(--yellow)">${gRiscoPct}%</div><div class="gstat-sub">${gRiscoN} (Crítico+Atenção)</div></div>
+        <div class="gstat" style="border-right:none"><div class="gstat-lbl">Sol. de Churn</div><div class="gstat-val" style="color:#f97316">${gSolChurn}</div><div class="gstat-sub" style="cursor:pointer;color:var(--cyan)" onclick="const l=this.nextElementSibling;l.style.display=l.style.display==='none'?'block':'none'">${gSolChurn>0?'▸ Ver clientes':''}</div><div style="display:none;margin-top:6px;font-size:10px">${gSolNames}</div></div>
       </div>
       <div class="gest-churn-max">
         <div class="gcm-label">Churn Máximo do Mês</div>
