@@ -489,8 +489,8 @@ function setEstrat(estrat,btn){
 
 function getFilteredClients(){
   if(currentEstrat==='ambos') return allClients;
-  const id=GESTORES_IDS[currentEstrat];
-  return allClients.filter(c=>c.estrategistaId===id);
+  const name=GESTORES_NAMES[currentEstrat].toLowerCase();
+  return allClients.filter(c=>(c.estrategistaId||'').toLowerCase()===name);
 }
 
 async function loadData(){
@@ -749,7 +749,7 @@ function renderDashboard(){
   gestoresParaRender.forEach((gKey,gi)=>{
     const gId=GESTORES_IDS[gKey];
     const gName=GESTORES_NAMES[gKey];
-    const gc=allClients.filter(c=>c.estrategistaId===gId);
+    const gc=allClients.filter(c=>(c.estrategistaId||'').toLowerCase()===gName.toLowerCase());
     const gcb=gc.filter(c=>!isSkip(c));
     const gCh=gc.filter(isChurn);
     const gIn=gc.filter(isInadim);
