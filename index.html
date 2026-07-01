@@ -809,6 +809,18 @@ function renderDashboard(){
     const keywords=GESTOR_REUN_NAMES[gName]||[keyword];
     const gReun=Object.entries(reunData).filter(([k])=>keywords.some(kw=>k.toLowerCase().includes(kw))).reduce((a,[,v])=>a+v,0);
 
+    // LTV médio do gestor
+    const now3=new Date();
+    const gcComData=gc.filter(c=>c.dataInicio);
+    const gLtvCount=gcComData.length;
+    const gLtv=gLtvCount>0
+      ?Math.round(gcComData.reduce((a,c)=>{
+          const start=new Date(c.dataInicio);
+          const meses=(now3.getFullYear()-start.getFullYear())*12+(now3.getMonth()-start.getMonth());
+          return a+Math.max(0,meses);
+        },0)/gLtvCount)
+      :0;
+
     const chRows=gCh.map(c=>`<tr>
       <td><span style="display:inline-flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:var(--red);display:inline-block;flex-shrink:0"></span>${c.name}</span></td>
       <td><span class="st-pill" style="background:var(--red-light);color:var(--red)">${c.saude||c.st}</span></td>
@@ -825,12 +837,13 @@ function renderDashboard(){
         <div class="gest-avatar" style="background:${colLight};color:${col}">${init}</div>
         <div><div class="gest-name">${gName}</div><div class="gest-role">Gestor de Resultados · ${gc.length} clientes</div></div>
       </div>
-      <div class="gest-stats">
+      <div class="gest-stats" style="grid-template-columns:repeat(6,1fr)">
         <div class="gstat"><div class="gstat-lbl">NRR Projetado</div><div class="gstat-val" style="color:${col}">${fmt(gProj)}</div><div class="gstat-sub">${gc.length} clientes</div></div>
         <div class="gstat"><div class="gstat-lbl">NRR Recebido</div><div class="gstat-val" style="color:${gPc}">${fmt(gRec)}</div><div class="gstat-sub">${gPct}% do projetado</div></div>
         <div class="gstat"><div class="gstat-lbl">Churn</div><div class="gstat-val" style="color:var(--red)">${gCh.length} clientes</div><div class="gstat-sub">${fmt(gChMrr)} MRR perdido</div></div>
         <div class="gstat"><div class="gstat-lbl">Inadimplência</div><div class="gstat-val" style="color:var(--yellow)">${gIn.length} clientes</div><div class="gstat-sub">${fmt(gInMrr)} em risco</div></div>
         <div class="gstat"><div class="gstat-lbl">Reuniões Mês</div><div class="gstat-val" style="color:var(--green)">${gReun}</div><div class="gstat-sub">realizadas</div></div>
+        <div class="gstat" style="border-right:none"><div class="gstat-lbl">LTV Médio</div><div class="gstat-val" style="color:var(--blue)">${gLtv} meses</div><div class="gstat-sub">${gLtvCount} clientes c/ data</div></div>
       </div>
       <div class="gest-churn-max">
         <div class="gcm-label">Churn Máximo do Mês</div>
