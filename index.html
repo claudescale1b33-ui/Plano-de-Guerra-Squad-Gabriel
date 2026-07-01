@@ -362,6 +362,22 @@ const GROUP='duplicate_of_clientes_ativos___mkkzpmkx';
 const BOARD_REUN='6690913711';
 const GESTORES_IDS={gabriel:'person-60743496',gustavo:'person-74325223'};
 const GESTORES_NAMES={gabriel:'Gabriel dos Santos',gustavo:'Gustavo Carmo'};
+
+// Gestores de Resultados por Estrategista (coluna 'pessoas' no Monday)
+const GESTORES_POR_ESTRAT={
+  gabriel:['Vitor Domingos','Samuel Cardoso','Luiz Higashi'],
+  gustavo:['Lucas Rosa','Arthur Zilli'],
+  ambos:['Vitor Domingos','Samuel Cardoso','Luiz Higashi','Lucas Rosa','Arthur Zilli']
+};
+
+// IDs das pessoas no quadro de reuniões (coluna 'person')
+const GESTOR_REUN_NAMES={
+  'Vitor Domingos':['vitor','domingos'],
+  'Samuel Cardoso':['samuel','cardoso'],
+  'Luiz Higashi':['luiz','higashi'],
+  'Lucas Rosa':['lucas','rosa'],
+  'Arthur Zilli':['arthur','zilli']
+};
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const WEEK_COLORS=['#00c4a7','#f79009','#94a3b8','#12b76a','#7c3aed'];
 const GCOLORS=[['#00c4a7','var(--cyan-light)'],['#7c3aed','var(--purple-light)']];
@@ -545,13 +561,19 @@ async function loadData(){
       ]}){items{name column_values(ids:["person","status"]){id text}}}}}`;
       const rData=await monday(qr);
       const rItems=rData?.data?.boards?.[0]?.items_page?.items||[];
-      reunData={gabriel:0,gustavo:0};
+      reunData={};
       rItems.forEach(item=>{
         const personCol=item.column_values.find(c=>c.id==='person');
         if(!personCol)return;
-        const txt=personCol.text||'';
-        if(txt.toLowerCase().includes('gabriel'))reunData.gabriel++;
-        if(txt.toLowerCase().includes('gustavo'))reunData.gustavo++;
+        const txt=(personCol.text||'').toLowerCase();
+        // Count for each gestor by name keywords
+        const allGestores=['Vitor Domingos','Samuel Cardoso','Luiz Higashi','Lucas Rosa','Arthur Zilli'];
+        allGestores.forEach(gn=>{
+          const keywords=GESTOR_REUN_NAMES[gn]||[gn.split(' ')[0].toLowerCase()];
+          if(keywords.some(kw=>txt.includes(kw))){
+            reunData[gn]=(reunData[gn]||0)+1;
+          }
+        });
       });
     }
 
@@ -740,16 +762,21 @@ function renderDashboard(){
     wWrap.appendChild(el);
   });
 
-  // GESTORES
-  const gestoresParaRender=currentEstrat==='ambos'
-    ?['gabriel','gustavo']
-    :[currentEstrat];
+  // GESTORES DE RESULTADOS — por estrategista selecionado
+  const gestList = GESTORES_POR_ESTRAT[currentEstrat] || [];
+  const GEST_COLORS=['#00c4a7','#7c3aed','#f79009','#2563eb','#f04438'];
+  const GEST_LIGHTS=['var(--cyan-light)','var(--purple-light)','var(--yellow-light)','var(--blue-light)','var(--red-light)'];
 
   const gWrap=document.getElementById('gestor-wrap');gWrap.innerHTML='';
-  gestoresParaRender.forEach((gKey,gi)=>{
-    const gId=GESTORES_IDS[gKey];
-    const gName=GESTORES_NAMES[gKey];
-    const gc=allClients.filter(c=>(c.estrategistaId||'').toLowerCase()===gName.toLowerCase());
+
+  gestList.forEach((gName,gi)=>{
+    const col=GEST_COLORS[gi%GEST_COLORS.length];
+    const colLight=GEST_LIGHTS[gi%GEST_LIGHTS.length];
+    const init=gName.split(' ').map(n=>n[0]).slice(0,2).join('');
+    const keyword=gName.split(' ')[0].toLowerCase();
+
+    // Filtra clientes pelo gestor de resultados (coluna 'pessoas')
+    const gc=clients.filter(c=>(c.gestor||'').toLowerCase().includes(keyword));
     const gcb=gc.filter(c=>!isSkip(c));
     const gCh=gc.filter(isChurn);
     const gIn=gc.filter(isInadim);
@@ -758,10 +785,11 @@ function renderDashboard(){
     const gChMrr=gCh.reduce((a,c)=>a+c.proj,0);
     const gInMrr=gIn.reduce((a,c)=>a+c.proj,0);
     const gPct=gProj>0?Math.round(gRec/gProj*100):0;
-    const gReun=reunData[gKey]||0;
-    const [col,colLight]=GCOLORS[gi%GCOLORS.length];
     const gPc=gPct>=87?'#12b76a':gPct>=60?'#f79009':'#f04438';
-    const init=gName.split(' ').map(n=>n[0]).slice(0,2).join('');
+
+    // Reuniões do gestor
+    const keywords=GESTOR_REUN_NAMES[gName]||[keyword];
+    const gReun=Object.entries(reunData).filter(([k])=>keywords.some(kw=>k.toLowerCase().includes(kw))).reduce((a,[,v])=>a+v,0);
 
     const chRows=gCh.map(c=>`<tr>
       <td><span style="display:inline-flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:var(--red);display:inline-block;flex-shrink:0"></span>${c.name}</span></td>
@@ -780,11 +808,11 @@ function renderDashboard(){
         <div><div class="gest-name">${gName}</div><div class="gest-role">Gestor de Resultados · ${gc.length} clientes</div></div>
       </div>
       <div class="gest-stats">
-        <div class="gstat"><div class="gstat-lbl">MRR Projetado</div><div class="gstat-val" style="color:${col}">${fmt(gProj)}</div><div class="gstat-sub">Carteira ativa</div></div>
-        <div class="gstat"><div class="gstat-lbl">MRR Recebido</div><div class="gstat-val" style="color:${gPc}">${fmt(gRec)}</div><div class="gstat-sub">${gPct}% do projetado</div></div>
-        <div class="gstat"><div class="gstat-lbl">Churn Confirmado</div><div class="gstat-val" style="color:var(--red)">${gCh.length} clientes</div><div class="gstat-sub">${fmt(gChMrr)} perdidos</div></div>
+        <div class="gstat"><div class="gstat-lbl">NRR Projetado</div><div class="gstat-val" style="color:${col}">${fmt(gProj)}</div><div class="gstat-sub">${gc.length} clientes</div></div>
+        <div class="gstat"><div class="gstat-lbl">NRR Recebido</div><div class="gstat-val" style="color:${gPc}">${fmt(gRec)}</div><div class="gstat-sub">${gPct}% do projetado</div></div>
+        <div class="gstat"><div class="gstat-lbl">Churn</div><div class="gstat-val" style="color:var(--red)">${gCh.length} clientes</div><div class="gstat-sub">${fmt(gChMrr)} MRR perdido</div></div>
         <div class="gstat"><div class="gstat-lbl">Inadimplência</div><div class="gstat-val" style="color:var(--yellow)">${gIn.length} clientes</div><div class="gstat-sub">${fmt(gInMrr)} em risco</div></div>
-        <div class="gstat"><div class="gstat-lbl">Reuniões Realizadas</div><div class="gstat-val" style="color:var(--green)">${gReun}</div><div class="gstat-sub">no mês atual</div></div>
+        <div class="gstat"><div class="gstat-lbl">Reuniões Mês</div><div class="gstat-val" style="color:var(--green)">${gReun}</div><div class="gstat-sub">realizadas</div></div>
       </div>
       <div class="gest-churn-max">
         <div class="gcm-label">Churn Máximo do Mês</div>
@@ -801,9 +829,7 @@ function renderDashboard(){
       </div>`;
     gWrap.appendChild(block);
   });
-}
 
-  
 function switchTab(id,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(t=>t.classList.remove('active'));
