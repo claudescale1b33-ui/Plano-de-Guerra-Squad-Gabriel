@@ -4,922 +4,749 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Plano de Guerra · MO 2.0</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f5f5f7;--bg2:#ececf0;--surface:#fff;--surface2:#f9f9fb;
-  --border:#e8e8ed;--border2:#d8d8df;
-  --text:#1a1a2e;--text2:#6b6b80;--text3:#aaaab8;
-  --cyan:#00c4a7;--cyan-light:#e6faf7;
-  --red:#f04438;--red-light:#fef3f2;
-  --yellow:#f79009;--yellow-light:#fffaeb;
-  --green:#12b76a;--green-light:#ecfdf3;
-  --purple:#7c3aed;--purple-light:#f5f3ff;
-  --blue:#2563eb;--blue-light:#eff6ff;
-  --orange:#f97316;--orange-light:#fff7ed;
-  --sans:'Inter',sans-serif;--display:'Syne',sans-serif;
-  --radius:14px;--radius-sm:8px;
-  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
-  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+  --bg:#ffffff;
+  --bg2:#f8fafc;
+  --bg3:#f1f5f9;
+  --surface:#ffffff;
+  --border:#e2e8f0;
+  --border2:#cbd5e1;
+  --text:#0f172a;
+  --text2:#475569;
+  --text3:#94a3b8;
+  --green:#16a34a;--green-bg:#dcfce7;--green-border:#bbf7d0;
+  --yellow:#b45309;--yellow-bg:#fef3c7;--yellow-border:#fde68a;
+  --red:#dc2626;--red-bg:#fee2e2;--red-border:#fecaca;
+  --blue:#1d4ed8;--blue-bg:#dbeafe;--blue-border:#bfdbfe;
+  --purple:#7c3aed;--purple-bg:#ede9fe;--purple-border:#ddd6fe;
+  --orange:#c2410c;--orange-bg:#ffedd5;--orange-border:#fed7aa;
+  --teal:#0f766e;--teal-bg:#ccfbf1;--teal-border:#99f6e4;
+  --sans:'Inter',sans-serif;
+  --radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.04);
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased}
-.app{max-width:1380px;margin:0 auto;padding:0 28px 60px}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.app{max-width:1360px;margin:0 auto;padding:0 24px 60px}
 
 /* LOADING */
-#loading{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s}
+#loading{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .4s}
 #loading.out{opacity:0;pointer-events:none}
-.load-logo{font-family:var(--display);font-size:32px;font-weight:800;color:var(--text)}
-.load-logo span{color:var(--cyan)}
+.load-logo{font-size:28px;font-weight:800;color:var(--text);letter-spacing:-1px}
+.load-logo span{color:var(--green)}
 .load-bar{width:160px;height:2px;background:var(--border);border-radius:2px;overflow:hidden}
-.load-bar-fill{height:100%;background:var(--cyan);animation:lb 1.6s cubic-bezier(.4,0,.2,1) forwards}
+.load-bar-f{height:100%;background:var(--green);animation:lb 1.5s ease forwards}
 @keyframes lb{0%{width:0}100%{width:100%}}
 .load-sub{font-size:12px;color:var(--text3)}
 
-/* HEADER */
-.header{display:flex;align-items:flex-start;justify-content:space-between;padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:4px}
-.hdr-eyebrow{font-size:11px;font-weight:600;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
-.hdr-title{font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1}
-.hdr-sub{font-size:12px;color:var(--text2);margin-top:4px}
-.hdr-right{display:flex;align-items:center;gap:10px}
-.upd-pill{font-size:11px;color:var(--text2);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-weight:500;box-shadow:var(--shadow)}
-.refresh-btn{display:flex;align-items:center;gap:6px;background:var(--cyan);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:600;padding:9px 18px;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,196,167,.3)}
-.refresh-btn:hover{background:#00a88e;transform:translateY(-1px)}
-.ri{display:inline-block;transition:transform .5s}
+/* TOP BANNER */
+.top-banner{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.banner-left{display:flex;flex-direction:column;gap:2px}
+.banner-eyebrow{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
+.banner-title{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
+.banner-meta{font-size:11px;color:var(--text3)}
+.banner-right{display:flex;align-items:center;gap:10px}
+.upd-pill{font-size:11px;color:var(--text2);background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 11px;font-weight:500}
+.refresh-btn{display:flex;align-items:center;gap:6px;background:var(--green);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:600;padding:7px 14px;cursor:pointer;transition:all .2s}
+.refresh-btn:hover{background:#15803d;transform:translateY(-1px)}
+.ri{transition:transform .4s}
 .refresh-btn:hover .ri{transform:rotate(180deg)}
 
-/* ESTRATEGISTA FILTER */
-.estrat-bar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bottom:1px solid var(--border);margin-bottom:4px}
-.estrat-label{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-right:4px}
-.estrat-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-weight:500;padding:6px 14px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
-.estrat-btn:hover{border-color:var(--cyan);color:var(--cyan)}
-.estrat-btn.active{background:var(--cyan);border-color:var(--cyan);color:#fff;box-shadow:0 2px 8px rgba(0,196,167,.3)}
+/* ESTRAT BAR */
+.estrat-bar{display:flex;align-items:center;gap:8px;padding:12px 24px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.estrat-lbl{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-right:4px}
+.estrat-btn{background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;font-weight:500;padding:5px 13px;cursor:pointer;transition:all .15s}
+.estrat-btn:hover{border-color:var(--green);color:var(--green)}
+.estrat-btn.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:600}
 
 /* TABS */
-.tab-bar{display:flex;gap:2px;padding-top:16px;border-bottom:1px solid var(--border)}
-.tab{position:relative;background:transparent;border:none;font-family:var(--sans);font-size:13px;font-weight:500;color:var(--text2);padding:9px 18px 11px;cursor:pointer;border-radius:8px 8px 0 0;transition:all .2s;white-space:nowrap}
-.tab:hover{color:var(--text);background:var(--surface2)}
-.tab.active{color:var(--text);background:var(--surface);font-weight:600}
-.tab-line{position:absolute;bottom:-1px;left:0;right:0;height:2px;background:transparent;border-radius:2px;transition:.2s}
-.tab.active .tab-line{background:var(--cyan)}
-.tab-pane{display:none;padding-top:22px;animation:fi .25s ease}
+.tab-bar{display:flex;gap:0;padding:0 24px;background:var(--bg);border-bottom:1px solid var(--border)}
+.tab{position:relative;background:transparent;border:none;font-size:13px;font-weight:500;color:var(--text3);padding:12px 18px 10px;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--green)}
+.tab-pane{display:none;animation:fi .2s ease}
 .tab-pane.active{display:block}
-@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-/* SECTION */
-.sec{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;margin-top:26px}
-.sec:first-child{margin-top:0}
-.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+/* CONTENT */
+.content{padding:24px}
 
-/* GRIDS */
-.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px}
-.cards-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:12px}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
-.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px}
-.g6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:12px}
+/* SECTION HEADER */
+.sec-header{margin-bottom:16px;margin-top:28px}
+.sec-header:first-child{margin-top:0}
+.sec-title{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
+.sec-divider{height:1px;background:var(--border);margin-top:8px}
 
-/* METRIC CARD */
-.mcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 16px;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s;box-shadow:var(--shadow)}
-.mcard:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.mcard-lbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
-.mcard-val{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-1px;line-height:1;margin-bottom:4px}
-.mcard-sub{font-size:11px;color:var(--text3)}
-.mcard-bar{height:3px;background:var(--bg2);border-radius:3px;margin-top:12px;overflow:hidden}
-.mcard-bar-f{height:100%;border-radius:3px;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+/* METRIC CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1px}
+.mcard{background:var(--bg);padding:18px 20px;position:relative;transition:background .15s}
+.mcard:hover{background:var(--bg2)}
+.mcard-lbl{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.mcard-val{font-size:22px;font-weight:800;letter-spacing:-0.5px;line-height:1;margin-bottom:4px}
+.mcard-sub{font-size:11px;color:var(--text3);line-height:1.4}
+.mcard-bar{height:3px;background:var(--bg3);border-radius:3px;margin-top:12px;overflow:hidden}
+.mcard-bar-f{height:100%;border-radius:3px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.3px}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-border)}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border)}
+.badge-orange{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)}
+.badge-teal{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border)}
 
-/* RING CARD */
-.ring-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s}
-.ring-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.ring-wrap{position:relative;width:80px;height:80px;flex-shrink:0}
-.ring-svg{transform:rotate(-90deg);overflow:visible}
-.ring-bg-c{fill:none;stroke:var(--bg2);stroke-width:6}
-.ring-fill-c{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1),stroke .5s}
+/* RING */
+.ring-card{background:var(--bg);padding:18px 20px;display:flex;align-items:center;gap:16px;transition:background .15s}
+.ring-card:hover{background:var(--bg2)}
+.ring-wrap{position:relative;width:72px;height:72px;flex-shrink:0}
+.ring-svg{transform:rotate(-90deg)}
+.ring-bg-c{fill:none;stroke:var(--bg3);stroke-width:6}
+.ring-fill-c{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)}
 .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring-pct{font-family:var(--display);font-size:16px;font-weight:800;line-height:1}
-.ring-lbl{font-size:7px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:1px}
-.ring-info-lbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
-.ring-info-val{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-1px;margin-bottom:3px}
+.ring-pct{font-size:15px;font-weight:800;line-height:1}
+.ring-lbl{font-size:7px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase}
+.ring-info{}
+.ring-info-lbl{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.ring-info-val{font-size:20px;font-weight:800;letter-spacing:-0.5px;line-height:1;margin-bottom:3px}
 .ring-info-sub{font-size:11px;color:var(--text3)}
-.ring-info-bar{height:3px;background:var(--bg2);border-radius:3px;margin-top:8px;overflow:hidden;width:110px}
-.ring-info-bar-f{height:100%;border-radius:3px;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+.ring-info-bar{height:3px;background:var(--bg3);border-radius:3px;margin-top:8px;overflow:hidden;width:120px}
+.ring-info-bar-f{height:100%;border-radius:3px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
 
-/* EXP CARD */
-.exp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 16px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s}
-.exp-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.exp-lbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
-.exp-val{font-family:var(--display);font-size:20px;font-weight:800;color:var(--green);letter-spacing:-1px;line-height:1;margin-bottom:4px}
+/* EXP */
+.exp-card{background:var(--bg);padding:18px 20px;transition:background .15s}
+.exp-card:hover{background:var(--bg2)}
+.exp-lbl{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.exp-val{font-size:22px;font-weight:800;letter-spacing:-0.5px;color:var(--green);line-height:1;margin-bottom:4px}
 .exp-sub{font-size:11px;color:var(--text3)}
 
+/* SOL CHURN */
+.sol-card{background:var(--bg);padding:18px 20px;transition:background .15s}
+.sol-card:hover{background:var(--bg2)}
+.sol-lbl{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.sol-val{font-size:22px;font-weight:800;letter-spacing:-0.5px;line-height:1;margin-bottom:4px;color:var(--orange)}
+.sol-sub{font-size:11px;color:var(--text3)}
+.sol-list{display:none;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
+.sol-list.open{display:block}
+.sol-item{font-size:11px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.sol-item:last-child{border-bottom:none}
+.sol-dot{width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0}
+.sol-btn{font-size:10px;color:var(--blue);cursor:pointer;background:none;border:none;padding:0;font-weight:600;margin-top:6px;display:block}
+.sol-btn:hover{text-decoration:underline}
+
+/* CHART SECTION */
+.charts-row{display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:20px}
+.chart-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.chart-header{margin-bottom:16px}
+.chart-title{font-size:14px;font-weight:700;color:var(--text)}
+.chart-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.chart-wrap{position:relative}
+
 /* WEEKLY */
-.week-grid{display:grid;gap:10px}
-.wk{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s}
-.wk:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.wk-head{padding:12px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;border-top:3px solid var(--wc,var(--border))}
-.wk-dot{width:7px;height:7px;border-radius:50%;background:var(--wc);flex-shrink:0}
-.wk-tag{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase}
-.wk-dates{font-size:11px;font-weight:700;color:var(--wc);margin-left:auto}
-.wk-body{padding:12px 16px;display:flex;flex-direction:column;gap:10px}
-.wk-mlbl{font-size:9px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.wk-mval{font-family:var(--display);font-size:15px;font-weight:800;letter-spacing:-.5px;line-height:1}
-.wk-bar{height:3px;background:var(--bg2);border-radius:3px;margin-top:4px;overflow:hidden}
+.week-row{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px}
+.wk{background:var(--bg)}
+.wk-head{padding:12px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.wk-tag{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.wk-dates{font-size:12px;font-weight:700;margin-left:auto}
+.wk-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.wk-mlbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
+.wk-mval{font-size:16px;font-weight:800;letter-spacing:-0.5px;line-height:1}
+.wk-bar{height:3px;background:var(--bg3);border-radius:3px;margin-top:4px;overflow:hidden}
 .wk-bar-f{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
-.wk-pct{font-size:9px;padding:1px 5px;border-radius:3px;display:inline-block;margin-left:4px;vertical-align:middle;font-weight:600}
+.wk-pct-badge{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;display:inline-block;margin-left:5px;vertical-align:middle}
 .wk-sep{border:none;border-top:1px solid var(--border)}
-.wk-flbl{font-size:9px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.wk-val-display{font-family:var(--display);font-size:13px;font-weight:700;color:var(--red);padding:4px 0}
-.wk-foot{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:var(--bg);border-top:1px solid var(--border)}
-.wk-gap-lbl{font-size:10px;font-weight:500;color:var(--text2)}
-.wk-gap-val{font-family:var(--display);font-size:13px;font-weight:800;letter-spacing:-.5px}
-.tbtn{background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text2);font-size:10px;font-weight:500;cursor:pointer;padding:3px 8px;transition:all .2s}
-.tbtn:hover{color:var(--cyan);border-color:var(--cyan);background:var(--cyan-light)}
+.wk-flbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
+.wk-churn-val{font-size:13px;font-weight:700;color:var(--red);padding:2px 0}
+.wk-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;padding:6px 8px;outline:none;transition:border-color .15s}
+.wk-input:focus{border-color:var(--green);box-shadow:0 0 0 2px #dcfce7}
+.wk-input::placeholder{color:var(--text3)}
+.wk-foot{padding:10px 16px;background:var(--bg2);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.wk-gap-lbl{font-size:10px;color:var(--text3)}
+.wk-gap-val{font-size:14px;font-weight:800;letter-spacing:-0.5px}
+.expand-btn{background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;padding:3px 9px;transition:all .15s}
+.expand-btn:hover{color:var(--green);border-color:var(--green);background:var(--green-bg)}
 .cl-list{display:none;margin-top:6px;border-top:1px solid var(--border);padding-top:6px}
-.cl-item{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);font-size:10px;gap:4px}
+.cl-item{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-bottom:1px solid var(--border);align-items:center}
 .cl-item:last-child{border-bottom:none}
-.cl-name{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;font-weight:500}
-.cl-val{color:var(--text2);white-space:nowrap}
-.cldot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.cl-name{color:var(--text2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px}
+.cl-val{color:var(--text3);font-size:10px}
+.cldot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-right:4px}
 
 /* GESTORES */
-.gest-wrap{display:flex;flex-direction:column;gap:14px}
-.gest-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
-.gest-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
-.gest-avatar{width:38px;height:38px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:13px;font-weight:800}
-.gest-name{font-size:14px;font-weight:700}
-.gest-role{font-size:11px;color:var(--text2);margin-top:1px}
-.gest-stats{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--border);background:var(--surface2)}
-.gstat{padding:14px 18px;border-right:1px solid var(--border)}
-.gstat:last-child{border-right:none}
-.gstat-lbl{font-size:9px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
-.gstat-val{font-family:var(--display);font-size:18px;font-weight:800;letter-spacing:-.5px}
-.gstat-sub{font-size:10px;color:var(--text3);margin-top:2px}
-.gest-churn-max{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--red-light)}
-.gcm-label{font-size:9px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-.gcm-row{display:grid;grid-template-columns:1fr 1fr 2fr;gap:10px}
-.gcm-flbl{font-size:9px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.gcm-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:12px;padding:7px 9px;outline:none;transition:border-color .2s}
-.gcm-input:focus{border-color:var(--red)}
-.gcm-input::placeholder{color:var(--text3)}
+.gest-wrap{display:flex;flex-direction:column;gap:12px}
+.gest-block{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.gest-head{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.gest-avatar{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.gest-name{font-size:14px;font-weight:700;color:var(--text)}
+.gest-role{font-size:11px;color:var(--text3);margin-top:1px}
+.gest-kpis{display:grid;border-bottom:1px solid var(--border);background:var(--bg2)}
+.gkpi{padding:14px 18px;border-right:1px solid var(--border)}
+.gkpi:last-child{border-right:none}
+.gkpi-lbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
+.gkpi-val{font-size:18px;font-weight:800;letter-spacing:-0.5px}
+.gkpi-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.gest-churn-limit{padding:12px 20px;border-bottom:1px solid var(--border);background:var(--red-bg)}
+.gcl-title{font-size:9px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.gcl-row{display:grid;grid-template-columns:1fr 1fr 2fr;gap:10px}
+.gcl-lbl{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.3px;text-transform:uppercase;margin-bottom:3px}
+.gcl-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;padding:6px 8px;outline:none;transition:border-color .15s}
+.gcl-input:focus{border-color:var(--red)}
+.gcl-input::placeholder{color:var(--text3)}
 .gest-body{padding:16px 20px}
-.g-sec{font-size:9px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;margin-top:4px}
-.gtable{width:100%;border-collapse:collapse;margin-bottom:18px}
+.g-sec{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;margin-top:4px}
+.gtable{width:100%;border-collapse:collapse;margin-bottom:16px}
 .gtable:last-child{margin-bottom:0}
-.gtable th{font-size:9px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:0 0 8px;border-bottom:1px solid var(--border)}
+.gtable th{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;text-align:left;padding:0 0 8px;border-bottom:1px solid var(--border)}
 .gtable th:last-child{text-align:right}
-.gtable td{font-size:11px;padding:9px 0;border-bottom:1px solid var(--border);vertical-align:middle}
+.gtable td{font-size:11px;padding:8px 0;border-bottom:1px solid var(--border);color:var(--text)}
 .gtable tr:last-child td{border-bottom:none}
 .gtable td:last-child{text-align:right;font-weight:600}
-.st-pill{font-size:9px;padding:2px 7px;border-radius:4px;display:inline-block;font-weight:600}
-.empty-ok{font-size:12px;color:var(--text3);text-align:center;padding:18px 0}
+.st-pill{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600;display:inline-block}
+.empty-ok{font-size:11px;color:var(--text3);text-align:center;padding:16px 0}
 
-/* EXPANSION TAB */
-.flbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;margin-top:12px}
-.flbl:first-child{margin-top:0}
-.finput,.fta{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:12px;padding:8px 10px;outline:none;transition:border-color .2s;resize:none;line-height:1.6}
-.finput::placeholder,.fta::placeholder{color:var(--text3)}
-.finput:focus,.fta:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,196,167,.1)}
-.tbl-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;padding:6px 8px;outline:none;transition:border-color .2s}
-.tbl-input:focus{border-color:var(--cyan)}
-.tbl-input::placeholder{color:var(--text3)}
-.tbl-select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;padding:6px 8px;outline:none;cursor:pointer;transition:border-color .2s}
-.tbl-select:focus{border-color:var(--cyan)}
+/* EXPANSION */
+.exp-tab-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.exp-tab-head{display:grid;grid-template-columns:3fr 1.5fr 1fr 1.2fr 36px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.exp-tab-th{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;padding:10px 14px}
+.exp-row{display:grid;grid-template-columns:3fr 1.5fr 1fr 1.2fr 36px;border-bottom:1px solid var(--border)}
+.exp-row:last-child{border-bottom:none}
+.exp-row:hover{background:var(--bg2)}
+.exp-cell{padding:8px 14px;display:flex;align-items:center}
+.exp-input{width:100%;background:transparent;border:none;color:var(--text);font-size:12px;outline:none;font-family:var(--sans)}
+.exp-input::placeholder{color:var(--text3)}
+.exp-input:focus{background:var(--bg3);border-radius:4px;padding:2px 4px}
+.exp-select{width:100%;background:transparent;border:none;color:var(--text);font-size:12px;outline:none;cursor:pointer;font-family:var(--sans)}
+.exp-empty{text-align:center;padding:28px;font-size:12px;color:var(--text3)}
+.exp-footer{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--bg2);border-top:1px solid var(--border)}
 
-.risco-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 16px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s}
-.risco-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.risco-card-lbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
-.risco-card-val{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-1px;line-height:1;margin-bottom:4px}
-.risco-card-sub{font-size:11px;color:var(--text3)}
-.churn-sol-list{display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:10px}
-.churn-sol-list.open{display:block}
-.churn-sol-item{font-size:11px;color:var(--text);padding:5px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
-.churn-sol-item:last-child{border-bottom:none}
-.churn-sol-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);flex-shrink:0}
-.churn-sol-btn{font-size:10px;color:var(--cyan);cursor:pointer;background:none;border:none;padding:0;font-weight:600;margin-top:4px;display:block}
-.churn-sol-btn:hover{text-decoration:underline}
-.footer{font-size:10px;color:var(--text3);text-align:center;margin-top:36px;padding-top:14px;border-top:1px solid var(--border)}
+.footer{font-size:10px;color:var(--text3);text-align:center;margin-top:32px;padding-top:14px;border-top:1px solid var(--border)}
 
-@media(max-width:1200px){.g6{grid-template-columns:repeat(3,1fr)}.gest-stats{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:1050px){.g3,.g4,.g5,.g6{grid-template-columns:1fr 1fr}.gest-stats{grid-template-columns:1fr 1fr}.gcm-row{grid-template-columns:1fr 1fr}}
-@media(max-width:640px){.g2,.g3,.g4,.g5,.g6{grid-template-columns:1fr}.header{flex-direction:column;gap:12px}.ring-card{flex-direction:column}.pizza-card{flex-direction:column}}
+/* MOBILE */
+@media(max-width:1100px){.cards-grid{grid-template-columns:repeat(4,1fr)}.gest-kpis{grid-template-columns:repeat(4,1fr)}.gcl-row{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){
+  .top-banner{padding:10px 16px;flex-direction:column;align-items:flex-start;gap:8px;position:relative}
+  .banner-right{width:100%;justify-content:flex-between}
+  .estrat-bar{padding:10px 16px;gap:6px}
+  .tab-bar{padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tab{font-size:12px;padding:10px 14px 8px}
+  .content{padding:16px}
+  .cards-grid{grid-template-columns:repeat(2,1fr)}
+  .charts-row{grid-template-columns:1fr}
+  .week-row{grid-template-columns:1fr!important}
+  .gest-kpis{grid-template-columns:repeat(2,1fr)!important}
+  .gcl-row{grid-template-columns:1fr!important}
+  .ring-card{flex-direction:column;align-items:flex-start;gap:10px}
+  .ring-info-bar{width:100%}
+  .mcard-val,.ring-info-val,.exp-val,.sol-val{font-size:18px}
+  .gkpi-val{font-size:16px}
+}
+@media(max-width:480px){.cards-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
 <div id="loading">
   <div class="load-logo">MO <span>2.0</span></div>
-  <div class="load-bar"><div class="load-bar-fill"></div></div>
+  <div class="load-bar"><div class="load-bar-f"></div></div>
   <div class="load-sub">Carregando dados do Monday...</div>
 </div>
 
-<div class="app" id="app" style="display:none">
+<div id="app" style="display:none">
 
-  <div class="header">
-    <div>
-      <div class="hdr-eyebrow">Plano de Guerra · MO 2.0</div>
-      <div class="hdr-title" id="hdr-title">—</div>
-      <div class="hdr-sub" id="hdr-sub">Estrategista · Squad MO 2.0</div>
-    </div>
-    <div class="hdr-right">
-      <div class="upd-pill" id="updated-at">—</div>
-      <button class="refresh-btn" onclick="loadData()"><span class="ri">↺</span> Atualizar</button>
-    </div>
+<!-- TOP BANNER -->
+<div class="top-banner">
+  <div class="banner-left">
+    <div class="banner-eyebrow">Plano de Guerra · MO 2.0</div>
+    <div class="banner-title" id="hdr-title">—</div>
+    <div class="banner-meta" id="hdr-sub">Squad MO 2.0</div>
   </div>
-
-  <!-- FILTRO ESTRATEGISTA -->
-  <div class="estrat-bar">
-    <span class="estrat-label">Estrategista</span>
-    <button class="estrat-btn active" onclick="setEstrat('ambos',this)">Mundo Ótico</button>
-    <button class="estrat-btn" onclick="setEstrat('gabriel',this)">Gabriel dos Santos</button>
-    <button class="estrat-btn" onclick="setEstrat('gustavo',this)">Gustavo Carmo</button>
+  <div class="banner-right">
+    <div class="upd-pill" id="updated-at">—</div>
+    <button class="refresh-btn" onclick="loadData()"><span class="ri">↺</span> Atualizar</button>
   </div>
-
-  <div class="tab-bar">
-    <button class="tab active" onclick="switchTab('overview',this)">Overview<div class="tab-line"></div></button>
-    <button class="tab" onclick="switchTab('semanal',this)">Controle Semanal<div class="tab-line"></div></button>
-    <button class="tab" onclick="switchTab('gestores',this)">Gestores<div class="tab-line"></div></button>
-    <button class="tab" onclick="switchTab('expansao',this)">Expansão<div class="tab-line"></div></button>
-  </div>
-
-  <!-- OVERVIEW -->
-  <div class="tab-pane active" id="tab-overview">
-    <div class="sec">NRR do Mês</div>
-    <div class="cards-grid">
-      <!-- 1 -->
-      <div class="mcard">
-        <div class="mcard-lbl">Clientes Ativos</div>
-        <div class="mcard-val" id="c-total" style="color:var(--blue)">—</div>
-        <div class="mcard-sub">Grupo ativo</div>
-      </div>
-      <!-- 2 -->
-      <div class="mcard">
-        <div class="mcard-lbl">MRR Projetado</div>
-        <div class="mcard-val" id="c-proj" style="color:var(--cyan)">—</div>
-        <div class="mcard-sub" id="c-proj-sub">—</div>
-        <div class="mcard-bar"><div class="mcard-bar-f" style="width:100%;background:var(--cyan)"></div></div>
-      </div>
-      <!-- 3 -->
-      <div class="mcard">
-        <div class="mcard-lbl">Meta NRR (87,5%)</div>
-        <div class="mcard-val" id="c-meta" style="color:var(--yellow)">—</div>
-        <div class="mcard-sub">Mínimo a atingir</div>
-        <div class="mcard-bar"><div class="mcard-bar-f" style="width:87.5%;background:var(--yellow)"></div></div>
-      </div>
-      <!-- 4 MRR Recebido ring -->
-      <div class="ring-card">
-        <div class="ring-wrap">
-          <svg class="ring-svg" width="80" height="80" viewBox="0 0 80 80">
-            <circle class="ring-bg-c" cx="40" cy="40" r="33"/>
-            <circle class="ring-fill-c" id="ring-fill" cx="40" cy="40" r="33" stroke-dasharray="207.3" stroke-dashoffset="207.3"/>
-          </svg>
-          <div class="ring-center">
-            <div class="ring-pct" id="ring-pct">—</div>
-            <div class="ring-lbl">NRR</div>
-          </div>
-        </div>
-        <div>
-          <div class="ring-info-lbl">MRR Recebido</div>
-          <div class="ring-info-val" id="ring-val">—</div>
-          <div class="ring-info-sub" id="ring-sub">do projetado</div>
-          <div class="ring-info-bar"><div class="ring-info-bar-f" id="ring-bar" style="width:0%"></div></div>
-        </div>
-      </div>
-      <!-- 5 -->
-      <div class="mcard">
-        <div class="mcard-lbl">Inadimplentes</div>
-        <div class="mcard-val" id="c-inadim-n" style="color:var(--yellow)">—</div>
-        <div class="mcard-sub" id="c-inadim-mrr">—</div>
-        <div class="mcard-bar"><div class="mcard-bar-f" id="bar-inadim" style="width:0%;background:var(--yellow)"></div></div>
-      </div>
-      <!-- 6 -->
-      <div class="mcard">
-        <div class="mcard-lbl">Nº Churn</div>
-        <div class="mcard-val" id="c-churn-n" style="color:var(--red)">—</div>
-        <div class="mcard-sub">Churn Confirmado</div>
-      </div>
-      <!-- 7 Solicitação de Churn -->
-      <div class="risco-card">
-        <div class="risco-card-lbl">Solicitação de Churn</div>
-        <div class="risco-card-val" id="c-sol-churn-n" style="color:#f97316">—</div>
-        <div class="risco-card-sub">clientes solicitaram churn</div>
-        <button class="churn-sol-btn" id="c-sol-btn" onclick="document.getElementById('c-sol-list').classList.toggle('open');this.textContent=document.getElementById('c-sol-list').classList.contains('open')?'▾ Ocultar clientes':'▸ Ver clientes'">▸ Ver clientes</button>
-        <div class="churn-sol-list" id="c-sol-list"></div>
-      </div>
-      <!-- 8 -->
-      <div class="mcard">
-        <div class="mcard-lbl">Churn · MRR Perdido</div>
-        <div class="mcard-val" id="c-churn-mrr-val" style="color:var(--red)">R$ 0</div>
-        <div class="mcard-sub" id="c-churn-mrr-sub">Preencha no controle semanal</div>
-      </div>
-      <!-- 9 -->
-      <div class="mcard">
-        <div class="mcard-lbl">Churn · NRR Recebido</div>
-        <div class="mcard-val" id="c-churn-rec" style="color:var(--red)">—</div>
-        <div class="mcard-sub">Receita já recebida de clientes em churn</div>
-      </div>
-      <!-- 10 -->
-      <div class="exp-card">
-        <div class="exp-lbl">Expansão do Mês</div>
-        <div class="exp-val" id="exp-total">R$ 0</div>
-        <div class="exp-sub">Soma das semanas</div>
-      </div>
-      <!-- 11 -->
-      <div class="mcard">
-        <div class="mcard-lbl">% TCV da Carteira</div>
-        <div class="mcard-val" id="c-tcv-pct" style="color:var(--purple)">—</div>
-        <div class="mcard-sub" id="c-tcv-sub">—</div>
-      </div>
-      <!-- 12 -->
-      <div class="mcard">
-        <div class="mcard-lbl">LTV Médio</div>
-        <div class="mcard-val" id="c-ltv" style="color:var(--blue)">—</div>
-        <div class="mcard-sub" id="c-ltv-sub">média em meses</div>
-      </div>
-      <!-- 13 -->
-      <div class="risco-card">
-        <div class="risco-card-lbl">% da Base em Risco</div>
-        <div class="risco-card-val" id="c-risco-pct" style="color:var(--yellow)">—</div>
-        <div class="risco-card-sub" id="c-risco-sub">Crítico + Atenção</div>
-      </div>
-      <!-- 14 -->
-      <div class="mcard">
-        <div class="mcard-lbl">% com Cobrança</div>
-        <div class="mcard-val" id="c-pag-pct" style="color:var(--green)">—</div>
-        <div class="mcard-sub" id="c-pag-sub">—</div>
-      </div>
-    </div>
-
-
-  </div>
-
-  <!-- SEMANAL -->
-  <div class="tab-pane" id="tab-semanal">
-    <div class="sec" id="sec-semanal">Controle Semanal Financeiro</div>
-    <div class="week-grid" id="weeks-wrap"></div>
-  </div>
-
-  <!-- GESTORES -->
-  <div class="tab-pane" id="tab-gestores">
-    <div class="sec">Gestores de Resultados</div>
-    <div class="gest-wrap" id="gestor-wrap"></div>
-  </div>
-
-  <!-- EXPANSÃO -->
-  <div class="tab-pane" id="tab-expansao">
-    <div class="sec">Pipeline de Expansão · <span id="exp-month-label"></span></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div style="font-size:12px;color:var(--text2)">Clientes com potencial de expansão este mês</div>
-      <button onclick="addExpRow()" style="background:var(--cyan);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;cursor:pointer;transition:all .2s" onmouseover="this.style.background='#00a88e'" onmouseout="this.style.background='var(--cyan)'">+ Adicionar cliente</button>
-    </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)">
-      <table style="width:100%;border-collapse:collapse" id="exp-table">
-        <thead>
-          <tr style="background:var(--bg2)">
-            <th style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:11px 16px;border-bottom:1px solid var(--border)">Cliente</th>
-            <th style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:11px 16px;border-bottom:1px solid var(--border)">Produto</th>
-            <th style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:11px 16px;border-bottom:1px solid var(--border)">Valor</th>
-            <th style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:11px 16px;border-bottom:1px solid var(--border)">Status</th>
-            <th style="padding:11px 16px;border-bottom:1px solid var(--border);width:36px"></th>
-          </tr>
-        </thead>
-        <tbody id="exp-tbody">
-          <tr id="exp-empty-row">
-            <td colspan="5" style="text-align:center;padding:28px;font-size:12px;color:var(--text3)">Nenhum cliente adicionado. Clique em "+ Adicionar cliente".</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)">
-      <div style="font-size:12px;font-weight:600;color:var(--text2)">Total Pipeline</div>
-      <div style="font-family:var(--display);font-size:22px;font-weight:800;color:var(--green)" id="exp-pipeline-total">R$ 0</div>
-    </div>
-  </div>
-
-  <div class="footer" id="footer-txt">Monday.com · Controle Clientes MO 2.0 · Squad MO 2.0</div>
 </div>
+
+<!-- ESTRAT -->
+<div class="estrat-bar">
+  <span class="estrat-lbl">Estrategista</span>
+  <button class="estrat-btn active" onclick="setEstrat('ambos',this)">Mundo Ótico</button>
+  <button class="estrat-btn" onclick="setEstrat('gabriel',this)">Gabriel dos Santos</button>
+  <button class="estrat-btn" onclick="setEstrat('gustavo',this)">Gustavo Carmo</button>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab active" onclick="switchTab('overview',this)">Overview</button>
+  <button class="tab" onclick="switchTab('semanal',this)">Controle Semanal</button>
+  <button class="tab" onclick="switchTab('gestores',this)">Gestores</button>
+  <button class="tab" onclick="switchTab('expansao',this)">Expansão</button>
+</div>
+
+<div class="content">
+
+<!-- OVERVIEW -->
+<div class="tab-pane active" id="tab-overview">
+
+  <div class="sec-header"><div class="sec-title">NRR do Mês</div><div class="sec-divider"></div></div>
+  <div class="cards-grid" style="grid-template-columns:repeat(7,1fr);margin-bottom:1px">
+    <div class="mcard">
+      <div class="mcard-lbl">MRR Projetado <span class="badge badge-teal" id="b-proj">—</span></div>
+      <div class="mcard-val" id="c-proj" style="color:var(--teal)">—</div>
+      <div class="mcard-sub" id="c-proj-sub">—</div>
+      <div class="mcard-bar"><div class="mcard-bar-f" style="width:100%;background:var(--green)"></div></div>
+    </div>
+    <div class="mcard">
+      <div class="mcard-lbl">Meta NRR 87,5%</div>
+      <div class="mcard-val" id="c-meta" style="color:var(--yellow)">—</div>
+      <div class="mcard-sub">Mínimo a atingir</div>
+      <div class="mcard-bar"><div class="mcard-bar-f" style="width:87.5%;background:var(--yellow)"></div></div>
+    </div>
+    <div class="ring-card">
+      <div class="ring-wrap">
+        <svg class="ring-svg" width="72" height="72" viewBox="0 0 72 72">
+          <circle class="ring-bg-c" cx="36" cy="36" r="30"/>
+          <circle class="ring-fill-c" id="ring-fill" cx="36" cy="36" r="30" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+        </svg>
+        <div class="ring-center"><div class="ring-pct" id="ring-pct">—</div><div class="ring-lbl">NRR</div></div>
+      </div>
+      <div class="ring-info">
+        <div class="ring-info-lbl">MRR Recebido</div>
+        <div class="ring-info-val" id="ring-val">—</div>
+        <div class="ring-info-sub" id="ring-sub">do projetado</div>
+        <div class="ring-info-bar"><div class="ring-info-bar-f" id="ring-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="mcard">
+      <div class="mcard-lbl">Inadimplentes</div>
+      <div class="mcard-val" id="c-inadim-n" style="color:var(--yellow)">—</div>
+      <div class="mcard-sub" id="c-inadim-mrr">—</div>
+      <div class="mcard-bar"><div class="mcard-bar-f" id="bar-inadim" style="width:0%;background:var(--yellow)"></div></div>
+    </div>
+    <div class="mcard">
+      <div class="mcard-lbl">Churn · MRR Perdido</div>
+      <div class="mcard-val" id="c-churn-mrr-val" style="color:var(--red)">R$ 0</div>
+      <div class="mcard-sub" id="c-churn-mrr-sub">Preencha no semanal</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-lbl">Expansão do Mês</div>
+      <div class="exp-val" id="exp-total">R$ 0</div>
+      <div class="exp-sub">Soma das semanas</div>
+    </div>
+    <div class="sol-card">
+      <div class="sol-lbl">Solicitação de Churn</div>
+      <div class="sol-val" id="c-sol-churn-n">—</div>
+      <div class="sol-sub">clientes solicitaram</div>
+      <button class="sol-btn" id="c-sol-btn" onclick="document.getElementById('c-sol-list').classList.toggle('open');this.textContent=document.getElementById('c-sol-list').classList.contains('open')?'▾ Ocultar':'▸ Ver clientes'">▸ Ver clientes</button>
+      <div class="sol-list" id="c-sol-list"></div>
+    </div>
+  </div>
+
+  <div class="cards-grid" style="grid-template-columns:repeat(7,1fr);border-radius:0 0 var(--radius) var(--radius)">
+    <div class="mcard">
+      <div class="mcard-lbl">Clientes Ativos</div>
+      <div class="mcard-val" id="c-total" style="color:var(--blue)">—</div>
+      <div class="mcard-sub">Grupo ativo</div>
+    </div>
+    <div class="mcard">
+      <div class="mcard-lbl">Nº Churn</div>
+      <div class="mcard-val" id="c-churn-n" style="color:var(--red)">—</div>
+      <div class="mcard-sub">Churn Confirmado</div>
+    </div>
+    <div class="mcard">
+      <div class="mcard-lbl">Churn · NRR Recebido</div>
+      <div class="mcard-val" id="c-churn-rec" style="color:var(--red)">—</div>
+      <div class="mcard-sub">Já recebido em churn</div>
+    </div>
+    <div class="mcard">
+      <div class="mcard-lbl">% TCV da Carteira</div>
+      <div class="mcard-val" id="c-tcv-pct" style="color:var(--purple)">—</div>
+      <div class="mcard-sub" id="c-tcv-sub">—</div>
+    </div>
+    <div class="mcard">
+      <div class="mcard-lbl">LTV Médio</div>
+      <div class="mcard-val" id="c-ltv" style="color:var(--blue)">—</div>
+      <div class="mcard-sub" id="c-ltv-sub">—</div>
+    </div>
+    <div class="mcard">
+      <div class="mcard-lbl">% da Base em Risco</div>
+      <div class="mcard-val" id="c-risco-pct" style="color:var(--yellow)">—</div>
+      <div class="mcard-sub" id="c-risco-sub">Crítico + Atenção</div>
+    </div>
+    <div class="mcard">
+      <div class="mcard-lbl">% com Cobrança</div>
+      <div class="mcard-val" id="c-pag-pct" style="color:var(--green)">—</div>
+      <div class="mcard-sub" id="c-pag-sub">—</div>
+    </div>
+  </div>
+
+  <div class="sec-header" style="margin-top:28px"><div class="sec-title">Análise Visual</div><div class="sec-divider"></div></div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-header"><div class="chart-title">NRR por Semana</div><div class="chart-sub">Projetado vs Recebido · <span id="chart-mes-lbl">—</span></div></div>
+      <div class="chart-wrap" style="height:210px"><canvas id="chart-nrr"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div class="chart-title">Saúde da Carteira</div><div class="chart-sub">Distribuição por status</div></div>
+      <div class="chart-wrap" style="height:210px"><canvas id="chart-saude"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- SEMANAL -->
+<div class="tab-pane" id="tab-semanal">
+  <div class="sec-header"><div class="sec-title" id="sec-semanal">Controle Semanal</div><div class="sec-divider"></div></div>
+  <div class="chart-card" style="margin-bottom:16px">
+    <div class="chart-header"><div class="chart-title">Projetado vs Recebido — Evolução Semanal</div><div class="chart-sub">Linha do tempo financeira do mês</div></div>
+    <div class="chart-wrap" style="height:200px"><canvas id="chart-semanal"></canvas></div>
+  </div>
+  <div class="week-row" id="weeks-wrap"></div>
+</div>
+
+<!-- GESTORES -->
+<div class="tab-pane" id="tab-gestores">
+  <div class="sec-header"><div class="sec-title">Gestores de Resultados</div><div class="sec-divider"></div></div>
+  <div class="chart-card" style="margin-bottom:16px">
+    <div class="chart-header"><div class="chart-title">NRR por Gestor</div><div class="chart-sub">Comparativo Projetado vs Recebido</div></div>
+    <div class="chart-wrap" style="height:200px"><canvas id="chart-gestores"></canvas></div>
+  </div>
+  <div class="gest-wrap" id="gestor-wrap"></div>
+</div>
+
+<!-- EXPANSÃO -->
+<div class="tab-pane" id="tab-expansao">
+  <div class="sec-header"><div class="sec-title">Pipeline de Expansão · <span id="exp-month-label">—</span></div><div class="sec-divider"></div></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+    <button onclick="addExpRow()" style="background:var(--green);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='var(--green)'">+ Adicionar cliente</button>
+  </div>
+  <div class="exp-tab-card">
+    <div class="exp-tab-head">
+      <div class="exp-tab-th">Cliente</div>
+      <div class="exp-tab-th">Produto</div>
+      <div class="exp-tab-th">Valor</div>
+      <div class="exp-tab-th">Status</div>
+      <div class="exp-tab-th"></div>
+    </div>
+    <div id="exp-tbody"><div class="exp-empty">Nenhum cliente adicionado. Clique em "+ Adicionar cliente".</div></div>
+  </div>
+  <div class="exp-footer">
+    <div style="font-size:12px;font-weight:600;color:var(--text2)">Total Pipeline</div>
+    <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:var(--green)" id="exp-pipeline-total">R$ 0</div>
+  </div>
+</div>
+
+<div class="footer" id="footer-txt">Monday.com · Controle Clientes MO 2.0 · Squad MO 2.0</div>
+</div><!-- end content -->
+</div><!-- end app -->
 
 <script>
 const TOKEN='eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjY2NDU5NTIyMiwiYWFpIjoxMSwidWlkIjo2MDc0MzQ5NiwiaWFkIjoiMjAyNi0wNS0yOVQxNDowMzo0Ny45MjVaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTYxOTU1NjYsInJnbiI6InVzZTEifQ.u35YRjIc8AwN0fMQso44-RnphvwOACXR1XV4IStgnXk';
-const BOARD='5619363426';
-const GROUP='duplicate_of_clientes_ativos___mkkzpmkx';
-const BOARD_REUN='6690913711';
-const GESTORES_IDS={gabriel:'person-60743496',gustavo:'person-74325223'};
+const BOARD='5619363426',GROUP='duplicate_of_clientes_ativos___mkkzpmkx',BOARD_REUN='6690913711';
 const GESTORES_NAMES={gabriel:'Gabriel dos Santos',gustavo:'Gustavo Carmo'};
-
-// Gestores de Resultados por Estrategista (coluna 'pessoas' no Monday)
+const GESTORES_IDS={gabriel:'person-60743496',gustavo:'person-74325223'};
 const GESTORES_POR_ESTRAT={
   gabriel:['Vitor Domingos','Samuel Cardoso','Luiz Higashi'],
   gustavo:['Lucas Silva','Artur Zilli'],
   ambos:['Vitor Domingos','Samuel Cardoso','Luiz Higashi','Lucas Silva','Artur Zilli']
 };
-
-// IDs das pessoas no quadro de reuniões (coluna 'person')
-const GESTOR_REUN_NAMES={
-  'Vitor Domingos':['vitor','domingos'],
-  'Samuel Cardoso':['samuel','cardoso'],
-  'Luiz Higashi':['luiz','higashi'],
-  'Lucas Silva':['lucas','rosa'],
-  'Artur Zilli':['arthur','zilli']
-};
+const GESTOR_REUN_NAMES={'Vitor Domingos':['vitor','domingos'],'Samuel Cardoso':['samuel','cardoso'],'Luiz Higashi':['luiz','higashi'],'Lucas Silva':['lucas','silva'],'Artur Zilli':['artur','zilli']};
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const WEEK_COLORS=['#00c4a7','#f79009','#94a3b8','#12b76a','#7c3aed'];
-const GCOLORS=[['#00c4a7','var(--cyan-light)'],['#7c3aed','var(--purple-light)']];
+const WEEK_COLORS=['#0f766e','#b45309','#64748b','#16a34a','#7c3aed'];
+const GEST_COLORS=['#0f766e','#7c3aed','#b45309','#16a34a','#c2410c'];
+const GEST_BG=['#ccfbf1','#ede9fe','#fef3c7','#dcfce7','#ffedd5'];
 const SKIP=['TCV','Primeiro Pagamento','1º Pagamento'];
 const EXP_PRODUCTS=['TCV','CRM + IA','Cross Sell','Indicação','Upgrade de Plano','Outro'];
-// Grupos de reuniões por mês (mês 0-indexado)
-const REUN_GROUPS={
-  0:'group_mkza86wx',1:'group_mm069rsn',2:'group_mm0et3p',
-  3:'group_mm20k687',4:'group_mm31p8rp',5:'group_mm485w2d',
-  6:'group_mm4vb9zk'
-};
+const REUN_GROUPS={0:'group_mkza86wx',1:'group_mm069rsn',2:'group_mm0et3p',3:'group_mm20k687',4:'group_mm31p8rp',5:'group_mm485w2d',6:'group_mm4vb9zk'};
 
-let currentEstrat='ambos';
-let allClients=[];
-let reunData={};
+let currentEstrat='ambos',allClients=[],reunData={};
+let cNrr=null,cSaude=null,cSemanal=null,cGestores=null;
 
-function fmt(v){return'R$ '+Math.round(v||0).toLocaleString('pt-BR')}
-function fmtK(v){v=Math.round(v||0);return v>=1000?'R$ '+(v/1000).toFixed(1)+'k':'R$ '+v}
-function isSkip(c){return SKIP.some(s=>c.st.toLowerCase().includes(s.toLowerCase()))}
-function isChurn(c){const s=(c.saude||'').toLowerCase();return s.includes('churn confirmado')||s.includes('solicitou churn')}
-function isInadim(c){return c.st.toLowerCase().includes('inadim')}
-function dayFrom(l){if(!l)return null;const m=l.match(/\d+/);return m?parseInt(m[0]):null}
-function stDot(s){
-  if(!s)return'#d1d5db';s=s.toLowerCase();
-  if(s.includes('pago')||s.includes('recorrente'))return'#12b76a';
-  if(s.includes('churn')||s.includes('perda'))return'#f04438';
-  if(s.includes('inadim')||s.includes('parcial'))return'#f79009';
-  return'#d1d5db';
-}
+const fmt=v=>'R$ '+Math.round(v||0).toLocaleString('pt-BR');
+const fmtK=v=>{v=Math.round(v||0);return v>=1000?'R$ '+(v/1000).toFixed(1)+'k':'R$ '+v};
+const isSkip=c=>SKIP.some(s=>c.st.toLowerCase().includes(s.toLowerCase()));
+const isChurnConf=c=>(c.saude||'').toLowerCase().includes('churn confirmado');
+const isSolChurn=c=>(c.saude||'').toLowerCase().includes('solicitou churn');
+const isInadim=c=>c.st.toLowerCase().includes('inadim');
+const dayFrom=l=>{if(!l)return null;const m=l.match(/\d+/);return m?parseInt(m[0]):null};
+const stDot=s=>{if(!s)return'#94a3b8';s=s.toLowerCase();if(s.includes('pago')||s.includes('recorrente'))return'#16a34a';if(s.includes('churn')||s.includes('perda'))return'#dc2626';if(s.includes('inadim'))return'#b45309';return'#94a3b8'};
+const dChart=c=>{if(c){try{c.destroy()}catch(e){}}return null};
+const mkChart=(id,cfg)=>{const el=document.getElementById(id);return el?new Chart(el,cfg):null};
 
-function monthsFrom(dateStr){
-  if(!dateStr)return null;
-  const start=new Date(dateStr);
-  const now=new Date();
-  return Math.floor((now-start)/(1000*60*60*24*30.44));
-}
-
-function contratoFaixa(months){
-  if(months===null)return'Sem data';
-  if(months<=3)return'0-3 meses';
-  if(months<=6)return'4-6 meses';
-  if(months<=12)return'7-12 meses';
-  if(months<=24)return'1-2 anos';
-  return'+2 anos';
-}
-
-function getWeeksOfMonth(year,month){
-  const weeks=[];
-  const lastDay=new Date(year,month+1,0);
-  let current=new Date(year,month,1);
-  while(current<=lastDay){
-    const weekStart=new Date(current);
-    const dow=current.getDay();
-    const daysUntilSun=dow===0?0:7-dow;
-    let weekEnd=new Date(current);
-    weekEnd.setDate(weekEnd.getDate()+daysUntilSun);
-    if(weekEnd>lastDay)weekEnd=new Date(lastDay);
-    weeks.push({start:weekStart.getDate(),end:weekEnd.getDate(),label:`Week ${String(weeks.length+1).padStart(2,'0')}`,dates:`${String(weekStart.getDate()).padStart(2,'0')} – ${String(weekEnd.getDate()).padStart(2,'0')}`});
-    current=new Date(weekEnd);current.setDate(current.getDate()+1);
-    if(current.getDay()!==1&&current<=lastDay){while(current.getDay()!==1&&current<=lastDay)current.setDate(current.getDate()+1);}
-    if(current>lastDay)break;
+function getWeeksOfMonth(y,m){
+  const weeks=[],last=new Date(y,m+1,0);
+  let cur=new Date(y,m,1);
+  while(cur<=last){
+    const ws=new Date(cur),dow=cur.getDay(),due=dow===0?0:7-dow;
+    let we=new Date(cur);we.setDate(we.getDate()+due);if(we>last)we=new Date(last);
+    weeks.push({start:ws.getDate(),end:we.getDate(),label:`S${weeks.length+1}`,dates:`${String(ws.getDate()).padStart(2,'0')}–${String(we.getDate()).padStart(2,'0')}`});
+    cur=new Date(we);cur.setDate(cur.getDate()+1);
+    if(cur.getDay()!==1&&cur<=last){while(cur.getDay()!==1&&cur<=last)cur.setDate(cur.getDate()+1);}
+    if(cur>last)break;
   }
   return weeks;
 }
-
-function parseVal(str){const n=(str||'').replace(/[^0-9]/g,'');return parseInt(n)||0;}
-
+const parseVal=s=>{const n=(s||'').replace(/[^0-9]/g,'');return parseInt(n)||0};
 function updateTotals(){
-  let totalExp=0;
-  document.querySelectorAll('.wk-exp-input').forEach(el=>{totalExp+=parseVal(el.value);});
-  let totalChurn=0;
-  document.querySelectorAll('.wk-churn-input').forEach(el=>{totalChurn+=parseVal(el.value);});
-  const expEl=document.getElementById('exp-total');if(expEl)expEl.textContent=fmt(totalExp);
-  const churnEl=document.getElementById('c-churn-mrr-val');if(churnEl)churnEl.textContent=fmt(totalChurn);
-  const churnSub=document.getElementById('c-churn-mrr-sub');if(churnSub)churnSub.textContent=totalChurn>0?'Soma das semanas':'Preencha no controle semanal';
+  let te=0;document.querySelectorAll('.wk-exp-input').forEach(el=>te+=parseVal(el.value));
+  let tc=0;document.querySelectorAll('.wk-churn-input').forEach(el=>tc+=parseVal(el.value));
+  const ee=document.getElementById('exp-total');if(ee)ee.textContent=fmt(te);
+  const ce=document.getElementById('c-churn-mrr-val');if(ce)ce.textContent=fmt(tc);
+  const cs=document.getElementById('c-churn-mrr-sub');if(cs)cs.textContent=tc>0?'Soma das semanas':'Preencha no semanal';
   calcExpTotal();
 }
 
-// Expansion tab
 let expRows=[];
 function addExpRow(){
-  const emptyRow=document.getElementById('exp-empty-row');if(emptyRow)emptyRow.remove();
+  const empty=document.getElementById('exp-empty-msg');if(empty)empty.remove();
   const id=Date.now();expRows.push(id);
-  const tr=document.createElement('tr');
-  tr.id='exp-row-'+id;
-  tr.style.borderBottom='1px solid var(--border)';
-  tr.innerHTML=`
-    <td style="padding:8px 14px"><input type="text" placeholder="Nome do cliente..." class="tbl-input" oninput="calcExpTotal()"></td>
-    <td style="padding:8px 14px"><select class="tbl-select" onchange="calcExpTotal()">${EXP_PRODUCTS.map(p=>`<option>${p}</option>`).join('')}</select></td>
-    <td style="padding:8px 14px"><input type="text" placeholder="R$ 0" class="tbl-input" style="width:110px;color:var(--green);font-weight:600" oninput="fmtExpInput(this);calcExpTotal()"></td>
-    <td style="padding:8px 14px"><select class="tbl-select"><option>Em abordagem</option><option>Proposta enviada</option><option>Fechado</option><option>Perdido</option></select></td>
-    <td style="padding:8px 14px;text-align:center"><button onclick="removeExpRow(${id})" style="background:var(--red-light);border:none;border-radius:5px;color:var(--red);font-size:11px;padding:4px 8px;cursor:pointer;font-weight:600">✕</button></td>`;
-  document.getElementById('exp-tbody').appendChild(tr);
+  const row=document.createElement('div');row.className='exp-row';row.id='exp-row-'+id;
+  row.innerHTML=`
+    <div class="exp-cell"><input class="exp-input" placeholder="Nome do cliente..." oninput="calcExpTotal()"></div>
+    <div class="exp-cell"><select class="exp-select" onchange="calcExpTotal()">${EXP_PRODUCTS.map(p=>`<option>${p}</option>`).join('')}</select></div>
+    <div class="exp-cell"><input class="exp-input" placeholder="R$ 0" style="color:var(--green);font-weight:600" oninput="fmtExpInput(this);calcExpTotal()"></div>
+    <div class="exp-cell"><select class="exp-select"><option>Em abordagem</option><option>Proposta enviada</option><option>Fechado</option><option>Perdido</option></select></div>
+    <div class="exp-cell" style="justify-content:center"><button onclick="removeExpRow(${id})" style="background:var(--red-bg);border:1px solid var(--red-border);border-radius:5px;color:var(--red);font-size:11px;padding:3px 8px;cursor:pointer;font-weight:600">✕</button></div>`;
+  document.getElementById('exp-tbody').appendChild(row);
 }
 function removeExpRow(id){
-  const tr=document.getElementById('exp-row-'+id);if(tr)tr.remove();
-  expRows=expRows.filter(r=>r!==id);
-  if(expRows.length===0){document.getElementById('exp-tbody').innerHTML='<tr id="exp-empty-row"><td colspan="5" style="text-align:center;padding:28px;font-size:12px;color:var(--text3)">Nenhum cliente adicionado.</td></tr>';}
+  const r=document.getElementById('exp-row-'+id);if(r)r.remove();
+  expRows=expRows.filter(x=>x!==id);
+  if(!expRows.length){const tb=document.getElementById('exp-tbody');tb.innerHTML='<div id="exp-empty-msg" class="exp-empty">Nenhum cliente adicionado.</div>';}
   calcExpTotal();
 }
 function fmtExpInput(el){const n=el.value.replace(/[^0-9]/g,'');if(n)el.value='R$ '+parseInt(n).toLocaleString('pt-BR');}
 function calcExpTotal(){
-  let total=0;
-  document.querySelectorAll('#exp-tbody input[placeholder="R$ 0"]').forEach(el=>{const n=el.value.replace(/[^0-9]/g,'');total+=parseInt(n)||0;});
-  const el=document.getElementById('exp-pipeline-total');if(el)el.textContent='R$ '+total.toLocaleString('pt-BR');
-  const expOverview=document.getElementById('exp-total');if(expOverview)expOverview.textContent=fmt(total);
+  let t=0;document.querySelectorAll('#exp-tbody input[placeholder="R$ 0"]').forEach(el=>{t+=parseVal(el.value);});
+  const el=document.getElementById('exp-pipeline-total');if(el)el.textContent='R$ '+t.toLocaleString('pt-BR');
+  const eo=document.getElementById('exp-total');if(eo)eo.textContent=fmt(t);
 }
-
-async function monday(query){
-  const r=await fetch('https://api.monday.com/v2',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':TOKEN,'API-Version':'2024-01'},
-    body:JSON.stringify({query})
-  });
+async function monday(q){
+  const r=await fetch('https://api.monday.com/v2',{method:'POST',headers:{'Content-Type':'application/json','Authorization':TOKEN,'API-Version':'2024-01'},body:JSON.stringify({query:q})});
   return r.json();
 }
+function setEstrat(e,btn){currentEstrat=e;document.querySelectorAll('.estrat-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderDashboard();}
+function getClients(){if(currentEstrat==='ambos')return allClients;const n=GESTORES_NAMES[currentEstrat].toLowerCase();return allClients.filter(c=>(c.estrategistaId||'').toLowerCase()===n);}
 
-function setEstrat(estrat,btn){
-  currentEstrat=estrat;
-  document.querySelectorAll('.estrat-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  // Re-render with filtered clients
-  renderDashboard();
-}
-
-function getFilteredClients(){
-  if(currentEstrat==='ambos') return allClients;
-  const name=GESTORES_NAMES[currentEstrat].toLowerCase();
-  return allClients.filter(c=>(c.estrategistaId||'').toLowerCase()===name);
-}
+const chartOpts=(yFmt=true)=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{family:'Inter',size:11},color:'#64748b',boxWidth:10,padding:14}},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)}}},scales:{x:{grid:{display:false},ticks:{font:{family:'Inter',size:10},color:'#94a3b8'}},y:{grid:{color:'#f1f5f9',drawBorder:false},ticks:{font:{family:'Inter',size:10},color:'#94a3b8',callback:v=>yFmt?fmtK(v):v}}}});
 
 async function loadData(){
-  const L=document.getElementById('loading');
-  L.classList.remove('out');L.style.display='flex';
+  const L=document.getElementById('loading');L.classList.remove('out');L.style.display='flex';
   document.getElementById('app').style.display='none';
-
-  const now=new Date();
-  const year=now.getFullYear();
-  const month=now.getMonth();
-  const mesNome=MESES[month];
-
-  document.getElementById('hdr-title').textContent=`${mesNome} ${year}`;
-  document.getElementById('sec-semanal').textContent=`Controle Semanal Financeiro · ${mesNome} ${year}`;
-  const expLabel=document.getElementById('exp-month-label');if(expLabel)expLabel.textContent=`${mesNome} ${year}`;
-
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth(),mn=MESES[m];
+  document.getElementById('hdr-title').textContent=`${mn} ${y}`;
+  document.getElementById('sec-semanal').textContent=`Controle Semanal · ${mn} ${y}`;
+  const eml=document.getElementById('exp-month-label');if(eml)eml.textContent=`${mn} ${y}`;
+  const cml=document.getElementById('chart-mes-lbl');if(cml)cml.textContent=`${mn} ${y}`;
   try{
-    // Fetch all clients (both estrategistas)
-    const q=`{boards(ids:[${BOARD}]){items_page(limit:500,query_params:{operator:and,rules:[
-      {column_id:"dup__of_gestor",compare_value:["${GESTORES_IDS.gabriel}","${GESTORES_IDS.gustavo}"],operator:any_of},
-      {column_id:"group",compare_value:["${GROUP}"],operator:any_of}
-    ]}){items{name column_values(ids:["numeric_mkzmzj33","numeric_mm121vht","color_mm0ejcfw","color_mkwr8dhs","pessoas","status","dup__of_gestor","data_1"]){id text}}}}}`;
-
-    const data=await monday(q);
-    const items=data?.data?.boards?.[0]?.items_page?.items||[];
-
+    const q=`{boards(ids:[${BOARD}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"dup__of_gestor",compare_value:["${GESTORES_IDS.gabriel}","${GESTORES_IDS.gustavo}"],operator:any_of},{column_id:"group",compare_value:["${GROUP}"],operator:any_of}]}){items{name column_values(ids:["numeric_mkzmzj33","numeric_mm121vht","color_mm0ejcfw","color_mkwr8dhs","pessoas","status","dup__of_gestor","data_1"]){id text}}}}}`;
+    const d=await monday(q);
+    const items=d?.data?.boards?.[0]?.items_page?.items||[];
     allClients=items.map(item=>{
       const cv={};item.column_values.forEach(c=>{cv[c.id]=c.text});
-      const months=monthsFrom(cv['data_1']);
-      return{
-        name:item.name,
-        proj:parseFloat(cv['numeric_mkzmzj33'])||0,
-        rec:parseFloat(cv['numeric_mm121vht'])||0,
-        st:cv['color_mm0ejcfw']||'',
-        venc:cv['color_mkwr8dhs']||'',
-        gestor:cv['pessoas']||'Sem gestor',
-        saude:cv['status']||'',
-        estrategistaId:cv['dup__of_gestor']||'',
-        day:dayFrom(cv['color_mkwr8dhs']),
-        dataInicio:cv['data_1']||null,
-        mesesContrato:months,
-        faixaContrato:contratoFaixa(months)
-      };
+      return{name:item.name,proj:parseFloat(cv['numeric_mkzmzj33'])||0,rec:parseFloat(cv['numeric_mm121vht'])||0,st:cv['color_mm0ejcfw']||'',venc:cv['color_mkwr8dhs']||'',gestor:cv['pessoas']||'',saude:cv['status']||'',estrategistaId:cv['dup__of_gestor']||'',day:dayFrom(cv['color_mkwr8dhs']),dataInicio:cv['data_1']||null};
     });
-
-    // Fetch reuniões do mês atual
-    const reunGroup=REUN_GROUPS[month];
-    if(reunGroup){
-      const qr=`{boards(ids:[${BOARD_REUN}]){items_page(limit:500,query_params:{operator:and,rules:[
-        {column_id:"group",compare_value:["${reunGroup}"],operator:any_of}
-      ]}){items{name column_values(ids:["person","status"]){id text}}}}}`;
-      const rData=await monday(qr);
-      const rItems=rData?.data?.boards?.[0]?.items_page?.items||[];
+    const rg=REUN_GROUPS[m];
+    if(rg){
+      const qr=`{boards(ids:[${BOARD_REUN}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"group",compare_value:["${rg}"],operator:any_of}]}){items{name column_values(ids:["person","status"]){id text}}}}}`;
+      const rd=await monday(qr);
+      const ri=rd?.data?.boards?.[0]?.items_page?.items||[];
       reunData={};
-      rItems.forEach(item=>{
-        // Only count reuniões with status "Realizado"
-        const statusCol=item.column_values.find(c=>c.id==='status');
-        if(!statusCol||(statusCol.text||'').toLowerCase()!=='realizado') return;
-        const personCol=item.column_values.find(c=>c.id==='person');
-        if(!personCol)return;
-        const txt=(personCol.text||'').toLowerCase();
-        // Count for each gestor by name keywords
-        const allGestores=['Vitor Domingos','Samuel Cardoso','Luiz Higashi','Lucas Silva','Artur Zilli'];
-        allGestores.forEach(gn=>{
-          const keywords=GESTOR_REUN_NAMES[gn]||[gn.split(' ')[0].toLowerCase()];
-          if(keywords.some(kw=>txt.includes(kw))){
-            reunData[gn]=(reunData[gn]||0)+1;
-          }
+      ri.forEach(item=>{
+        const sc=item.column_values.find(c=>c.id==='status');
+        if(!sc||(sc.text||'').toLowerCase()!=='realizado')return;
+        const pc=item.column_values.find(c=>c.id==='person');if(!pc)return;
+        const txt=(pc.text||'').toLowerCase();
+        Object.keys(GESTOR_REUN_NAMES).forEach(gn=>{
+          if(GESTOR_REUN_NAMES[gn].some(kw=>txt.includes(kw)))reunData[gn]=(reunData[gn]||0)+1;
         });
       });
     }
-
     renderDashboard();
-
     const ts=now.toLocaleString('pt-BR');
     document.getElementById('updated-at').textContent='Atualizado '+ts;
-    document.getElementById('footer-txt').textContent=`Monday.com · Controle Clientes MO 2.0 · ${mesNome} ${year} · ${ts}`;
-
+    document.getElementById('footer-txt').textContent=`Monday.com · Controle Clientes MO 2.0 · ${mn} ${y} · ${ts}`;
+    document.getElementById('hdr-sub').textContent=(currentEstrat==='ambos'?'Gabriel dos Santos & Gustavo Carmo':GESTORES_NAMES[currentEstrat])+' · Squad MO 2.0';
   }catch(e){console.error(e);alert('Erro ao carregar dados.');}
-
-  setTimeout(()=>{L.classList.add('out');setTimeout(()=>{L.style.display='none'},500);document.getElementById('app').style.display='block';},600);
+  setTimeout(()=>{L.classList.add('out');setTimeout(()=>{L.style.display='none'},400);document.getElementById('app').style.display='block';},500);
 }
 
 function renderDashboard(){
-  const now=new Date();
-  const year=now.getFullYear();
-  const month=now.getMonth();
-  const mesNome=MESES[month];
-  const weeks=getWeeksOfMonth(year,month);
-  const clients=getFilteredClients();
-
-  // Update subtitle
-  const subLabel=currentEstrat==='ambos'?'Gabriel dos Santos & Gustavo Carmo':GESTORES_NAMES[currentEstrat];
-  document.getElementById('hdr-sub').textContent=`${subLabel} · Squad MO 2.0`;
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth(),mn=MESES[m];
+  const weeks=getWeeksOfMonth(y,m);
+  const clients=getClients();
+  document.getElementById('hdr-sub').textContent=(currentEstrat==='ambos'?'Gabriel dos Santos & Gustavo Carmo':GESTORES_NAMES[currentEstrat])+' · Squad MO 2.0';
 
   const bill=clients.filter(c=>!isSkip(c));
-  const totalProj=bill.reduce((a,c)=>a+c.proj,0);
-  const totalRec=clients.reduce((a,c)=>a+c.rec,0);
-  const meta=totalProj*0.875;
-  const pct=totalProj>0?Math.round(totalRec/totalProj*100):0;
-  const churns=clients.filter(isChurn);
+  const tProj=bill.reduce((a,c)=>a+c.proj,0);
+  const tRec=clients.reduce((a,c)=>a+c.rec,0);
+  const meta=tProj*0.875;
+  const pct=tProj>0?Math.round(tRec/tProj*100):0;
+  const churnsC=clients.filter(isChurnConf);
+  const solCh=clients.filter(isSolChurn);
   const inadims=clients.filter(isInadim);
   const inadimMrr=inadims.reduce((a,c)=>a+c.proj,0);
-  const churnRec=churns.reduce((a,c)=>a+c.rec,0);
-  const pc=pct>=87?'#12b76a':pct>=60?'#f79009':'#f04438';
+  const churnRec=churnsC.reduce((a,c)=>a+c.rec,0);
+  const churnMrr=churnsC.reduce((a,c)=>a+c.proj,0);
   const tcvs=clients.filter(c=>c.st.toLowerCase().includes('tcv'));
-  const comCobranca=clients.filter(c=>!c.st.toLowerCase().includes('tcv')&&!c.st.toLowerCase().includes('primeiro pagamento')&&!c.st.toLowerCase().includes('1º pagamento'));
+  const comCob=clients.filter(c=>!c.st.toLowerCase().includes('tcv')&&!c.st.toLowerCase().includes('primeiro pagamento')&&!c.st.toLowerCase().includes('1º pagamento'));
+  const emRisco=clients.filter(c=>{const s=(c.saude||'').toLowerCase();return s.includes('crítico')||s.includes('critico')||s.includes('atenção')||s.includes('atencao');});
+  const pc=pct>=87?'#16a34a':pct>=60?'#b45309':'#dc2626';
+  const pctBadge=pct>=87?'badge-green':pct>=60?'badge-yellow':'badge-red';
 
-  document.getElementById('c-proj').textContent=fmt(totalProj);
+  // Cards
+  document.getElementById('c-proj').textContent=fmt(tProj);
   document.getElementById('c-proj-sub').textContent=clients.length+' clientes ativos';
+  const bp=document.getElementById('b-proj');if(bp){bp.className='badge '+(tProj>0?'badge-teal':'badge-teal');bp.textContent=clients.length+' clientes';}
   document.getElementById('c-meta').textContent=fmt(meta);
   document.getElementById('c-total').textContent=clients.length;
-  document.getElementById('c-churn-n').textContent=churns.length;
+  document.getElementById('c-churn-n').textContent=churnsC.length;
   document.getElementById('c-inadim-n').textContent=inadims.length;
   document.getElementById('c-inadim-mrr').textContent=fmt(inadimMrr)+' em risco';
-  document.getElementById('ring-pct').textContent=pct+'%';
-  document.getElementById('ring-pct').style.color=pc;
-  document.getElementById('ring-val').textContent=fmt(totalRec);
-  document.getElementById('ring-val').style.color=pc;
-  document.getElementById('ring-sub').textContent=pct+'% do projetado';
+  document.getElementById('c-churn-rec').textContent=fmt(churnRec);
+  document.getElementById('c-sol-churn-n').textContent=solCh.length;
   document.getElementById('c-tcv-pct').textContent=(clients.length>0?Math.round(tcvs.length/clients.length*100):0)+'%';
   document.getElementById('c-tcv-sub').textContent=tcvs.length+' clientes TCV';
-  document.getElementById('c-pag-pct').textContent=(clients.length>0?Math.round(comCobranca.length/clients.length*100):0)+'%';
-  document.getElementById('c-pag-sub').textContent=comCobranca.length+' têm cobrança este mês';
-  document.getElementById('c-churn-rec').textContent=fmt(churnRec);
+  document.getElementById('c-pag-pct').textContent=(clients.length>0?Math.round(comCob.length/clients.length*100):0)+'%';
+  document.getElementById('c-pag-sub').textContent=comCob.length+' têm cobrança';
+  document.getElementById('c-risco-pct').textContent=(clients.length>0?Math.round(emRisco.length/clients.length*100):0)+'%';
+  document.getElementById('c-risco-sub').textContent=emRisco.length+' clientes';
+  document.getElementById('ring-pct').textContent=pct+'%';
+  document.getElementById('ring-pct').style.color=pc;
+  document.getElementById('ring-val').textContent=fmt(tRec);
+  document.getElementById('ring-val').style.color=pc;
+  document.getElementById('ring-sub').textContent=pct+'% do projetado';
 
-  // LTV médio — data_1 (Data Início) vs hoje
-  const now2 = new Date();
-  const clientsComData = clients.filter(c => c.dataInicio);
-  const ltvMedia = clientsComData.length > 0
-    ? Math.round(clientsComData.reduce((a, c) => {
-        const start = new Date(c.dataInicio);
-        const meses = (now2.getFullYear() - start.getFullYear()) * 12 + (now2.getMonth() - start.getMonth());
-        return a + Math.max(0, meses);
-      }, 0) / clientsComData.length)
-    : 0;
-  document.getElementById('c-ltv').textContent = ltvMedia + ' meses';
-  document.getElementById('c-ltv-sub').textContent = `média de ${clientsComData.length} clientes com data`;
+  // LTV
+  const ccd=clients.filter(c=>c.dataInicio);
+  const ltvM=ccd.length>0?Math.round(ccd.reduce((a,c)=>{const s=new Date(c.dataInicio);return a+Math.max(0,(now.getFullYear()-s.getFullYear())*12+(now.getMonth()-s.getMonth()));},0)/ccd.length):0;
+  document.getElementById('c-ltv').textContent=ltvM+' meses';
+  document.getElementById('c-ltv-sub').textContent='média de '+ccd.length+' clientes';
 
-  // % Base em Risco (Crítico + Atenção na Saúde do Cliente)
-  const emRisco=clients.filter(c=>{const s=(c.saude||'').toLowerCase();return s.includes('crítico')||s.includes('critico')||s.includes('atenção')||s.includes('atencao')||s.includes('aten');});
-  const riscoPct=clients.length>0?Math.round(emRisco.length/clients.length*100):0;
-  document.getElementById('c-risco-pct').textContent=riscoPct+'%';
-  document.getElementById('c-risco-sub').textContent=emRisco.length+' clientes (Crítico + Atenção)';
-
-  // Solicitação de Churn
-  const solChurn=clients.filter(c=>(c.saude||'').toLowerCase().includes('solicitou churn'));
-  document.getElementById('c-sol-churn-n').textContent=solChurn.length;
-  const solList=document.getElementById('c-sol-list');
-  if(solList){
-    solList.innerHTML=solChurn.length>0
-      ?solChurn.map(c=>`<div class="churn-sol-item"><span class="churn-sol-dot"></span>${c.name}</div>`).join('')
-      :'<div style="font-size:11px;color:var(--text3);padding:4px 0">Nenhuma solicitação no momento</div>';
-  }
-  const solBtn=document.getElementById('c-sol-btn');
-  if(solBtn) solBtn.style.display=solChurn.length>0?'block':'none';
-
+  // Sol churn list
+  const sl=document.getElementById('c-sol-list');
+  if(sl)sl.innerHTML=solCh.length>0?solCh.map(c=>`<div class="sol-item"><span class="sol-dot"></span>${c.name}</div>`).join(''):'<div style="font-size:11px;color:var(--text3)">Nenhuma solicitação</div>';
+  const sb=document.getElementById('c-sol-btn');if(sb)sb.style.display=solCh.length>0?'block':'none';
 
   setTimeout(()=>{
-    const circ=207.3;
-    document.getElementById('ring-fill').style.strokeDashoffset=circ-(circ*Math.min(pct,100)/100);
-    document.getElementById('ring-fill').style.stroke=pc;
-    document.getElementById('ring-bar').style.width=Math.min(pct,100)+'%';
-    document.getElementById('ring-bar').style.background=pc;
-    document.getElementById('bar-inadim').style.width=Math.min(totalProj>0?inadimMrr/totalProj*100:0,100)+'%';
+    const circ=188.5;
+    const rf=document.getElementById('ring-fill');if(rf){rf.style.strokeDashoffset=circ-(circ*Math.min(pct,100)/100);rf.style.stroke=pc;}
+    const rb=document.getElementById('ring-bar');if(rb){rb.style.width=Math.min(pct,100)+'%';rb.style.background=pc;}
+    const bi=document.getElementById('bar-inadim');if(bi)bi.style.width=Math.min(tProj>0?inadimMrr/tProj*100:0,100)+'%';
   },300);
 
-  // PIZZA TEMPO DE CONTRATO
-  const faixas=['0-3 meses','4-6 meses','7-12 meses','1-2 anos','+2 anos'];
-  const faixaCounts={};
-  faixas.forEach(f=>{faixaCounts[f]={count:0,mrr:0}});
-  clients.forEach(c=>{
-    const f=c.faixaContrato;
-    if(faixaCounts[f]){faixaCounts[f].count++;faixaCounts[f].mrr+=c.proj;}
-  });
+  // Saúde donut data
+  const saudeData={Saudável:0,Atenção:0,Crítico:0,Churn:0,Outros:0};
+  clients.forEach(c=>{const s=(c.saude||'').toLowerCase();if(s.includes('saud'))saudeData['Saudável']++;else if(s.includes('aten'))saudeData['Atenção']++;else if(s.includes('crít')||s.includes('crit'))saudeData['Crítico']++;else if(s.includes('churn'))saudeData['Churn']++;else saudeData['Outros']++;});
 
-  // Draw pizza
-  const canvas=document.getElementById('pizza-canvas');
-  if(canvas){
-    const ctx=canvas.getContext('2d');
-    ctx.clearRect(0,0,120,120);
-    const total=clients.length||1;
-    let startAngle=-Math.PI/2;
-    const cx=60,cy=60,r=50;
-    faixas.forEach((f,i)=>{
-      const slice=faixaCounts[f].count/total;
-      if(slice===0)return;
-      const endAngle=startAngle+slice*Math.PI*2;
-      ctx.beginPath();ctx.moveTo(cx,cy);
-      ctx.arc(cx,cy,r,startAngle,endAngle);
-      ctx.closePath();ctx.fillStyle=PIZZA_COLORS[i];ctx.fill();
-      startAngle=endAngle;
-    });
-    // Center hole
-    ctx.beginPath();ctx.arc(cx,cy,28,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
-    ctx.fillStyle='#1a1a2e';ctx.font='bold 14px Syne,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(clients.length,cx,cy-5);
-    ctx.font='10px Inter,sans-serif';ctx.fillStyle='#6b6b80';
-    ctx.fillText('clientes',cx,cy+10);
-  }
+  // Week data
+  const wLabels=weeks.map(w=>w.dates);
+  const wProjs=weeks.map(w=>clients.filter(c=>!isSkip(c)&&c.day&&c.day>=w.start&&c.day<=w.end).reduce((a,c)=>a+c.proj,0));
+  const wRecs=weeks.map(w=>clients.filter(c=>c.day&&c.day>=w.start&&c.day<=w.end).reduce((a,c)=>a+c.rec,0));
 
-  // Pizza legend
-  const legend=document.getElementById('pizza-legend');
-  if(legend){
-    legend.innerHTML=faixas.map((f,i)=>`
-      <div class="pizza-leg-item">
-        <div class="pizza-leg-dot" style="background:${PIZZA_COLORS[i]}"></div>
-        <span class="pizza-leg-lbl">${f}</span>
-        <span class="pizza-leg-val">${faixaCounts[f].count}</span>
-      </div>`).join('');
-  }
+  // Charts
+  cNrr=dChart(cNrr);
+  cNrr=mkChart('chart-nrr',{type:'bar',data:{labels:wLabels,datasets:[{label:'Projetado',data:wProjs,backgroundColor:'rgba(15,118,110,.1)',borderColor:'#0f766e',borderWidth:2,borderRadius:6,borderSkipped:false},{label:'Recebido',data:wRecs,backgroundColor:'rgba(22,163,74,.1)',borderColor:'#16a34a',borderWidth:2,borderRadius:6,borderSkipped:false}]},options:chartOpts()});
 
-  // Contrato cards
-  const contCards=document.getElementById('contrato-cards');
-  if(contCards){
-    contCards.innerHTML=faixas.map((f,i)=>`
-      <div class="mcard" style="border-top:3px solid ${PIZZA_COLORS[i]}">
-        <div class="mcard-lbl">${f}</div>
-        <div class="mcard-val" style="color:${PIZZA_COLORS[i]}">${faixaCounts[f].count}</div>
-        <div class="mcard-sub">${fmt(faixaCounts[f].mrr)} MRR</div>
-      </div>`).join('');
-  }
+  cSaude=dChart(cSaude);
+  cSaude=mkChart('chart-saude',{type:'doughnut',data:{labels:Object.keys(saudeData),datasets:[{data:Object.values(saudeData),backgroundColor:['#16a34a','#b45309','#dc2626','#7c3aed','#94a3b8'],borderWidth:2,borderColor:'#fff',hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'right',labels:{font:{family:'Inter',size:11},color:'#64748b',boxWidth:10,padding:10}},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}`}}}}});
 
-  // WEEKS
-  const wWrap=document.getElementById('weeks-wrap');wWrap.innerHTML='';
-  wWrap.style.gridTemplateColumns=`repeat(${weeks.length},1fr)`;
+  cSemanal=dChart(cSemanal);
+  cSemanal=mkChart('chart-semanal',{type:'line',data:{labels:wLabels,datasets:[{label:'Projetado',data:wProjs,borderColor:'#0f766e',backgroundColor:'rgba(15,118,110,.06)',fill:true,tension:.4,pointBackgroundColor:'#0f766e',pointRadius:4,pointHoverRadius:6,borderWidth:2},{label:'Recebido',data:wRecs,borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.06)',fill:true,tension:.4,pointBackgroundColor:'#16a34a',pointRadius:4,pointHoverRadius:6,borderWidth:2}]},options:chartOpts()});
+
+  // Weeks render
+  const ww=document.getElementById('weeks-wrap');ww.innerHTML='';
+  ww.style.gridTemplateColumns=`repeat(${weeks.length},1fr)`;
   weeks.forEach((w,wi)=>{
     const col=WEEK_COLORS[wi%WEEK_COLORS.length];
     const wc=clients.filter(c=>c.day&&c.day>=w.start&&c.day<=w.end);
     const wb=wc.filter(c=>!isSkip(c));
     const proj=wb.reduce((a,c)=>a+c.proj,0);
     const rec=wb.reduce((a,c)=>a+c.rec,0);
-    const pct2=proj>0?Math.round(rec/proj*100):0;
-    const pc2=pct2>=87?'#12b76a':pct2>=60?'#f79009':'#f04438';
+    const p2=proj>0?Math.round(rec/proj*100):0;
+    const pc2=p2>=87?'#16a34a':p2>=60?'#b45309':'#dc2626';
+    const bg2=p2>=87?'var(--green-bg)':p2>=60?'var(--yellow-bg)':'var(--red-bg)';
     const gap=rec-proj;
-    // Churn confirmado desta semana
-    const churnSemana=wc.filter(isChurn);
-    const churnSemProj=churnSemana.reduce((a,c)=>a+c.proj,0);
-    const clRows=wb.map(c=>`
-      <div class="cl-item">
-        <span style="display:flex;align-items:center;gap:4px">
-          <span class="cldot" style="background:${stDot(c.st)}"></span>
-          <span class="cl-name">${c.name}</span>
-        </span>
-        <span class="cl-val">${c.proj?fmtK(c.proj):'—'}</span>
-      </div>`).join('');
-    const el=document.createElement('div');
-    el.className='wk';el.style.setProperty('--wc',col);
-    el.innerHTML=`
-      <div class="wk-head">
-        <div class="wk-dot"></div>
-        <div class="wk-tag">${w.label}</div>
-        <div class="wk-dates">${w.dates} ${mesNome.substring(0,3)}</div>
-      </div>
-      <div class="wk-body">
-        <div>
-          <div class="wk-mlbl">Projetado</div>
-          <div class="wk-mval" style="color:${col}">${fmt(proj)}</div>
-          <div class="wk-bar"><div class="wk-bar-f" style="width:100%;background:${col}30"></div></div>
-        </div>
-        <div>
-          <div class="wk-mlbl">Recebido <span class="wk-pct" style="background:${pc2}15;color:${pc2}">${pct2}%</span></div>
-          <div class="wk-mval" style="color:${pc2}">${fmt(rec)}</div>
-          <div class="wk-bar"><div class="wk-bar-f" style="width:${Math.min(pct2,100)}%;background:${pc2}"></div></div>
-        </div>
-        <hr class="wk-sep">
-        <div>
-          <div class="wk-flbl">Receita perdida (churn)</div>
-          <div class="wk-val-display">${churnSemana.length>0?fmt(churnSemProj):'R$ 0'}</div>
-          ${churnSemana.length>0?`<div style="font-size:10px;color:var(--text3);margin-top:2px">${churnSemana.map(c=>c.name).join(', ')}</div>`:''}
-        </div>
-        <div>
-          <div class="wk-flbl">Expansão</div>
-          <input class="tbl-input wk-exp-input" style="font-size:11px;padding:5px 7px" placeholder="R$ 0" oninput="fmtExpInput(this);updateTotals()">
-        </div>
-        <hr class="wk-sep">
-        <div>
-          <button class="tbtn" onclick="const l=this.nextElementSibling;l.style.display=l.style.display==='block'?'none':'block';this.textContent=l.style.display==='block'?'▾ Clientes':'▸ Clientes'">▸ Clientes</button>
-          <div class="cl-list">${clRows||'<div style="font-size:10px;color:var(--text3);padding:4px 0">Sem clientes com cobrança</div>'}</div>
-        </div>
-      </div>
-      <div class="wk-foot">
-        <span class="wk-gap-lbl">Gap semana</span>
-        <span class="wk-gap-val" style="color:${gap>=0?'#12b76a':'#f04438'}">${gap>=0?'+':''}${fmtK(gap)}</span>
-      </div>`;
-    wWrap.appendChild(el);
+    const chS=wc.filter(isChurnConf);
+    const chP=chS.reduce((a,c)=>a+c.proj,0);
+    const clR=wb.map(c=>`<div class="cl-item"><span style="display:flex;align-items:center"><span class="cldot" style="background:${stDot(c.st)}"></span><span class="cl-name">${c.name}</span></span><span class="cl-val">${c.proj?fmtK(c.proj):'—'}</span></div>`).join('');
+    const el=document.createElement('div');el.className='wk';
+    el.innerHTML=`<div class="wk-head" style="border-top:2px solid ${col}"><div class="wk-tag">${w.label}</div><div class="wk-dates" style="color:${col}">${w.dates} ${mn.slice(0,3)}</div></div>
+    <div class="wk-body">
+      <div><div class="wk-mlbl">Projetado</div><div class="wk-mval" style="color:${col}">${fmt(proj)}</div><div class="wk-bar"><div class="wk-bar-f" style="width:100%;background:${col}30"></div></div></div>
+      <div><div class="wk-mlbl">Recebido <span class="wk-pct-badge" style="background:${bg2};color:${pc2}">${p2}%</span></div><div class="wk-mval" style="color:${pc2}">${fmt(rec)}</div><div class="wk-bar"><div class="wk-bar-f" style="width:${Math.min(p2,100)}%;background:${pc2}"></div></div></div>
+      <hr class="wk-sep">
+      <div><div class="wk-flbl">Receita perdida (churn)</div><div class="wk-churn-val">${chS.length>0?fmt(chP):'R$ 0'}</div>${chS.length>0?`<div style="font-size:9px;color:var(--text3);margin-top:2px">${chS.map(c=>c.name).join(', ')}</div>`:''}</div>
+      <div><div class="wk-flbl">Expansão</div><input class="wk-input wk-exp-input" placeholder="R$ 0" oninput="fmtExpInput(this);updateTotals()"></div>
+      <hr class="wk-sep">
+      <div><button class="expand-btn" onclick="const l=this.nextElementSibling;l.style.display=l.style.display==='block'?'none':'block';this.textContent=l.style.display==='block'?'▾ Clientes':'▸ Clientes'">▸ Clientes</button><div class="cl-list">${clR||'<div style="font-size:10px;color:var(--text3);padding:4px 0">Sem clientes com cobrança</div>'}</div></div>
+    </div>
+    <div class="wk-foot"><span class="wk-gap-lbl">Gap semana</span><span class="wk-gap-val" style="color:${gap>=0?'#16a34a':'#dc2626'}">${gap>=0?'+':''}${fmtK(gap)}</span></div>`;
+    ww.appendChild(el);
   });
 
-  // GESTORES DE RESULTADOS — por estrategista selecionado
-  const gestList = GESTORES_POR_ESTRAT[currentEstrat] || [];
-  const GEST_COLORS=['#00c4a7','#7c3aed','#f79009','#2563eb','#f04438'];
-  const GEST_LIGHTS=['var(--cyan-light)','var(--purple-light)','var(--yellow-light)','var(--blue-light)','var(--red-light)'];
-
+  // Gestores
+  const gList=GESTORES_POR_ESTRAT[currentEstrat]||[];
   const gWrap=document.getElementById('gestor-wrap');gWrap.innerHTML='';
+  const gProjAll=[],gRecAll=[],gLabels=[];
 
-  gestList.forEach((gName,gi)=>{
+  gList.forEach((gName,gi)=>{
     const col=GEST_COLORS[gi%GEST_COLORS.length];
-    const colLight=GEST_LIGHTS[gi%GEST_LIGHTS.length];
+    const bg=GEST_BG[gi%GEST_BG.length];
     const init=gName.split(' ').map(n=>n[0]).slice(0,2).join('');
-    const keyword=gName.split(' ')[0].toLowerCase();
-
-    // Filtra clientes pelo gestor de resultados (coluna 'pessoas')
-    const gc=clients.filter(c=>(c.gestor||'').toLowerCase().includes(keyword));
+    const kw=gName.split(' ')[0].toLowerCase();
+    const gc=clients.filter(c=>(c.gestor||'').toLowerCase().includes(kw));
     const gcb=gc.filter(c=>!isSkip(c));
-    const gCh=gc.filter(isChurn);
+    const gCh=gc.filter(isChurnConf);
+    const gSol=gc.filter(isSolChurn);
     const gIn=gc.filter(isInadim);
+    const gRisco=gc.filter(c=>{const s=(c.saude||'').toLowerCase();return s.includes('crít')||s.includes('crit')||s.includes('aten');});
     const gProj=gcb.reduce((a,c)=>a+c.proj,0);
     const gRec=gc.reduce((a,c)=>a+c.rec,0);
     const gChMrr=gCh.reduce((a,c)=>a+c.proj,0);
     const gInMrr=gIn.reduce((a,c)=>a+c.proj,0);
     const gPct=gProj>0?Math.round(gRec/gProj*100):0;
-    const gPc=gPct>=87?'#12b76a':gPct>=60?'#f79009':'#f04438';
+    const gPc=gPct>=87?'#16a34a':gPct>=60?'#b45309':'#dc2626';
+    const kws=GESTOR_REUN_NAMES[gName]||[kw];
+    const gReun=Object.entries(reunData).filter(([k])=>kws.some(w2=>k.toLowerCase().includes(w2))).reduce((a,[,v])=>a+v,0);
+    const gcd=gc.filter(c=>c.dataInicio);
+    const gLtv=gcd.length>0?Math.round(gcd.reduce((a,c)=>{const s=new Date(c.dataInicio);return a+Math.max(0,(now.getFullYear()-s.getFullYear())*12+(now.getMonth()-s.getMonth()));},0)/gcd.length):0;
+    const gRiscoPct=gc.length>0?Math.round(gRisco.length/gc.length*100):0;
 
-    // Reuniões do gestor
-    const keywords=GESTOR_REUN_NAMES[gName]||[keyword];
-    const gReun=Object.entries(reunData).filter(([k])=>keywords.some(kw=>k.toLowerCase().includes(kw))).reduce((a,[,v])=>a+v,0);
+    gProjAll.push(gProj);gRecAll.push(gRec);gLabels.push(gName.split(' ')[0]);
 
-    // LTV médio do gestor
-    const now3=new Date();
-    const gcComData=gc.filter(c=>c.dataInicio);
-    const gLtvCount=gcComData.length;
-    const gLtv=gLtvCount>0
-      ?Math.round(gcComData.reduce((a,c)=>{
-          const start=new Date(c.dataInicio);
-          const meses=(now3.getFullYear()-start.getFullYear())*12+(now3.getMonth()-start.getMonth());
-          return a+Math.max(0,meses);
-        },0)/gLtvCount)
-      :0;
+    const chRows=gCh.map(c=>`<tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:var(--red);display:inline-block"></span>${c.name}</span></td><td><span class="st-pill" style="background:var(--red-bg);color:var(--red)">${c.saude||c.st}</span></td><td>${fmt(c.proj)}</td></tr>`).join('');
+    const inRows=gIn.map(c=>`<tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:var(--yellow);display:inline-block"></span>${c.name}</span></td><td><span class="st-pill" style="background:var(--yellow-bg);color:var(--yellow)">Inadimplente</span></td><td>${fmt(c.proj)}</td></tr>`).join('');
+    const solNames=gSol.map(c=>`<div style="padding:2px 0;font-size:10px;border-bottom:1px solid var(--border)">${c.name}</div>`).join('');
 
-    // % Base em Risco do gestor
-    const gRisco=gc.filter(c=>{const s=(c.saude||'').toLowerCase();return s.includes('crítico')||s.includes('critico')||s.includes('atenção')||s.includes('atencao')||s.includes('aten');});
-    const gRiscoN=gRisco.length;
-    const gRiscoPct=gc.length>0?Math.round(gRiscoN/gc.length*100):0;
-
-    // Solicitação de Churn do gestor
-    const gSolChurnList=gc.filter(c=>(c.saude||'').toLowerCase().includes('solicitou churn'));
-    const gSolChurn=gSolChurnList.length;
-    const gSolNames=gSolChurnList.map(c=>`<div style="padding:2px 0;border-bottom:1px solid var(--border)">${c.name}</div>`).join('');
-
-    const chRows=gCh.map(c=>`<tr>
-      <td><span style="display:inline-flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:var(--red);display:inline-block;flex-shrink:0"></span>${c.name}</span></td>
-      <td><span class="st-pill" style="background:var(--red-light);color:var(--red)">${c.saude||c.st}</span></td>
-      <td>${fmt(c.proj)}</td></tr>`).join('');
-    const inRows=gIn.map(c=>`<tr>
-      <td><span style="display:inline-flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:var(--yellow);display:inline-block;flex-shrink:0"></span>${c.name}</span></td>
-      <td><span class="st-pill" style="background:var(--yellow-light);color:var(--yellow)">Inadimplente</span></td>
-      <td>${fmt(c.proj)}</td></tr>`).join('');
-
-    const block=document.createElement('div');
-    block.className='gest-block';
+    const block=document.createElement('div');block.className='gest-block';
     block.innerHTML=`
       <div class="gest-head">
-        <div class="gest-avatar" style="background:${colLight};color:${col}">${init}</div>
+        <div class="gest-avatar" style="background:${col}">${init}</div>
         <div><div class="gest-name">${gName}</div><div class="gest-role">Gestor de Resultados · ${gc.length} clientes</div></div>
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+          ${gPct>=87?`<span class="badge badge-green">NRR ${gPct}%</span>`:gPct>=60?`<span class="badge badge-yellow">NRR ${gPct}%</span>`:`<span class="badge badge-red">NRR ${gPct}%</span>`}
+          <span class="badge badge-blue">${gReun} reuniões</span>
+        </div>
       </div>
-      <div class="gest-stats" style="grid-template-columns:repeat(8,1fr)">
-        <div class="gstat"><div class="gstat-lbl">NRR Projetado</div><div class="gstat-val" style="color:${col}">${fmt(gProj)}</div><div class="gstat-sub">${gc.length} clientes</div></div>
-        <div class="gstat"><div class="gstat-lbl">NRR Recebido</div><div class="gstat-val" style="color:${gPc}">${fmt(gRec)}</div><div class="gstat-sub">${gPct}% do projetado</div></div>
-        <div class="gstat"><div class="gstat-lbl">Churn</div><div class="gstat-val" style="color:var(--red)">${gCh.length} clientes</div><div class="gstat-sub">${fmt(gChMrr)} MRR perdido</div></div>
-        <div class="gstat"><div class="gstat-lbl">Inadimplência</div><div class="gstat-val" style="color:var(--yellow)">${gIn.length} clientes</div><div class="gstat-sub">${fmt(gInMrr)} em risco</div></div>
-        <div class="gstat"><div class="gstat-lbl">Reuniões Mês</div><div class="gstat-val" style="color:var(--green)">${gReun}</div><div class="gstat-sub">realizadas</div></div>
-        <div class="gstat"><div class="gstat-lbl">LTV Médio</div><div class="gstat-val" style="color:var(--blue)">${gLtv} meses</div><div class="gstat-sub">${gLtvCount} c/ data</div></div>
-        <div class="gstat"><div class="gstat-lbl">% Base em Risco</div><div class="gstat-val" style="color:var(--yellow)">${gRiscoPct}%</div><div class="gstat-sub">${gRiscoN} (Crítico+Atenção)</div></div>
-        <div class="gstat" style="border-right:none"><div class="gstat-lbl">Sol. de Churn</div><div class="gstat-val" style="color:#f97316">${gSolChurn}</div><div class="gstat-sub" style="cursor:pointer;color:var(--cyan)" onclick="const l=this.nextElementSibling;l.style.display=l.style.display==='none'?'block':'none'">${gSolChurn>0?'▸ Ver clientes':''}</div><div style="display:none;margin-top:6px;font-size:10px">${gSolNames}</div></div>
+      <div class="gest-kpis" style="grid-template-columns:repeat(8,1fr)">
+        <div class="gkpi"><div class="gkpi-lbl">NRR Projetado</div><div class="gkpi-val" style="color:${col}">${fmt(gProj)}</div><div class="gkpi-sub">${gc.length} clientes</div></div>
+        <div class="gkpi"><div class="gkpi-lbl">NRR Recebido</div><div class="gkpi-val" style="color:${gPc}">${fmt(gRec)}</div><div class="gkpi-sub">${gPct}% do proj.</div></div>
+        <div class="gkpi"><div class="gkpi-lbl">Churn</div><div class="gkpi-val" style="color:var(--red)">${gCh.length}</div><div class="gkpi-sub">${fmt(gChMrr)}</div></div>
+        <div class="gkpi"><div class="gkpi-lbl">Sol. Churn</div><div class="gkpi-val" style="color:var(--orange)">${gSol.length}</div><div class="gkpi-sub" style="${gSol.length>0?'cursor:pointer;color:var(--blue)':''}" onclick="const d=this.nextElementSibling;if(d&&${gSol.length}>0)d.style.display=d.style.display==='none'?'block':'none'">${gSol.length>0?'▸ Ver':''}</div><div style="display:none;margin-top:4px">${solNames}</div></div>
+        <div class="gkpi"><div class="gkpi-lbl">Inadimplência</div><div class="gkpi-val" style="color:var(--yellow)">${gIn.length}</div><div class="gkpi-sub">${fmt(gInMrr)}</div></div>
+        <div class="gkpi"><div class="gkpi-lbl">% em Risco</div><div class="gkpi-val" style="color:var(--yellow)">${gRiscoPct}%</div><div class="gkpi-sub">${gRisco.length} clientes</div></div>
+        <div class="gkpi"><div class="gkpi-lbl">Reuniões</div><div class="gkpi-val" style="color:var(--green)">${gReun}</div><div class="gkpi-sub">realizadas</div></div>
+        <div class="gkpi"><div class="gkpi-lbl">LTV Médio</div><div class="gkpi-val" style="color:var(--blue)">${gLtv}m</div><div class="gkpi-sub">${gcd.length} c/ data</div></div>
       </div>
-      <div class="gest-churn-max">
-        <div class="gcm-label">Churn Máximo do Mês</div>
-        <div class="gcm-row">
-          <div><div class="gcm-flbl">Limite de clientes</div><input class="gcm-input" type="text" placeholder="Ex: 2 clientes"></div>
-          <div><div class="gcm-flbl">Limite em MRR</div><input class="gcm-input" type="text" placeholder="Ex: R$ 4.000"></div>
-          <div><div class="gcm-flbl">Ação se ultrapassar</div><input class="gcm-input" type="text" placeholder="Ex: Reunião emergencial COO"></div>
+      <div class="gest-churn-limit">
+        <div class="gcl-title">Churn Máximo do Mês</div>
+        <div class="gcl-row">
+          <div><div class="gcl-lbl">Limite de clientes</div><input class="gcl-input" placeholder="Ex: 2 clientes"></div>
+          <div><div class="gcl-lbl">Limite em MRR</div><input class="gcl-input" placeholder="Ex: R$ 4.000"></div>
+          <div><div class="gcl-lbl">Ação se ultrapassar</div><input class="gcl-input" placeholder="Ex: Reunião emergencial COO"></div>
         </div>
       </div>
       <div class="gest-body">
@@ -930,6 +757,11 @@ function renderDashboard(){
     gWrap.appendChild(block);
   });
 
+  // Chart gestores
+  cGestores=dChart(cGestores);
+  if(gLabels.length>0){
+    cGestores=mkChart('chart-gestores',{type:'bar',data:{labels:gLabels,datasets:[{label:'NRR Projetado',data:gProjAll,backgroundColor:GEST_COLORS.slice(0,gLabels.length).map(c=>c+'20'),borderColor:GEST_COLORS.slice(0,gLabels.length),borderWidth:2,borderRadius:8,borderSkipped:false},{label:'NRR Recebido',data:gRecAll,backgroundColor:GEST_COLORS.slice(0,gLabels.length).map(c=>c+'50'),borderColor:GEST_COLORS.slice(0,gLabels.length),borderWidth:2,borderRadius:8,borderSkipped:false}]},options:chartOpts()});
+  }
 }
 
 function switchTab(id,btn){
@@ -938,7 +770,6 @@ function switchTab(id,btn){
   document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
 }
-
 loadData();
 </script>
 </body>
