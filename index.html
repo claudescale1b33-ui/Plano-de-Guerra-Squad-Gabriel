@@ -817,14 +817,19 @@ function renderDashboard(){
 
 // Similarity matching - normalize and compare client names
 function normalize(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();}
+// Generic words that don't help matching
+const GENERIC_WORDS=new Set(['otica','oticas','optica','opticas','oculos','tica','the','and','dos','das','de','do','da']);
 function similarity(a,b){
   a=normalize(a);b=normalize(b);
   if(!a||!b)return 0;
   if(a===b)return 1;
-  if(a.includes(b)||b.includes(a))return 0.8;
-  // Word overlap
-  const wa=new Set(a.split(/\s+/).filter(w=>w.length>2));
-  const wb=new Set(b.split(/\s+/).filter(w=>w.length>2));
+  // Substring match only if b is meaningful length
+  if(b.length>=4&&a.includes(b))return 0.85;
+  if(a.length>=4&&b.includes(a))return 0.85;
+  // Word overlap - only non-generic words count
+  const wa=new Set(a.split(/\s+/).filter(w=>w.length>2&&!GENERIC_WORDS.has(w)));
+  const wb=new Set(b.split(/\s+/).filter(w=>w.length>2&&!GENERIC_WORDS.has(w)));
+  if(!wa.size||!wb.size)return 0; // no meaningful words to compare
   let overlap=0;
   wa.forEach(w=>{if(wb.has(w))overlap++;});
   const total=Math.max(wa.size,wb.size);
@@ -832,14 +837,15 @@ function similarity(a,b){
 }
 
 function getTipo(item){
-  // Check title for tipo hints
   const name=(item.name||'').toLowerCase();
+  const cv=item.column_values||{};
+  // Check tipo column (status1, color, etc.)
+  const tipo=cv.status1||cv.color||cv.status2||'';
+  if(tipo&&tipo!=='Realizado')return tipo;
+  // Check title for hints
   if(name.includes('ligação')||name.includes('ligacao')||name.includes('| lig'))return'Ligação';
   if(name.includes('treinamento'))return'Treinamento';
   if(name.includes('reunião')||name.includes('reuniao'))return'Reunião';
-  // Check any status column values
-  const sc=item.column_values?.find?.(c=>c.id==='status1'||c.id==='color');
-  if(sc&&sc.text)return sc.text;
   return'Contato';
 }
 
@@ -849,13 +855,14 @@ function renderContactTable(clients,reunItems){
   const contactMap={}; // clientName -> {date, gestor, tipo, reunName}
 
   reunItems.forEach(item=>{
-    const sc=item.column_values?.find?.(c=>c.id==='status');
-    if(!sc||(sc.text||'').toLowerCase()!=='realizado')return;
-    const dc=item.column_values?.find?.(c=>c.id==='data');
-    if(!dc||!dc.text)return;
-    const pc=item.column_values?.find?.(c=>c.id==='person');
-    const gestor=(pc?.text||'');
-    const itemDate=new Date(dc.text);
+    // column_values comes as object {person: "...", status: "...", data: "..."}
+    const cv=item.column_values||{};
+    const statusTxt=(cv.status||'').toLowerCase();
+    if(statusTxt!=='realizado')return;
+    const dataTxt=cv.data||'';
+    if(!dataTxt)return;
+    const gestor=(cv.person||'');
+    const itemDate=new Date(dataTxt);
     const reunName=item.name;
 
     // Match this reunion item to a client
@@ -910,11 +917,10 @@ function renderContactTable(clients,reunItems){
   const rankCounts={};
   RANKING_GESTORES.forEach(g=>{rankCounts[g]=0;});
   reunItems.forEach(item=>{
-    const sc=item.column_values?.find?.(c=>c.id==='status');
-    if(!sc||(sc.text||'').toLowerCase()!=='realizado')return;
-    const pc=item.column_values?.find?.(c=>c.id==='person');
-    if(!pc)return;
-    const txt=(pc.text||'').toLowerCase();
+    const cv2=item.column_values||{};
+    if((cv2.status||'').toLowerCase()!=='realizado')return;
+    if(!cv2.person)return;
+    const txt=(cv2.person||'').toLowerCase();
     // Exclude estrategistas
     if(ESTRATEGISTAS_EXCLUIDOS.some(e=>txt.includes(e)))return;
     RANKING_GESTORES.forEach(gn=>{
