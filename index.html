@@ -223,6 +223,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .exp-empty{text-align:center;padding:28px;font-size:12px;color:var(--text3)}
 .exp-footer{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--bg2);border-top:1px solid var(--border)}
 
+.dias-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;text-align:center}
+.dias-0{background:var(--green-bg);color:var(--green)}
+.dias-3{background:#fef3c7;color:#92400e}
+.dias-7{background:var(--red-bg);color:var(--red)}
+.dias-none{background:var(--bg3);color:var(--text3)}
+.rank-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.rank-item:last-child{border-bottom:none}
+.rank-item:hover{background:var(--bg2)}
+.rank-pos{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.rank-name{font-size:12px;font-weight:600;color:var(--text);flex:1}
+.rank-count{font-family:'Inter',sans-serif;font-size:18px;font-weight:800;color:var(--teal)}
+.rank-sub{font-size:10px;color:var(--text3)}
+.contact-row:hover{background:var(--bg2)}
 .footer{font-size:10px;color:var(--text3);text-align:center;margin-top:32px;padding-top:14px;border-top:1px solid var(--border)}
 
 /* MOBILE */
@@ -394,6 +407,36 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
       <div class="chart-wrap" style="height:210px"><canvas id="chart-saude"></canvas></div>
     </div>
   </div>
+
+  <!-- ULTIMO CONTATO -->
+  <div class="sec-header" style="margin-top:28px"><div class="sec-title">Último Contato com Clientes</div><div class="sec-divider"></div></div>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:8px">
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:12px;color:var(--text3)">Ordenado por mais dias sem contato · Mês atual</div>
+        <div style="display:flex;gap:6px">
+          <input id="contact-search" placeholder="Buscar cliente..." oninput="filterContactTable()" style="font-size:11px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;outline:none;width:180px;background:var(--bg2)">
+        </div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)">
+        <table style="width:100%;border-collapse:collapse" id="contact-table">
+          <thead><tr style="background:var(--bg2)">
+            <th style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)">Cliente</th>
+            <th style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)">Gestor</th>
+            <th style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;text-align:center;padding:10px 14px;border-bottom:1px solid var(--border)">Dias s/ contato</th>
+            <th style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)">Último contato</th>
+            <th style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)">Tipo</th>
+          </tr></thead>
+          <tbody id="contact-tbody"><tr><td colspan="5" style="text-align:center;padding:24px;font-size:12px;color:var(--text3)">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- RANKING -->
+    <div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Ranking de contatos · Mês atual</div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)" id="ranking-wrap"></div>
+    </div>
+  </div>
 </div>
 
 <!-- SEMANAL -->
@@ -452,7 +495,9 @@ const GESTORES_POR_ESTRAT={
   gustavo:['Lucas Silva','Artur Zilli'],
   ambos:['Vitor Domingos','Samuel Cardoso','Luiz Higashi','Lucas Silva','Artur Zilli']
 };
-const GESTOR_REUN_NAMES={'Vitor Domingos':['vitor','domingos'],'Samuel Cardoso':['samuel','cardoso'],'Luiz Higashi':['luiz','higashi'],'Lucas Silva':['lucas','silva'],'Artur Zilli':['artur','zilli']};
+const GESTOR_REUN_NAMES={'Vitor Domingos':['vitor','domingos'],'Samuel Cardoso':['samuel','cardoso'],'Luiz Higashi':['luiz','higashi'],'Lucas Silva':['lucas','silva'],'Artur Zilli':['artur','zilli'],'Ellen Bittencourt':['ellen','bittencourt'],'Júlia de Oliveira Vieira':['julia','júlia','oliveira vieira','vieira']};
+const RANKING_GESTORES=['Vitor Domingos','Samuel Cardoso','Luiz Higashi','Lucas Silva','Artur Zilli','Ellen Bittencourt','Júlia de Oliveira Vieira'];
+const ESTRATEGISTAS_EXCLUIDOS=['gabriel','gustavo'];
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const WEEK_COLORS=['#2BBFAA','#b45309','#64748b','#16a34a','#7c3aed'];
 const GEST_COLORS=['#2BBFAA','#7c3aed','#b45309','#16a34a','#c2410c'];
@@ -461,7 +506,7 @@ const SKIP=['TCV','Primeiro Pagamento','1º Pagamento'];
 const EXP_PRODUCTS=['TCV','CRM + IA','Cross Sell','Indicação','Upgrade de Plano','Outro'];
 const REUN_GROUPS={0:'group_mkza86wx',1:'group_mm069rsn',2:'group_mm0et3p',3:'group_mm20k687',4:'group_mm31p8rp',5:'group_mm485w2d',6:'group_mm4vb9zk'};
 
-let currentEstrat='ambos',allClients=[],reunData={};
+let currentEstrat='ambos',allClients=[],reunData={},allReunItems=[];
 let cNrr=null,cSaude=null,cSemanal=null,cGestores=null;
 
 const fmt=v=>'R$ '+Math.round(v||0).toLocaleString('pt-BR');
@@ -757,6 +802,9 @@ function renderDashboard(){
     gWrap.appendChild(block);
   });
 
+  // Contact table
+  renderContactTable(clients, allReunItems);
+
   // Chart gestores
   cGestores=dChart(cGestores);
   if(gLabels.length>0){
@@ -765,6 +813,138 @@ function renderDashboard(){
       {label:'NRR Recebido',data:gRecAll,backgroundColor:GEST_COLORS.slice(0,gLabels.length).map(c=>c+'66'),borderColor:GEST_COLORS.slice(0,gLabels.length),borderWidth:2,borderRadius:{topLeft:6,topRight:6},borderSkipped:false,barPercentage:0.65}
     ]},options:chartOpts()});
   }
+}
+
+// Similarity matching - normalize and compare client names
+function normalize(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();}
+function similarity(a,b){
+  a=normalize(a);b=normalize(b);
+  if(!a||!b)return 0;
+  if(a===b)return 1;
+  if(a.includes(b)||b.includes(a))return 0.8;
+  // Word overlap
+  const wa=new Set(a.split(/\s+/).filter(w=>w.length>2));
+  const wb=new Set(b.split(/\s+/).filter(w=>w.length>2));
+  let overlap=0;
+  wa.forEach(w=>{if(wb.has(w))overlap++;});
+  const total=Math.max(wa.size,wb.size);
+  return total>0?overlap/total:0;
+}
+
+function getTipo(item){
+  // Check title for tipo hints
+  const name=(item.name||'').toLowerCase();
+  if(name.includes('ligação')||name.includes('ligacao')||name.includes('| lig'))return'Ligação';
+  if(name.includes('treinamento'))return'Treinamento';
+  if(name.includes('reunião')||name.includes('reuniao'))return'Reunião';
+  // Check any status column values
+  const sc=item.column_values?.find?.(c=>c.id==='status1'||c.id==='color');
+  if(sc&&sc.text)return sc.text;
+  return'Contato';
+}
+
+function renderContactTable(clients,reunItems){
+  const now=new Date();
+  // For each active client, find their latest contact in reunItems
+  const contactMap={}; // clientName -> {date, gestor, tipo, reunName}
+
+  reunItems.forEach(item=>{
+    const sc=item.column_values?.find?.(c=>c.id==='status');
+    if(!sc||(sc.text||'').toLowerCase()!=='realizado')return;
+    const dc=item.column_values?.find?.(c=>c.id==='data');
+    if(!dc||!dc.text)return;
+    const pc=item.column_values?.find?.(c=>c.id==='person');
+    const gestor=(pc?.text||'');
+    const itemDate=new Date(dc.text);
+    const reunName=item.name;
+
+    // Match this reunion item to a client
+    clients.forEach(client=>{
+      const sim=similarity(client.name,reunName);
+      if(sim>=0.4){
+        if(!contactMap[client.name]||new Date(contactMap[client.name].date)<itemDate){
+          contactMap[client.name]={date:dc.text,gestor,tipo:getTipo(item),reunName,sim};
+        }
+      }
+    });
+  });
+
+  // Build rows sorted by days without contact (descending)
+  const rows=clients.map(c=>{
+    const contact=contactMap[c.name];
+    let dias=null;
+    if(contact){
+      const d=new Date(contact.date);
+      dias=Math.floor((now-d)/(1000*60*60*24));
+    }
+    return{client:c,contact,dias};
+  }).sort((a,b)=>{
+    if(a.dias===null&&b.dias===null)return 0;
+    if(a.dias===null)return-1; // no contact = worst
+    if(b.dias===null)return-1;
+    return b.dias-a.dias;
+  });
+
+  const tbody=document.getElementById('contact-tbody');
+  if(!tbody)return;
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;font-size:12px;color:var(--text3)">Nenhum cliente ativo</td></tr>';return;}
+
+  tbody.innerHTML=rows.map(r=>{
+    const diasStr=r.dias===null?'—':r.dias===0?'Hoje':r.dias+'d';
+    const diasClass=r.dias===null?'dias-none':r.dias===0?'dias-0':r.dias<=3?'dias-3':'dias-7';
+    const dataStr=r.contact?new Date(r.contact.date).toLocaleDateString('pt-BR'):'Sem contato';
+    const gestor=r.contact?(r.contact.gestor.split(',')[0].trim()):(r.client.gestor||'—');
+    const tipo=r.contact?r.contact.tipo:'—';
+    return`<tr class="contact-row" style="border-bottom:1px solid var(--border)">
+      <td style="padding:9px 14px;font-size:12px;font-weight:500;color:var(--text)">${r.client.name}</td>
+      <td style="padding:9px 14px;font-size:11px;color:var(--text2)">${gestor}</td>
+      <td style="padding:9px 14px;text-align:center"><span class="dias-badge ${diasClass}">${diasStr}</span></td>
+      <td style="padding:9px 14px;font-size:11px;color:var(--text2)">${dataStr}</td>
+      <td style="padding:9px 14px"><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:var(--blue-bg);color:var(--blue)">${tipo}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Ranking
+  const rankWrap=document.getElementById('ranking-wrap');
+  if(!rankWrap)return;
+  const rankCounts={};
+  RANKING_GESTORES.forEach(g=>{rankCounts[g]=0;});
+  reunItems.forEach(item=>{
+    const sc=item.column_values?.find?.(c=>c.id==='status');
+    if(!sc||(sc.text||'').toLowerCase()!=='realizado')return;
+    const pc=item.column_values?.find?.(c=>c.id==='person');
+    if(!pc)return;
+    const txt=(pc.text||'').toLowerCase();
+    // Exclude estrategistas
+    if(ESTRATEGISTAS_EXCLUIDOS.some(e=>txt.includes(e)))return;
+    RANKING_GESTORES.forEach(gn=>{
+      const kws=GESTOR_REUN_NAMES[gn]||[gn.split(' ')[0].toLowerCase()];
+      if(kws.some(kw=>txt.includes(kw)))rankCounts[gn]=(rankCounts[gn]||0)+1;
+    });
+  });
+
+  const sorted=Object.entries(rankCounts).sort((a,b)=>b[1]-a[1]);
+  const medals=['🥇','🥈','🥉'];
+  const posColors=['#f59e0b','#94a3b8','#cd7f32'];
+  rankWrap.innerHTML=sorted.map(([name,count],i)=>`
+    <div class="rank-item">
+      <div class="rank-pos" style="background:${i<3?posColors[i]+'25':'var(--bg3)'};color:${i<3?posColors[i]:'var(--text3)'}">${i<3?medals[i]:i+1}</div>
+      <div style="flex:1;min-width:0">
+        <div class="rank-name">${name}</div>
+        <div class="rank-sub">${count} contato${count!==1?'s':''} no mês</div>
+      </div>
+      <div style="text-align:right">
+        <div class="rank-count">${count}</div>
+      </div>
+    </div>`).join('');
+}
+
+function filterContactTable(){
+  const q=normalize(document.getElementById('contact-search')?.value||'');
+  document.querySelectorAll('#contact-tbody tr.contact-row').forEach(row=>{
+    const name=normalize(row.cells[0]?.textContent||'');
+    row.style.display=(!q||name.includes(q))?'':'none';
+  });
 }
 
 function switchTab(id,btn){
