@@ -598,12 +598,14 @@ async function loadData(){
       const qr=`{boards(ids:[${BOARD_REUN}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"group",compare_value:["${rg}"],operator:any_of}]}){items{name column_values(ids:["person","status"]){id text}}}}}`;
       const rd=await monday(qr);
       const ri=rd?.data?.boards?.[0]?.items_page?.items||[];
+      allReunItems=ri; // save for contact tracking
       reunData={};
       ri.forEach(item=>{
-        const sc=item.column_values.find(c=>c.id==='status');
-        if(!sc||(sc.text||'').toLowerCase()!=='realizado')return;
-        const pc=item.column_values.find(c=>c.id==='person');if(!pc)return;
-        const txt=(pc.text||'').toLowerCase();
+        // column_values is an OBJECT {person: "...", status: "...", data: "..."}
+        const cv=item.column_values||{};
+        if((cv.status||'').toLowerCase()!=='realizado')return;
+        if(!cv.person)return;
+        const txt=(cv.person||'').toLowerCase();
         Object.keys(GESTOR_REUN_NAMES).forEach(gn=>{
           if(GESTOR_REUN_NAMES[gn].some(kw=>txt.includes(kw)))reunData[gn]=(reunData[gn]||0)+1;
         });
