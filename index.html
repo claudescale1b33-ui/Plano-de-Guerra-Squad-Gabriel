@@ -595,17 +595,18 @@ async function loadData(){
     });
     const rg=REUN_GROUPS[m];
     if(rg){
-      const qr=`{boards(ids:[${BOARD_REUN}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"group",compare_value:["${rg}"],operator:any_of}]}){items{name column_values(ids:["person","status"]){id text}}}}}`;
+      const qr=`{boards(ids:[${BOARD_REUN}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"group",compare_value:["${rg}"],operator:any_of}]}){items{name column_values(ids:["person","status","data","status1","color"]){id text}}}}}`;
       const rd=await monday(qr);
       const ri=rd?.data?.boards?.[0]?.items_page?.items||[];
       allReunItems=ri; // save for contact tracking
       reunData={};
       ri.forEach(item=>{
-        // column_values is an OBJECT {person: "...", status: "...", data: "..."}
-        const cv=item.column_values||{};
-        if((cv.status||'').toLowerCase()!=='realizado')return;
-        if(!cv.person)return;
-        const txt=(cv.person||'').toLowerCase();
+        // column_values is ARRAY [{id:"person",text:"..."},{id:"status",text:"..."}]
+        const cvArr=Array.isArray(item.column_values)?item.column_values:[];
+        const cvGet=id=>(cvArr.find(c=>c.id===id)||{}).text||'';
+        if(cvGet('status').toLowerCase()!=='realizado')return;
+        const txt=cvGet('person').toLowerCase();
+        if(!txt)return;
         Object.keys(GESTOR_REUN_NAMES).forEach(gn=>{
           if(GESTOR_REUN_NAMES[gn].some(kw=>txt.includes(kw)))reunData[gn]=(reunData[gn]||0)+1;
         });
@@ -840,9 +841,9 @@ function similarity(a,b){
 
 function getTipo(item){
   const name=(item.name||'').toLowerCase();
-  const cv=item.column_values||{};
-  // Check tipo column (status1, color, etc.)
-  const tipo=cv.status1||cv.color||cv.status2||'';
+  const cvArr=Array.isArray(item.column_values)?item.column_values:[];
+  const cvGet=id=>(cvArr.find(c=>c.id===id)||{}).text||'';
+  const tipo=cvGet('status1')||cvGet('color')||cvGet('status2')||'';
   if(tipo&&tipo!=='Realizado')return tipo;
   // Check title for hints
   if(name.includes('ligação')||name.includes('ligacao')||name.includes('| lig'))return'Ligação';
@@ -857,13 +858,14 @@ function renderContactTable(clients,reunItems){
   const contactMap={}; // clientName -> {date, gestor, tipo, reunName}
 
   reunItems.forEach(item=>{
-    // column_values comes as object {person: "...", status: "...", data: "..."}
-    const cv=item.column_values||{};
-    const statusTxt=(cv.status||'').toLowerCase();
+    // column_values is ARRAY [{id:"person",text:"..."},{id:"status",text:"..."}]
+    const cvArr=Array.isArray(item.column_values)?item.column_values:[];
+    const cvGet=id=>(cvArr.find(c=>c.id===id)||{}).text||'';
+    const statusTxt=cvGet('status').toLowerCase();
     if(statusTxt!=='realizado')return;
-    const dataTxt=cv.data||'';
+    const dataTxt=cvGet('data');
     if(!dataTxt)return;
-    const gestor=(cv.person||'');
+    const gestor=cvGet('person');
     const itemDate=new Date(dataTxt);
     const reunName=item.name;
 
@@ -919,10 +921,11 @@ function renderContactTable(clients,reunItems){
   const rankCounts={};
   RANKING_GESTORES.forEach(g=>{rankCounts[g]=0;});
   reunItems.forEach(item=>{
-    const cv2=item.column_values||{};
-    if((cv2.status||'').toLowerCase()!=='realizado')return;
-    if(!cv2.person)return;
-    const txt=(cv2.person||'').toLowerCase();
+    const cvArr2=Array.isArray(item.column_values)?item.column_values:[];
+    const cvGet2=id=>(cvArr2.find(c=>c.id===id)||{}).text||'';
+    if(cvGet2('status').toLowerCase()!=='realizado')return;
+    const txt=cvGet2('person').toLowerCase();
+    if(!txt)return;
     // Exclude estrategistas
     if(ESTRATEGISTAS_EXCLUIDOS.some(e=>txt.includes(e)))return;
     RANKING_GESTORES.forEach(gn=>{
