@@ -451,6 +451,29 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
     <div class="mcard"><div class="mcard-accent" style="background:var(--teal)"></div><div class="mcard-lbl">Contatos no Mês</div><div class="mcard-val" id="c-contatos-n" style="color:var(--teal)">—</div><div class="mcard-sub">reuniões + ligações</div></div>
   </div>
 
+  <!-- CRM + IA CARD -->
+  <div style="margin-bottom:12px">
+    <div onclick="toggleCrmList()" style="background:rgba(6,15,8,.7);border:1px solid rgba(188,140,255,.2);border-radius:var(--radius-lg);padding:18px 22px;cursor:pointer;transition:all .2s;backdrop-filter:blur(20px);position:relative;overflow:hidden" id="crm-card">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),transparent)"></div>
+      <div style="position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(188,140,255,.06) 0%,transparent 70%);pointer-events:none"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:9px;font-weight:700;color:var(--purple);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">CRM + IA</div>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <div style="font-size:36px;font-weight:800;color:var(--purple);letter-spacing:-1px;line-height:1" id="c-crm-n">—</div>
+            <div style="font-size:13px;color:var(--text3)">clientes ativos</div>
+            <div style="font-size:16px;font-weight:700;color:var(--purple);opacity:.7" id="c-crm-pct">—</div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">Clique para ver a lista · <span id="crm-toggle-txt" style="color:var(--purple)">▸ expandir</span></div>
+        </div>
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(188,140,255,.1);border:1px solid rgba(188,140,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px">🤖</div>
+      </div>
+      <div id="crm-list" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px" id="crm-list-inner"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="sec" style="margin-top:24px">Análise Visual</div>
   <div class="charts-row">
     <div class="chart-card">
@@ -506,12 +529,12 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
 <!-- SEMANAL -->
 <div class="tab-pane" id="tab-semanal">
   <div class="sec" id="sec-semanal">Controle Semanal</div>
-  <div class="chart-card">
+  <div class="week-grid" id="weeks-wrap"></div>
+  <div class="chart-card" style="margin-top:12px">
     <div class="chart-title">Projetado vs Recebido — Linha do Tempo</div>
     <div class="chart-sub">Evolução financeira semanal do mês</div>
     <div style="height:200px"><canvas id="chart-semanal"></canvas></div>
   </div>
-  <div class="week-grid" id="weeks-wrap"></div>
 </div>
 
 <!-- GESTORES -->
@@ -699,12 +722,12 @@ async function loadData(){
   const eml=document.getElementById('exp-month-label');if(eml)eml.textContent=`${mn} ${y}`;
   const cml=document.getElementById('chart-mes-lbl');if(cml)cml.textContent=`${mn} ${y}`;
   try{
-    const q=`{boards(ids:[${BOARD}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"dup__of_gestor",compare_value:["${GESTORES_IDS.gabriel}","${GESTORES_IDS.gustavo}"],operator:any_of},{column_id:"group",compare_value:["${GROUP}"],operator:any_of}]}){items{name column_values(ids:["numeric_mkzmzj33","numeric_mm121vht","color_mm0ejcfw","color_mkwr8dhs","pessoas","status","dup__of_gestor","data_1"]){id text}}}}}`;
+    const q=`{boards(ids:[${BOARD}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"dup__of_gestor",compare_value:["${GESTORES_IDS.gabriel}","${GESTORES_IDS.gustavo}"],operator:any_of},{column_id:"group",compare_value:["${GROUP}"],operator:any_of}]}){items{name column_values(ids:["numeric_mkzmzj33","numeric_mm121vht","color_mm0ejcfw","color_mkwr8dhs","pessoas","status","dup__of_gestor","data_1","color_mm06xex2"]){id text}}}}}`;
     const d=await monday(q);
     const items=d?.data?.boards?.[0]?.items_page?.items||[];
     allClients=items.map(item=>{
       const cv={};item.column_values.forEach(c=>{cv[c.id]=c.text});
-      return{name:item.name,proj:parseFloat(cv['numeric_mkzmzj33'])||0,rec:parseFloat(cv['numeric_mm121vht'])||0,st:cv['color_mm0ejcfw']||'',venc:cv['color_mkwr8dhs']||'',gestor:cv['pessoas']||'',saude:cv['status']||'',estrategistaId:cv['dup__of_gestor']||'',day:dayFrom(cv['color_mkwr8dhs']),dataInicio:cv['data_1']||null};
+      return{name:item.name,proj:parseFloat(cv['numeric_mkzmzj33'])||0,rec:parseFloat(cv['numeric_mm121vht'])||0,st:cv['color_mm0ejcfw']||'',venc:cv['color_mkwr8dhs']||'',gestor:cv['pessoas']||'',saude:cv['status']||'',estrategistaId:cv['dup__of_gestor']||'',day:dayFrom(cv['color_mkwr8dhs']),dataInicio:cv['data_1']||null,crmia:(cv['color_mm06xex2']||'').toLowerCase().includes('sim')};
     });
     const rg=REUN_GROUPS[m];
     if(rg){
@@ -822,6 +845,17 @@ function renderDashboard(){
   const ltvM=ccd.length>0?Math.round(ccd.reduce((a,c)=>{const s=new Date(c.dataInicio);return a+Math.max(0,(now.getFullYear()-s.getFullYear())*12+(now.getMonth()-s.getMonth()));},0)/ccd.length):0;
   document.getElementById('c-ltv').textContent=ltvM+' m';
   document.getElementById('c-ltv-sub').textContent='média de '+ccd.length+' clientes';
+  // CRM + IA
+  const crmClients=clients.filter(c=>c.crmia);
+  const crmN=document.getElementById('c-crm-n');if(crmN)crmN.textContent=crmClients.length;
+  const crmPct=document.getElementById('c-crm-pct');if(crmPct)crmPct.textContent=clients.length>0?'('+Math.round(crmClients.length/clients.length*100)+'%)':'';
+  const crmInner=document.getElementById('crm-list-inner');
+  if(crmInner){
+    crmInner.innerHTML=crmClients.length>0
+      ?crmClients.map(c=>`<div style="background:rgba(188,140,255,.06);border:1px solid rgba(188,140,255,.15);border-radius:6px;padding:7px 12px;font-size:11px;color:var(--text2);font-weight:500;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;display:inline-block"></span>${c.name}</div>`).join('')
+      :'<div style="font-size:11px;color:var(--text3)">Nenhum cliente com CRM + IA</div>';
+  }
+
   // Donut center values
   const riscoPctVal=(clients.length>0?Math.round(emRisco.length/clients.length*100):0)+'%';
   const rpd=document.getElementById('risco-pct-donut');if(rpd)rpd.textContent=riscoPctVal;
@@ -1074,6 +1108,17 @@ function filterContactTable(){
     const name=(row.querySelector('.action-name')?.textContent||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
     row.style.display=(!q||name.includes(q))?'':'none';
   });
+}
+
+function toggleCrmList(){
+  const list=document.getElementById('crm-list');
+  const txt=document.getElementById('crm-toggle-txt');
+  const card=document.getElementById('crm-card');
+  if(!list)return;
+  const open=list.style.display==='none';
+  list.style.display=open?'block':'none';
+  if(txt)txt.textContent=open?'▾ recolher':'▸ expandir';
+  if(card)card.style.borderColor=open?'rgba(188,140,255,.35)':'rgba(188,140,255,.2)';
 }
 
 function switchTab(id,btn){
