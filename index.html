@@ -601,11 +601,10 @@ async function loadData(){
       allReunItems=ri; // save for contact tracking
       reunData={};
       ri.forEach(item=>{
-        // column_values is ARRAY [{id:"person",text:"..."},{id:"status",text:"..."}]
-        const cvArr=Array.isArray(item.column_values)?item.column_values:[];
-        const cvGet=id=>(cvArr.find(c=>c.id===id)||{}).text||'';
-        if(cvGet('status').toLowerCase()!=='realizado')return;
-        const txt=cvGet('person').toLowerCase();
+        const cvR=item.column_values||{};
+        const cvGetR=id=>Array.isArray(cvR)?(cvR.find(c=>c.id===id)||{}).text||'':(cvR[id]||'');
+        if(cvGetR('status').toLowerCase()!=='realizado')return;
+        const txt=cvGetR('person').toLowerCase();
         if(!txt)return;
         Object.keys(GESTOR_REUN_NAMES).forEach(gn=>{
           if(GESTOR_REUN_NAMES[gn].some(kw=>txt.includes(kw)))reunData[gn]=(reunData[gn]||0)+1;
@@ -821,29 +820,36 @@ function renderDashboard(){
 // Similarity matching - normalize and compare client names
 function normalize(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();}
 // Generic words that don't help matching
-const GENERIC_WORDS=new Set(['otica','oticas','optica','opticas','oculos','tica','the','and','dos','das','de','do','da']);
+const GENERIC_WORDS=new Set(['otica','oticas','optica','opticas','oculos','tica','the','and','dos','das','de','do','da','sao','san','centro','nova','novo']);
 function similarity(a,b){
   a=normalize(a);b=normalize(b);
   if(!a||!b)return 0;
   if(a===b)return 1;
-  // Substring match only if b is meaningful length
-  if(b.length>=4&&a.includes(b))return 0.85;
-  if(a.length>=4&&b.includes(a))return 0.85;
-  // Word overlap - only non-generic words count
-  const wa=new Set(a.split(/\s+/).filter(w=>w.length>2&&!GENERIC_WORDS.has(w)));
-  const wb=new Set(b.split(/\s+/).filter(w=>w.length>2&&!GENERIC_WORDS.has(w)));
-  if(!wa.size||!wb.size)return 0; // no meaningful words to compare
+  // Full substring match
+  if(b.length>=4&&a.includes(b))return 0.9;
+  if(a.length>=4&&b.includes(a))return 0.9;
+  // Word-level matching with partial support
+  const wa=a.split(/\s+/).filter(w=>w.length>2&&!GENERIC_WORDS.has(w));
+  const wb=b.split(/\s+/).filter(w=>w.length>2&&!GENERIC_WORDS.has(w));
+  if(!wa.length||!wb.length)return 0;
   let overlap=0;
-  wa.forEach(w=>{if(wb.has(w))overlap++;});
-  const total=Math.max(wa.size,wb.size);
-  return total>0?overlap/total:0;
+  // Check exact word match AND partial word containment (opto vs optobrasil)
+  wa.forEach(wa_word=>{
+    wb.forEach(wb_word=>{
+      if(wa_word===wb_word)overlap+=1;
+      else if(wa_word.length>=4&&wb_word.includes(wa_word))overlap+=0.7;
+      else if(wb_word.length>=4&&wa_word.includes(wb_word))overlap+=0.7;
+    });
+  });
+  const total=Math.max(wa.length,wb.length);
+  return total>0?Math.min(overlap/total,1):0;
 }
 
 function getTipo(item){
   const name=(item.name||'').toLowerCase();
-  const cvArr=Array.isArray(item.column_values)?item.column_values:[];
-  const cvGet=id=>(cvArr.find(c=>c.id===id)||{}).text||'';
-  const tipo=cvGet('status1')||cvGet('color')||cvGet('status2')||'';
+  const cvT=item.column_values||{};
+  const cvGetT=id=>Array.isArray(cvT)?(cvT.find(c=>c.id===id)||{}).text||'':(cvT[id]||'');
+  const tipo=cvGetT('status1')||cvGetT('color')||cvGetT('status2')||'';
   if(tipo&&tipo!=='Realizado')return tipo;
   // Check title for hints
   if(name.includes('ligação')||name.includes('ligacao')||name.includes('| lig'))return'Ligação';
@@ -858,9 +864,9 @@ function renderContactTable(clients,reunItems){
   const contactMap={}; // clientName -> {date, gestor, tipo, reunName}
 
   reunItems.forEach(item=>{
-    // column_values is ARRAY [{id:"person",text:"..."},{id:"status",text:"..."}]
-    const cvArr=Array.isArray(item.column_values)?item.column_values:[];
-    const cvGet=id=>(cvArr.find(c=>c.id===id)||{}).text||'';
+    // Handle both array [{id,text}] and object {person,status,data} formats
+    const cv=item.column_values||{};
+    const cvGet=id=>Array.isArray(cv)?(cv.find(c=>c.id===id)||{}).text||'':(cv[id]||'');
     const statusTxt=cvGet('status').toLowerCase();
     if(statusTxt!=='realizado')return;
     const dataTxt=cvGet('data');
@@ -921,8 +927,8 @@ function renderContactTable(clients,reunItems){
   const rankCounts={};
   RANKING_GESTORES.forEach(g=>{rankCounts[g]=0;});
   reunItems.forEach(item=>{
-    const cvArr2=Array.isArray(item.column_values)?item.column_values:[];
-    const cvGet2=id=>(cvArr2.find(c=>c.id===id)||{}).text||'';
+    const cv2=item.column_values||{};
+    const cvGet2=id=>Array.isArray(cv2)?(cv2.find(c=>c.id===id)||{}).text||'':(cv2[id]||'');
     if(cvGet2('status').toLowerCase()!=='realizado')return;
     const txt=cvGet2('person').toLowerCase();
     if(!txt)return;
