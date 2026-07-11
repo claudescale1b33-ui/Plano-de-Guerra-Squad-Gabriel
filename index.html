@@ -413,38 +413,148 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
   </div>
 
   <div class="sec">Métricas NRR</div>
-  <div class="metrics-grid" style="grid-template-columns:repeat(7,1fr);margin-bottom:12px">
-    <div class="ring-card">
-      <div class="ring-wrap">
-        <svg class="ring-svg" width="68" height="68" viewBox="0 0 68 68">
-          <circle class="ring-bg-c" cx="34" cy="34" r="28"/>
-          <circle class="ring-fill-c" id="ring-fill" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+
+  <!-- ROW 1: NRR principais -->
+  <div style="display:grid;grid-template-columns:1.2fr repeat(6,1fr);gap:10px;margin-bottom:10px">
+
+    <!-- NRR % — card destaque com ring -->
+    <div style="background:linear-gradient(135deg,rgba(43,191,170,.1),rgba(2,8,4,.9));border:1px solid rgba(43,191,170,.25);border-radius:14px;padding:20px;position:relative;overflow:hidden;display:flex;align-items:center;gap:16px">
+      <div style="position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(43,191,170,.1),transparent 70%)"></div>
+      <div style="position:relative">
+        <svg style="transform:rotate(-90deg)" width="72" height="72" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(43,191,170,.1)" stroke-width="6"/>
+          <circle id="ring-fill" cx="36" cy="36" r="30" fill="none" stroke="#2BBFAA" stroke-width="6" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" style="transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 8px rgba(43,191,170,.6))"/>
         </svg>
-        <div class="ring-center"><div class="ring-pct" id="ring-pct">—</div><div class="ring-lbl">NRR</div></div>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div id="ring-pct" style="font-size:14px;font-weight:800;color:var(--teal);line-height:1">—</div>
+          <div style="font-size:7px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase">NRR</div>
+        </div>
       </div>
       <div>
-        <div class="ring-info-lbl">MRR Recebido</div>
-        <div class="ring-info-val" id="ring-val">—</div>
-        <div class="ring-info-sub" id="ring-sub">do projetado</div>
-        <div class="ring-info-bar"><div class="ring-info-bar-f" id="ring-bar" style="width:0%"></div></div>
+        <div style="font-size:9px;font-weight:700;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">MRR Recebido</div>
+        <div id="ring-val" style="font-size:20px;font-weight:800;color:var(--teal);letter-spacing:-0.5px;line-height:1">—</div>
+        <div id="ring-sub" style="font-size:10px;color:var(--text3);margin-top:3px">do projetado</div>
+        <div style="height:2px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:8px;overflow:hidden;width:100px">
+          <div id="ring-bar" style="height:100%;border-radius:2px;background:var(--teal);width:0%;transition:width 1.4s cubic-bezier(.4,0,.2,1)"></div>
+        </div>
       </div>
     </div>
-    <div class="mcard"><div class="mcard-accent" style="background:var(--yellow)"></div><div class="mcard-lbl">Meta NRR</div><div class="mcard-val" id="c-meta2" style="color:var(--yellow)">—</div><div class="mcard-sub">87,5% do projetado</div><div class="mcard-bar"><div class="mcard-bar-f" style="width:87.5%;background:var(--yellow)"></div></div></div>
-    <div class="mcard"><div class="mcard-accent" style="background:var(--yellow)"></div><div class="mcard-lbl">Inadimplentes</div><div class="mcard-val" id="c-inadim-n" style="color:var(--yellow)">—</div><div class="mcard-sub" id="c-inadim-mrr">—</div><div class="mcard-bar"><div class="mcard-bar-f" id="bar-inadim" style="width:0%;background:var(--yellow)"></div></div></div>
-    <div class="mcard"><div class="mcard-accent" style="background:var(--red)"></div><div class="mcard-lbl">Churn · MRR Perdido</div><div class="mcard-val" id="c-churn-mrr-val" style="color:var(--red)">R$ 0</div><div class="mcard-sub" id="c-churn-mrr-sub">Preencha no semanal</div></div>
-    <div class="mcard"><div class="mcard-accent" style="background:var(--red)"></div><div class="mcard-lbl">Churn · NRR Recebido</div><div class="mcard-val" id="c-churn-rec" style="color:var(--red)">—</div><div class="mcard-sub">já recebido em churn</div></div>
-    <div class="exp-card"><div class="mcard-accent" style="background:var(--green)"></div><div class="exp-lbl">Expansão do Mês</div><div class="exp-val" id="exp-total">R$ 0</div><div class="exp-sub">soma das semanas</div></div>
-    <div class="sol-card"><div class="mcard-accent" style="background:var(--orange)"></div><div class="sol-lbl">Sol. de Churn</div><div class="sol-val" id="c-sol-churn-n">—</div><div class="sol-sub">solicitaram churn</div><button class="sol-btn" id="c-sol-btn" onclick="document.getElementById('c-sol-list').classList.toggle('open');this.textContent=document.getElementById('c-sol-list').classList.contains('open')?'▾ Ocultar':'▸ Ver'">▸ Ver</button><div class="sol-list" id="c-sol-list"></div></div>
+
+    <!-- Meta NRR -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(210,153,34,.2);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--yellow),transparent)"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Meta NRR</div>
+      <div id="c-meta2" style="font-size:22px;font-weight:800;color:var(--yellow);letter-spacing:-0.5px;line-height:1">—</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:5px">87,5% do projetado</div>
+      <div style="height:3px;background:rgba(255,255,255,.04);border-radius:3px;margin-top:12px;overflow:hidden">
+        <div style="height:100%;width:87.5%;background:linear-gradient(90deg,var(--yellow),rgba(210,153,34,.4));border-radius:3px"></div>
+      </div>
+    </div>
+
+    <!-- Inadimplentes -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(210,153,34,.15);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--yellow),transparent)"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Inadimplentes</div>
+      <div id="c-inadim-n" style="font-size:36px;font-weight:800;color:var(--yellow);letter-spacing:-1px;line-height:1">—</div>
+      <div id="c-inadim-mrr" style="font-size:10px;color:var(--text3);margin-top:5px">—</div>
+      <div style="height:3px;background:rgba(255,255,255,.04);border-radius:3px;margin-top:12px;overflow:hidden">
+        <div id="bar-inadim" style="height:100%;width:0%;background:linear-gradient(90deg,var(--yellow),rgba(210,153,34,.4));border-radius:3px;transition:width 1.3s cubic-bezier(.4,0,.2,1)"></div>
+      </div>
+    </div>
+
+    <!-- Churn MRR Perdido -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(248,81,73,.15);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),transparent)"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Churn · MRR Perdido</div>
+      <div id="c-churn-mrr-val" style="font-size:22px;font-weight:800;color:var(--red);letter-spacing:-0.5px;line-height:1">R$ 0</div>
+      <div id="c-churn-mrr-sub" style="font-size:10px;color:var(--text3);margin-top:5px">Preencha no semanal</div>
+    </div>
+
+    <!-- Churn NRR Recebido -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(248,81,73,.12);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,rgba(248,81,73,.6),transparent)"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Churn · NRR Recebido</div>
+      <div id="c-churn-rec" style="font-size:22px;font-weight:800;color:var(--red);letter-spacing:-0.5px;line-height:1">—</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:5px">já recebido em churn</div>
+    </div>
+
+    <!-- Expansão -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(63,185,80,.2);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),transparent)"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Expansão do Mês</div>
+      <div id="exp-total" style="font-size:22px;font-weight:800;color:var(--green);letter-spacing:-0.5px;line-height:1">R$ 0</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:5px">soma das semanas</div>
+    </div>
+
+    <!-- Sol de Churn -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(227,179,65,.15);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),transparent)"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--orange);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Sol. de Churn</div>
+      <div id="c-sol-churn-n" style="font-size:36px;font-weight:800;color:var(--orange);letter-spacing:-1px;line-height:1">—</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:5px">solicitaram churn</div>
+      <button id="c-sol-btn" onclick="document.getElementById('c-sol-list').classList.toggle('open');this.textContent=document.getElementById('c-sol-list').classList.contains('open')?'▾ Ocultar':'▸ Ver clientes'" style="font-size:10px;color:var(--orange);background:none;border:none;cursor:pointer;padding:0;margin-top:6px;font-weight:600;font-family:var(--sans)">▸ Ver clientes</button>
+      <div id="c-sol-list" class="sol-list"></div>
+    </div>
   </div>
 
-  <div class="metrics-grid" style="grid-template-columns:repeat(7,1fr)">
-    <div class="mcard"><div class="mcard-accent" style="background:var(--red)"></div><div class="mcard-lbl">Nº Churn Conf.</div><div class="mcard-val" id="c-churn-n" style="color:var(--red)">—</div><div class="mcard-sub">churn confirmado</div></div>
-    <div class="mcard"><div class="mcard-accent" style="background:var(--purple)"></div><div class="mcard-lbl">% TCV</div><div class="mcard-val" id="c-tcv-pct" style="color:var(--purple)">—</div><div class="mcard-sub" id="c-tcv-sub">—</div></div>
-    <div class="mcard"><div class="mcard-accent" style="background:var(--blue)"></div><div class="mcard-lbl">LTV Médio</div><div class="mcard-val" id="c-ltv" style="color:var(--blue)">—</div><div class="mcard-sub" id="c-ltv-sub">—</div></div>
-    <div class="mcard"><div class="mcard-accent" style="background:var(--yellow)"></div><div class="mcard-lbl">% Base em Risco</div><div class="mcard-val" id="c-risco-pct" style="color:var(--yellow)">—</div><div class="mcard-sub" id="c-risco-sub">Crítico + Atenção</div></div>
-    <div class="mcard"><div class="mcard-accent" style="background:var(--green)"></div><div class="mcard-lbl">% com Cobrança</div><div class="mcard-val" id="c-pag-pct" style="color:var(--green)">—</div><div class="mcard-sub" id="c-pag-sub">—</div></div>
-    <div class="mcard"><div class="mcard-accent" style="background:var(--teal)"></div><div class="mcard-lbl">% c/ Contato Mês</div><div class="mcard-val" id="c-contato-pct" style="color:var(--teal)">—</div><div class="mcard-sub" id="c-contato-sub">tiveram contato</div></div>
-    <div class="mcard"><div class="mcard-accent" style="background:var(--teal)"></div><div class="mcard-lbl">Contatos no Mês</div><div class="mcard-val" id="c-contatos-n" style="color:var(--teal)">—</div><div class="mcard-sub">reuniões + ligações</div></div>
+  <!-- ROW 2: Carteira -->
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:10px">
+
+    <!-- Nº Churn Conf -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(248,81,73,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--red),transparent)"></div>
+      <div style="font-size:8px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">Nº Churn Conf.</div>
+      <div id="c-churn-n" style="font-size:30px;font-weight:800;color:var(--red);letter-spacing:-1px;line-height:1">—</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px">churn confirmado</div>
+    </div>
+
+    <!-- % TCV -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(188,140,255,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--purple),transparent)"></div>
+      <div style="font-size:8px;font-weight:700;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">% TCV</div>
+      <div id="c-tcv-pct" style="font-size:30px;font-weight:800;color:var(--purple);letter-spacing:-1px;line-height:1">—</div>
+      <div id="c-tcv-sub" style="font-size:10px;color:var(--text3);margin-top:4px">—</div>
+    </div>
+
+    <!-- LTV Médio -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(88,166,255,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--blue),transparent)"></div>
+      <div style="font-size:8px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">LTV Médio</div>
+      <div id="c-ltv" style="font-size:30px;font-weight:800;color:var(--blue);letter-spacing:-1px;line-height:1">—</div>
+      <div id="c-ltv-sub" style="font-size:10px;color:var(--text3);margin-top:4px">—</div>
+    </div>
+
+    <!-- % Base em Risco -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(210,153,34,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--yellow),transparent)"></div>
+      <div style="font-size:8px;font-weight:700;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">% Base em Risco</div>
+      <div id="c-risco-pct" style="font-size:30px;font-weight:800;color:var(--yellow);letter-spacing:-1px;line-height:1">—</div>
+      <div id="c-risco-sub" style="font-size:10px;color:var(--text3);margin-top:4px">Crítico + Atenção</div>
+    </div>
+
+    <!-- % com Cobrança -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(63,185,80,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--green),transparent)"></div>
+      <div style="font-size:8px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">% com Cobrança</div>
+      <div id="c-pag-pct" style="font-size:30px;font-weight:800;color:var(--green);letter-spacing:-1px;line-height:1">—</div>
+      <div id="c-pag-sub" style="font-size:10px;color:var(--text3);margin-top:4px">—</div>
+    </div>
+
+    <!-- % c/ Contato -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(43,191,170,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--teal),transparent)"></div>
+      <div style="font-size:8px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">% c/ Contato Mês</div>
+      <div id="c-contato-pct" style="font-size:30px;font-weight:800;color:var(--teal);letter-spacing:-1px;line-height:1">—</div>
+      <div id="c-contato-sub" style="font-size:10px;color:var(--text3);margin-top:4px">tiveram contato</div>
+    </div>
+
+    <!-- Contatos no Mês -->
+    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(43,191,170,.12);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(43,191,170,.6),transparent)"></div>
+      <div style="font-size:8px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">Contatos no Mês</div>
+      <div id="c-contatos-n" style="font-size:30px;font-weight:800;color:var(--teal);letter-spacing:-1px;line-height:1">—</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px">reuniões + ligações</div>
+    </div>
   </div>
 
   <!-- CRM + IA CARD -->
