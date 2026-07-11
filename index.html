@@ -987,26 +987,11 @@ function renderDashboard(){
     return b.dias-a.dias;
   });
 
-  const tbody=document.getElementById('contact-tbody');
-  if(tbody){
-    if(!rows.length){tbody.innerHTML='<div style="text-align:center;padding:24px;font-size:12px;color:var(--text3)">Nenhum cliente ativo</div>';return;}
-    tbody.innerHTML=rows.map(r=>{
-      const diasStr=r.dias===null?'—':r.dias===0?'Hoje':r.dias+'d';
-      const diasClass=r.dias===null?'dias-none':r.dias===0?'dias-ok':r.dias<=3?'dias-ok':r.dias<=7?'dias-warn':'dias-alert';
-      const dataStr=r.contact?new Date(r.contact.date).toLocaleDateString('pt-BR'):'Sem contato';
-      const gestor=r.contact?(r.contact.gestor.split(',')[0].trim()):(r.client.gestor||'—');
-      const tipo=r.contact?r.contact.tipo:'—';
-      return`<div class="action-row">
-        <div class="action-cell"><span class="action-name">${r.client.name}</span></div>
-        <div class="action-cell"><span class="action-gestor">${gestor}</span></div>
-        <div class="action-cell" style="justify-content:center"><span class="dias-badge ${diasClass}">${diasStr}</span></div>
-        <div class="action-cell" style="font-size:11px;color:var(--text2)">${dataStr}</div>
-        <div class="action-cell"><span class="badge badge-blue" style="font-size:9px">${tipo}</span></div>
-      </div>`;
-    }).join('');
-  }
+  // Store rows and render with current filter
+  window._allContactRows = rows;
+  renderContactRows();
 
-  // Ranking
+    // Ranking
   const rankWrap=document.getElementById('ranking-wrap');
   if(rankWrap){
     const sorted=RANKING_ALL.map(n=>({name:n,count:reunData[n]||0})).sort((a,b)=>b.count-a.count);
