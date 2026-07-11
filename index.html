@@ -9,12 +9,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0d1117;
-  --bg2:#161b22;
-  --bg3:#1c2333;
-  --bg4:#21262d;
-  --border:#30363d;
-  --border2:#444c56;
+  --bg:#061a0e;
+  --bg2:#0a2416;
+  --bg3:#0f2e1c;
+  --bg4:#143822;
+  --border:#1e4d2e;
+  --border2:#2a6b40;
   --text:#e6edf3;
   --text2:#8b949e;
   --text3:#484f58;
@@ -31,7 +31,7 @@
   --radius-lg:12px;
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+body{background:linear-gradient(160deg,#020d06 0%,#061a0e 30%,#0a2416 60%,#030d07 100%);background-attachment:fixed;color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
 
 /* LOADING */
 #loading{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s}
@@ -43,7 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .load-sub{font-size:12px;color:var(--text3)}
 
 /* TOP NAV */
-.topnav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(rgba(6,26,14,.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
 .topnav-left{display:flex;flex-direction:column;gap:2px}
 .topnav-eyebrow{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
 .topnav-title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
@@ -300,10 +300,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 <div id="app" style="display:none">
 
 <div class="topnav">
-  <div class="topnav-left">
-    <div class="topnav-eyebrow">Plano de Guerra · MO 2.0</div>
-    <div class="topnav-title" id="hdr-title">—</div>
-    <div class="topnav-sub" id="hdr-sub">Squad MO 2.0</div>
+  <div class="topnav-left" style="display:flex;align-items:center;gap:16px">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQ4AAAByCAYAAACiJj+rAAAACXBIWXMAAAsSAAALEgHS3X78AAAOK0lEQVR4nO2d7ZWbSBaGX+/Z/9JG0EwE1kTQOAJrIjCOYDQRjBzBtiMwjmC7Ixg6gpUiGDoDKQL2x6UWVLpVUDSf0vucw7GB0q0LTb3UrS8+FEUBQggJ4R9TO0AIWR4UDkJIMBQOQkgwFA5CSDAUDkJIMBQOQkgwFA5CSDAUDkJIMBQOQkgwFA5CSDAUDkJIMBQOQkgwFA5CSDAUDkJIMBQOQkgwFA5CSDAUDkJIMBQOQkgwFA5CSDAUDkJIMP+c2oGJWAPYAIgBRLXtwZH+COAE4AAgL//NhnSQkDnz4Y5WOd8ASCBi8bEnmy8QAXmGCAohd8GtC0cEEYsE7tpEX7wCSMuNkJvmVoUjArAH8EU5d0YVcuSoQpA6G0g4Y0KaDYBVy7zPAJ7K7RTiNCFL4daEI8K1YJxRhRMZuocUEURAtpBwp6kGYwRk3zE/QmbLLQnHDlJITc3gJ0QsngfKb1PmuYW/NvIGCZWygfwgZHRuQTgiiDh8xDRhwhoiDDv4ayHfIcLG8IUsnqULxxZVY+Qc2hXsWo/NEeJzPpI/hAzCkoVjD+BPSJdogvm8ydcQ3353nD9D2kjsBlmyfBJIDdiQ40Z72ZYqHCnkzb3FfNsOYoifrvDlK270obpjMgCPtf1XyHNwcyxxyPkT5K0eYb6iAYhvG0iNSOMH5A1FyOJYqnBsMZ/QxMcJ4ut3x3mKB1kkSxSOfGoHOrCDhCYaT5CaCSGLYYnCsVRS6OKxgoQ16zGdIeQ9UDjGJQXwh3J8heEGqhHSO/c6rX5KTGhiz6N5hHTj7kf2x8ca0itgQqkc/mH7W1yGXRnm04C9hvgXlfsniG8h3eL2/QDef41meYd6jfO9NoenKApu02yHQica2Y/Myj8rjydFUZwcPqZFUaxrNraetKeiKPaBeYf6ajYbk2/i8M3Y2DTkG5XX7OJQ2gi5nqQoitxj09y3deH3bZKNocp0bCGDwWzSkf3QSCA9Pq4RsF8gtQ4z3P4/nrQryEC9tEf/Qkgg1+LiEVXXucYGUivRZlobPpY2ohb+rMu0P+CfomDu28Hj22RQOKYjhx6WPEJEZSo28Bc0wwryULdJC0jBSzr61JUt2l/Lk3J8AynkbZZUWKHdmi8ZLgeJNfEAv7BNwpKEYw3p1swg8WlR206QxsUdwnonoprNQtkOkDdl8l7nHTxB5q9ox6fCFJIXAL8B+FT++6qkrReU72XaT5DeI602te/Ny3aYld7OEP++ldubkvYR14UzhS4ab5D78Qr9Ol3s4V59ztjTfFthHjXRignio9gT1xnq6ddlrBeCHYPb27rwx6waQ8WcrvuR9JyPa8uUvJ8D0hZFUeyUtFGht3tEHntZoK92eo1Dcf03Wxd6G9O+liZRzp8Kac+x/XI9n3X/IkeaJ8W/pNDv3VjPROM2Raax4wbWMWk3hb8BycepzMvOf1O4G/LaYBrC+rwndoEw+Yzx99Dyjhxpt0ra3GP7SUlf/5vYeWeBvtrpNUKuZV87/6yc10TDbHslfd2/nXI+9djT/BvrmWjc5hyqmPiy61qhKwB/4TLMCIlZXZiGsD5jzr0jnyni2iPc3a2Zcsw3/kRLPyavcF9L07iZz9b+seE3T/CHLVq71c6T/hnX4WFfi2y/m7kKR4T3F3DDE6pl//qyaUZ7Rj3YQmlLi219D9ZQ+OYAaedC049J16ULtHayJqHR1q6tE1n7r2i+P5lybBaNpHMVjhT9FHCgaljq02bdbl9oDaJT9q7cAl2FSyuceYvfZZ5zds25q71ZTE2Yq3Bo3VVHyDqi3xDemv0IdzXvCOlB+Fb+q735fXbjlmk38NdQtDfaChSPKdAEJ2rxO19twH5e32tvUuYqHHVeAPyC6oNKe1RDdL8irKC77G5Lu2ZIcojdpEWaHYD/Avjbkz6H3jUbt/TjHhirIGkhR5u8fWlsm13tZS1+NzhzF46v8K/RmUJurlbgfPzs0W6bGkG9evkDbjHQah2utLfII9xV8Q36DTWbsP/2n+Ev7E2LVdvCsYK/DUubzxT6nA/GnIXjBe3aEE4IG6D12jK9WYSniRWaq532Q7N3pMuUYx8xk7h2ALSQQCtMa4w/AErLL4MuHlsA/+5g79/Qn8WNI712bBLmLBwhPQoHSC2iDfsAu3lLu1HD+WdcxriutpHM8fvZxrrvRKthmXktcbklkL/v2F2RKa7bJVaQkPMZ1UzmA2SuThMH6KNvf5TnjL3nMg/7es+gcDTygvCVvrIWaY4t09VJA9O7sAtJ4kh3T+0ctqAavkDG4PyF5slgQ3GC++X1GSJwfyJM0FwTGz/W7NnjRwwJpu/e/j9zFY6sw2/yFmma+uI1uo4FaLLjCoO0h+OWQ5UY7XrIfkJ/Yw9JCn3hJY0zmhvUQ663zlfMbKGnuQpHl8KaDWS3L5XXGsfatprfaqgCyH2J4S9MPzHdos5PkEl+PlEw38rJW9g7QELbNiHwK4BfMaMQxTDXFcDygexOWdXLlWNzqEnYM4qb7tEnaz/3pD0o6TXxNoVpCymAUe34MyoxbfI1xLeQ9M/lZvwzQn4qfUtRhTZt7qVp0N+jWjUtqp0z191Xbbd3pvggUwyJXX186Gi76WI+oVsY1Jdd2843XDfW7iGxbp2b/bAPWSZzDVXIJbccqpAFMtdQ5Z7JlWNjDnxyEdf+3zShK7b2czSHDVGLNGQmsMYxPyLl2Ni9CTY7VN2jbVr3/7K2xJM2hgjG3+W/cVcnyXhQOMZDawidbeNXjQTVqMgjqsV7+2KPapzGA2bYg0CuoXCMR9ep2lOSoFrs94j2XY4h2DOhH9DfOidkINjGMR6RtX9G+1mYed/OtCTHZZflEN3Zr7gUD9+qXXVia/+AcP8iXP5d8pZ53z0UjvGIrX1XW4EW0uS9euInhrRpuIY+v0AGRWXKuQR6e0aCy+s/oBrOvYOEK58hotE0Y3QH9zdOXktbmm+GdWkjgT6U/Q0SLj1hRkO85waFYzxia98lHNoiRmO0hawhhcX34SFACvhnyMjHHS4LVwTd/we455uYNpODtW+zx/X4FptHSGPsC/S5HRvIfffNfXko89mVW9qQ511C4RiHDS4f1jeErb0xhnBkCJuw9QVyXe8dY5LgOlRJrTQpmgWtzmdcT4HfIGzN2RWq9h3bn7uHwjEO9oS2xJEuVo6dMXyo8oRu09Y/lr814UVW/quNfM1q+3lAHlv4ReMIt+9rSK1jje4LVZtp70voARsN9qqMQ73K/BPuGFybMetK2xcRgN+V42ZpxQ/l9kt5zOZ3VA2MGfT1Tsxxs6UB/j0px8zkrw+QmsQHXH49zvQAmfu+w7VonCEzX/+F6hpdS0ZqPtw1FI5xSCEP5a9w1zYi6G/OoadTa42R2tKKeXlMm9Xpa9B8D1tct0e8QETBrgGkqGadxrgUa82/GNcNoClEiOyZuo9gF/EFFI5xOEEeSl91N3EcH1o4Ymv/DL8Q7HBdsGwbfaHVwHy+mVmndTGIcV3b+A7338LMcm3jy91C4ZgPiXLsBcN3Cdq1nOeGPE+4FrOhlvWLrP22YzzqaI23TWKsnde6ye8WCsc8SKB3EabjugGgXcFsk2YIsg6/0Qp8kx1NOOMOed8sFI55sFeOubps75moJztdag95T3nfBBSO6Umg1zamasmPe0ozBF3yzTvYiVrauVumGMdxwPWSbX3RZLdrX/xQds1oTRsz7HkM7Lkij/DPgN3genToUNP+MyuvB0ihzwJsaNexg782t29p534pioLbdNtToZOM6MNOyf9QFMVaSbsuzzX5a5N58s88aTeKrVN5XLOVlL+3fc8VO6nHhpandj/udptizVEibKF/yMeseTEWa0g1XBsglaJ6M28hYZWd7g3ib71BUXuojjVbOaoaVYbrIedxbd8+b/hes7cpf2Mm5tkDwBJUw8frvKJaFDjC9fB3g7Y27F1D4ZiGCPKwakOgf8X41WKXiLXhN1xX+5seqro4ZPALRwT3vfJhi4edT1c7BGwcnYI1pKBpBeEbpomlnyEjW0NxfSio6cNEIeTo9hGjAy4L+xbhH20+lr+jaFhQOMbHNaHsiGmrwymaPzxkeIM0GKeO830PQT9AxKNNI+wZIsCJdfxU2vjeMk8zdD1vmf6uYKgyLin0mZ5nSJV8Lm+2BNWHh4zIHSEFOEO7Hp8I7mH0ec1GgutVuHz249pvTOjxZvnWdB8jSE1iC7nGFaoV2Q4Qcc8bbNw1SxKOBFUD3VwKWAgp3KIRg919ZEEsKVRJUX1yb8xeh/di2jRca0rsQNEgC2NJwgFIbcNUSZcwWzGC+Opav/MruLoUWSBLEw5AxOMZ0n34jPnOWkwgIueaOUrRIItlicIBSKH8A/ImzzHcQjJdiCCC9gN6l+sZ/h4JQmbPkhpHNbaQAriCtKzvMV2BXKNaGds1WMmMC8hH8omQQVi6cADyhk9x2TW3R/OCNH3RRjAAGT8wp5oRIZ25BeEw7CCCYQrvGSIeZusb0zXsavg0HEvfsgF8IGQSbkk4APdHhYyImB6ZLt2fMa4nU/kwa3emHfIiZNbcmnAYIkjto+l7HGZciMYaIhRrhK2p+QYRrxTLHKhGSCO3KhyGCNX3TH2f/euDF1xOQyfkZrl14aizQTUHo49Vuc+Q2oppQ2HtgtwN9yQcdUwYEqMKRyK4ayVmVmYG6Uo1k6EIuUvuVTgIIe9gqSNHCSETQuEghARD4SCEBEPhIIQEQ+EghARD4SCEBEPhIIQEQ+EghARD4SCEBEPhIIQEQ+EghARD4SCEBEPhIIQEQ+EghARD4SCEBEPhIIQEQ+EghARD4SCEBEPhIIQEQ+EghATzP5LkzaIP34T2AAAAAElFTkSuQmCC" alt="Mundo Ótico" style="height:36px;width:auto;filter:brightness(0) invert(1);opacity:.9">
+    <div>
+      <div class="topnav-eyebrow">Plano de Guerra · MO 2.0</div>
+      <div class="topnav-title" id="hdr-title">—</div>
+      <div class="topnav-sub" id="hdr-sub">Squad MO 2.0</div>
+    </div>
   </div>
   <div class="topnav-right">
     <div class="live-dot">dados ao vivo</div>
@@ -357,13 +360,22 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
       <div style="font-size:44px;font-weight:800;color:#58a6ff;letter-spacing:-2px;line-height:1" id="c-total">—</div>
       <div style="font-size:11px;color:var(--text3);margin-top:6px">carteira ativa</div>
     </div>
-    <!-- NRR Recebido -->
-    <div class="hero-card" style="background:linear-gradient(135deg,var(--teal-bg),#0d1117);border:1px solid var(--teal-dim);border-radius:12px;padding:20px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:var(--teal)10;border-radius:50%"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">NRR Recebido</div>
-      <div style="font-size:28px;font-weight:800;color:var(--teal);letter-spacing:-1px;line-height:1" id="ring-val2">—</div>
-      <div style="font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-top:4px" id="ring-pct2" style="color:var(--teal)">—%</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px">do projetado</div>
+    <!-- NRR Recebido com ring -->
+    <div class="hero-card" style="background:linear-gradient(135deg,var(--teal-bg),#061a0e);border:1px solid var(--teal-dim);border-radius:12px;padding:16px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div style="font-size:9px;font-weight:700;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;align-self:flex-start">NRR Recebido</div>
+      <div style="position:relative;width:100px;height:100px">
+        <svg style="transform:rotate(-90deg);overflow:visible" width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(43,191,170,0.12)" stroke-width="8"/>
+          <circle id="hero-ring-fill" cx="50" cy="50" r="42" fill="none" stroke="#2BBFAA" stroke-width="8" stroke-linecap="round"
+            stroke-dasharray="263.9" stroke-dashoffset="263.9" style="transition:stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 6px #2BBFAA)"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div id="ring-pct2" style="font-size:22px;font-weight:800;color:var(--teal);line-height:1;letter-spacing:-0.5px">—%</div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-top:2px">NRR</div>
+        </div>
+      </div>
+      <div id="ring-val2" style="font-size:16px;font-weight:800;color:var(--teal);letter-spacing:-0.5px;margin-top:8px">—</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px">recebido</div>
     </div>
     <!-- Churn Confirmado -->
     <div class="hero-card" style="background:linear-gradient(135deg,var(--red-bg),#0d1117);border:1px solid var(--red-dim);border-radius:12px;padding:20px;position:relative;overflow:hidden">
@@ -432,8 +444,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     </div>
     <div class="chart-card">
       <div class="chart-title">Saúde da Carteira</div>
-      <div class="chart-sub">Distribuição por status</div>
-      <div style="height:200px"><canvas id="chart-saude"></canvas></div>
+      <div class="chart-sub">Distribuição por status · <span style="color:var(--text2)">LTV Médio: <span id="ltv-saude">—</span></span></div>
+      <div style="position:relative;height:200px">
+        <canvas id="chart-saude"></canvas>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+          <div id="risco-pct-donut" style="font-size:22px;font-weight:800;color:var(--yellow);line-height:1">—</div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:2px">em risco</div>
+          <div id="ltv-donut" style="font-size:11px;font-weight:700;color:var(--blue);margin-top:6px">—</div>
+          <div style="font-size:8px;color:var(--text3)">LTV médio</div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="chart-card">
@@ -786,12 +806,20 @@ function renderDashboard(){
   const ltvM=ccd.length>0?Math.round(ccd.reduce((a,c)=>{const s=new Date(c.dataInicio);return a+Math.max(0,(now.getFullYear()-s.getFullYear())*12+(now.getMonth()-s.getMonth()));},0)/ccd.length):0;
   document.getElementById('c-ltv').textContent=ltvM+' m';
   document.getElementById('c-ltv-sub').textContent='média de '+ccd.length+' clientes';
+  // Donut center values
+  const riscoPctVal=(clients.length>0?Math.round(emRisco.length/clients.length*100):0)+'%';
+  const rpd=document.getElementById('risco-pct-donut');if(rpd)rpd.textContent=riscoPctVal;
+  const ltvD=document.getElementById('ltv-donut');if(ltvD)ltvD.textContent=ltvM+'m';
+  const ltvS=document.getElementById('ltv-saude');if(ltvS)ltvS.textContent=ltvM+' meses';
 
   const sl=document.getElementById('c-sol-list');
   if(sl)sl.innerHTML=solCh.length>0?solCh.map(c=>`<div class="sol-item"><span class="sol-dot"></span>${c.name}</div>`).join(''):'<div style="font-size:11px;color:var(--text3)">Nenhuma</div>';
   const sb=document.getElementById('c-sol-btn');if(sb)sb.style.display=solCh.length>0?'block':'none';
 
   setTimeout(()=>{
+    // Hero NRR ring
+    const heroRing=document.getElementById('hero-ring-fill');
+    if(heroRing){const circ=263.9;heroRing.style.strokeDashoffset=circ-(circ*Math.min(pct,100)/100);heroRing.style.stroke=pc;}
     const circ=175.9;
     const rf=document.getElementById('ring-fill');if(rf){rf.style.strokeDashoffset=circ-(circ*Math.min(pct,100)/100);rf.style.stroke=pc;}
     const rp=document.getElementById('ring-pct');if(rp){rp.textContent=pct+'%';rp.style.color=pc;}
