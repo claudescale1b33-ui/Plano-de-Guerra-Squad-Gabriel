@@ -289,9 +289,12 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
 .finput:focus,.fta:focus{border-color:var(--teal)}
 
 /* CONTACT SEARCH */
-.contact-search{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;padding:6px 10px;outline:none;width:180px;transition:border-color .15s;font-family:var(--sans)}
+.contact-search{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text);font-size:11px;padding:6px 10px;outline:none;width:180px;transition:border-color .15s;font-family:var(--sans)}
 .contact-search:focus{border-color:var(--teal)}
 .contact-search::placeholder{color:var(--text3)}
+.dias-filter-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text3);font-size:11px;font-weight:600;padding:5px 12px;cursor:pointer;transition:all .15s;font-family:var(--sans)}
+.dias-filter-btn:hover{color:var(--teal);border-color:rgba(43,191,170,.3)}
+.dias-filter-btn.active{background:rgba(43,191,170,.1);border-color:rgba(43,191,170,.3);color:var(--teal)}
 
 .footer{font-size:10px;color:var(--text3);text-align:center;margin-top:32px;padding-top:14px;border-top:1px solid var(--border)}
 
@@ -481,38 +484,92 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
       <div class="chart-sub" id="chart-mes-lbl">—</div>
       <div style="height:200px"><canvas id="chart-nrr"></canvas></div>
     </div>
-    <div class="chart-card">
+    <div class="chart-card" style="display:flex;flex-direction:column;gap:0">
       <div class="chart-title">Saúde da Carteira</div>
-      <div class="chart-sub">Distribuição por status · <span style="color:var(--text2)">LTV Médio: <span id="ltv-saude">—</span></span></div>
-      <div style="position:relative;height:200px">
-        <canvas id="chart-saude"></canvas>
-        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
-          <div id="ltv-donut" style="font-size:18px;font-weight:800;color:var(--blue);line-height:1">—</div>
-          <div style="font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:3px">LTV médio</div>
+      <div class="chart-sub" style="margin-bottom:20px">Visão geral da carteira ativa</div>
+      <!-- Two big metrics -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1">
+        <div style="background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.15);border-radius:10px;padding:20px 22px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(88,166,255,.08) 0%,transparent 70%)"></div>
+          <div style="font-size:9px;font-weight:700;color:var(--blue);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">LTV Médio</div>
+          <div id="ltv-donut" style="font-size:48px;font-weight:800;color:var(--blue);letter-spacing:-2px;line-height:1">—</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:8px" id="ltv-saude">meses de contrato</div>
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(88,166,255,.1)">
+            <div style="font-size:10px;color:var(--text3)">média de <span id="ltv-count" style="color:var(--text2);font-weight:600">—</span> clientes</div>
+          </div>
+        </div>
+        <div style="background:rgba(210,153,34,.06);border:1px solid rgba(210,153,34,.15);border-radius:10px;padding:20px 22px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(210,153,34,.08) 0%,transparent 70%)"></div>
+          <div style="font-size:9px;font-weight:700;color:var(--yellow);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">% Base em Risco</div>
+          <div id="risco-pct-card" style="font-size:48px;font-weight:800;color:var(--yellow);letter-spacing:-2px;line-height:1">—</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:8px">Crítico + Atenção</div>
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(210,153,34,.1)">
+            <div style="font-size:10px;color:var(--text3)"><span id="risco-n-card" style="color:var(--text2);font-weight:600">—</span> clientes em risco</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="chart-card">
-    <div class="chart-title">% da Base com Contato no Mês</div>
-    <div class="chart-sub">Clientes que tiveram pelo menos 1 reunião ou ligação registrada</div>
-    <div style="height:160px"><canvas id="chart-contato-pct"></canvas></div>
+  <div class="chart-card" style="position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;right:0;width:300px;height:300px;background:radial-gradient(circle,rgba(43,191,170,.04) 0%,transparent 70%);pointer-events:none"></div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center">
+      <div>
+        <div class="chart-title">% da Base com Contato no Mês</div>
+        <div class="chart-sub" style="margin-bottom:20px">Clientes que tiveram pelo menos 1 reunião ou ligação registrada</div>
+        <!-- Progress bar visual -->
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+            <span style="font-size:11px;color:var(--text2);font-weight:600">Com contato</span>
+            <span style="font-size:13px;font-weight:700;color:var(--teal)" id="contato-bar-n">—</span>
+          </div>
+          <div style="height:8px;background:rgba(255,255,255,.04);border-radius:8px;overflow:hidden;position:relative">
+            <div id="contato-bar-fill" style="height:100%;background:linear-gradient(90deg,var(--teal),rgba(43,191,170,.6));border-radius:8px;width:0%;transition:width 1.4s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px rgba(43,191,170,.4)"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+            <span style="font-size:11px;color:var(--text2);font-weight:600">Sem contato</span>
+            <span style="font-size:13px;font-weight:700;color:var(--red)" id="sem-contato-bar-n">—</span>
+          </div>
+          <div style="height:8px;background:rgba(255,255,255,.04);border-radius:8px;overflow:hidden">
+            <div id="sem-contato-bar-fill" style="height:100%;background:linear-gradient(90deg,var(--red),rgba(248,81,73,.5));border-radius:8px;width:0%;transition:width 1.4s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px rgba(248,81,73,.3)"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Big % number -->
+      <div style="text-align:center;padding:24px 32px;background:rgba(43,191,170,.05);border:1px solid rgba(43,191,170,.12);border-radius:12px;min-width:140px">
+        <div id="contato-pct-big" style="font-size:56px;font-weight:800;color:var(--teal);letter-spacing:-2px;line-height:1">—</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px;letter-spacing:.5px;text-transform:uppercase">com contato</div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(43,191,170,.1)">
+          <div id="contato-total-label" style="font-size:11px;color:var(--text3)">de <span id="contato-total-n" style="color:var(--text2);font-weight:600">—</span> clientes</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="sec" style="margin-top:24px">Último contato com clientes</div>
   <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px">
     <div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div style="font-size:11px;color:var(--text3)">Ordenado por mais dias sem contato · mês atual</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-right:4px">Filtrar</span>
+          <button class="dias-filter-btn active" onclick="setDiasFilter(0,this)">Todos</button>
+          <button class="dias-filter-btn" onclick="setDiasFilter(7,this)">+7 dias</button>
+          <button class="dias-filter-btn" onclick="setDiasFilter(14,this)">+14 dias</button>
+          <button class="dias-filter-btn" onclick="setDiasFilter(20,this)">+20 dias</button>
+          <button class="dias-filter-btn" onclick="setDiasFilter(31,this)">+31 dias</button>
+          <button class="dias-filter-btn" onclick="setDiasFilter(-1,this)">Sem contato</button>
+        </div>
         <input class="contact-search" id="contact-search" placeholder="Buscar cliente..." oninput="filterContactTable()">
       </div>
       <div class="action-list">
-        <div class="action-list-head">
+        <div class="action-list-head" style="grid-template-columns:2.5fr 1.2fr 80px 1fr 1fr 1fr">
           <div class="action-th">Cliente</div>
           <div class="action-th">Gestor</div>
           <div class="action-th" style="text-align:center">Dias s/ contato</div>
           <div class="action-th">Último contato</div>
-          <div class="action-th">Tipo</div>
+          <div class="action-th">Tipo de Contato</div>
+          <div class="action-th">Saúde</div>
         </div>
         <div id="contact-tbody"></div>
       </div>
@@ -843,6 +900,12 @@ function renderDashboard(){
   const ltvM=ccd.length>0?Math.round(ccd.reduce((a,c)=>{const s=new Date(c.dataInicio);return a+Math.max(0,(now.getFullYear()-s.getFullYear())*12+(now.getMonth()-s.getMonth()));},0)/ccd.length):0;
   document.getElementById('c-ltv').textContent=ltvM+' m';
   document.getElementById('c-ltv-sub').textContent='média de '+ccd.length+' clientes';
+  // Saude card metrics
+  const ltvDon=document.getElementById('ltv-donut');if(ltvDon)ltvDon.textContent=ltvM+'m';
+  const ltvSau=document.getElementById('ltv-saude');if(ltvSau)ltvSau.textContent='meses de contrato';
+  const ltvCnt=document.getElementById('ltv-count');if(ltvCnt)ltvCnt.textContent=ccd.length;
+  const riscoPctCard=document.getElementById('risco-pct-card');if(riscoPctCard)riscoPctCard.textContent=(clients.length>0?Math.round(emRisco.length/clients.length*100):0)+'%';
+  const riscoNCard=document.getElementById('risco-n-card');if(riscoNCard)riscoNCard.textContent=emRisco.length;
   // CRM + IA
   const crmClients=clients.filter(c=>c.crmia);
   const crmN=document.getElementById('c-crm-n');if(crmN)crmN.textContent=crmClients.length;
@@ -855,7 +918,7 @@ function renderDashboard(){
   }
 
   // Donut center values
-  const ltvD=document.getElementById('ltv-donut');if(ltvD)ltvD.textContent=ltvM+'m';
+
   const ltvS=document.getElementById('ltv-saude');if(ltvS)ltvS.textContent=ltvM+' meses';
 
   const sl=document.getElementById('c-sol-list');
@@ -907,10 +970,16 @@ function renderDashboard(){
     {label:'Recebido',data:wRecs,borderColor:'#3fb950',backgroundColor:'rgba(63,185,80,.08)',fill:true,tension:.4,pointBackgroundColor:'#161b22',pointBorderColor:'#3fb950',pointBorderWidth:2,pointRadius:4,pointHoverRadius:6,borderWidth:2}
   ]},options:{...chartDefaults,responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false}}});
 
-  // % contato chart (horizontal bar)
-  cContatoPct=dChart(cContatoPct);
+  // % contato premium card
   const semContato=clients.length-clientsComContato.length;
-  cContatoPct=mkChart('chart-contato-pct',{type:'bar',data:{labels:['Com contato','Sem contato'],datasets:[{data:[clientsComContato.length,semContato],backgroundColor:['rgba(43,191,170,.3)','rgba(248,81,73,.2)'],borderColor:['#2BBFAA','#f85149'],borderWidth:2,borderRadius:6,borderSkipped:false}]},options:{...chartDefaults,responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const total=clients.length;const pct=total>0?Math.round(ctx.raw/total*100):0;return ` ${ctx.raw} clientes (${pct}%)`;}}},datalabels:{display:false}},scales:{x:{grid:{color:'#21262d'},border:{display:false},ticks:{color:'#484f58',font:{family:'Inter',size:10}}},y:{grid:{display:false},border:{display:false},ticks:{color:'#8b949e',font:{family:'Inter',size:12,weight:'600'}}}}}});
+  const contatoPctBig=document.getElementById('contato-pct-big');if(contatoPctBig)contatoPctBig.textContent=contatoPct+'%';
+  const contatoBarN=document.getElementById('contato-bar-n');if(contatoBarN)contatoBarN.textContent=clientsComContato.length+' clientes';
+  const semContatoBarN=document.getElementById('sem-contato-bar-n');if(semContatoBarN)semContatoBarN.textContent=semContato+' clientes';
+  const contatoTotalN=document.getElementById('contato-total-n');if(contatoTotalN)contatoTotalN.textContent=clients.length;
+  setTimeout(()=>{
+    const cbf=document.getElementById('contato-bar-fill');if(cbf)cbf.style.width=contatoPct+'%';
+    const scbf=document.getElementById('sem-contato-bar-fill');if(scbf)scbf.style.width=(clients.length>0?Math.round(semContato/clients.length*100):0)+'%';
+  },400);
 
   // Contact table
   const rows=clients.map(c=>{
@@ -1096,6 +1165,32 @@ function updateSquadMedia(){
   });
   // Store for chart rendering if needed
   window._squadData={squads,diasDecorridos};
+}
+
+function setDiasFilter(dias, btn){
+  window._diasFilter=dias;
+  document.querySelectorAll('.dias-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderContactTableFiltered();
+}
+
+function renderContactTableFiltered(){
+  // Re-filter existing rows without re-fetching
+  const allRows=document.querySelectorAll('#contact-tbody .action-row');
+  const f=window._diasFilter||0;
+  allRows.forEach(row=>{
+    const diasEl=row.querySelector('.dias-badge');
+    const diasTxt=diasEl?diasEl.textContent.trim():'';
+    let dias=null;
+    if(diasTxt==='Hoje')dias=0;
+    else if(diasTxt.endsWith('d'))dias=parseInt(diasTxt);
+    let show=true;
+    if(f===-1)show=(dias===null&&diasTxt==='—');
+    else if(f>0)show=(dias===null&&diasTxt==='—')||dias>=f;
+    row.style.display=show?'':'none';
+  });
+  // search filter
+  filterContactTable();
 }
 
 function filterContactTable(){
