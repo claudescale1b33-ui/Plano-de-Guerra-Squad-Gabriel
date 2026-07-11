@@ -874,7 +874,7 @@ function renderContactTable(clients,reunItems){
       const sim=similarity(client.name,reunName);
       if(sim>=0.4){
         if(!contactMap[client.name]||new Date(contactMap[client.name].date)<itemDate){
-          contactMap[client.name]={date:dc.text,gestor,tipo:getTipo(item),reunName,sim};
+          contactMap[client.name]={date:dataTxt,gestor,tipo:getTipo(item),reunName,sim};
         }
       }
     });
