@@ -246,13 +246,6 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
 .gkpi-lbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
 .gkpi-val{font-size:18px;font-weight:800;letter-spacing:-0.5px}
 .gkpi-sub{font-size:10px;color:var(--text3);margin-top:2px}
-.gest-churn-limit{padding:12px 20px;border-bottom:1px solid var(--border);background:var(--red-bg)}
-.gcl-title{font-size:9px;font-weight:700;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
-.gcl-row{display:grid;grid-template-columns:1fr 1fr 2fr;gap:10px}
-.gcl-lbl{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:3px}
-.gcl-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;padding:6px 8px;outline:none;transition:border-color .15s}
-.gcl-input:focus{border-color:var(--red)}
-.gcl-input::placeholder{color:var(--text3)}
 .gest-body{padding:16px 20px}
 .g-sec{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
 .gtable{width:100%;border-collapse:collapse;margin-bottom:16px}
@@ -300,7 +293,7 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
 
 /* MOBILE */
 @media(max-width:1300px){.focus-grid{grid-template-columns:1fr 1fr 1fr!important}}
-@media(max-width:1100px){.metrics-grid{grid-template-columns:repeat(4,1fr)}.stat-cards{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.gest-kpis{grid-template-columns:repeat(4,1fr)!important}.gcl-row{grid-template-columns:1fr 1fr}.focus-grid{grid-template-columns:1fr 1fr!important}}
+@media(max-width:1100px){.metrics-grid{grid-template-columns:repeat(4,1fr)}.stat-cards{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.gest-kpis{grid-template-columns:repeat(4,1fr)!important}.focus-grid{grid-template-columns:1fr 1fr!important}}
 @media(max-width:768px){
   .content{padding:16px}.topnav{padding:12px 16px;flex-direction:column;align-items:flex-start;gap:8px;position:relative}.topnav-right{width:100%;justify-content:space-between}
   .estrat-bar{padding:10px 16px}.tab-bar{padding:0 16px}.metrics-grid{grid-template-columns:repeat(2,1fr)!important}.stat-cards{grid-template-columns:1fr}.charts-row{grid-template-columns:1fr}.ring-card{flex-direction:column;align-items:flex-start;gap:10px}.ring-info-bar{width:100%}.week-grid{grid-template-columns:1fr!important}.gest-kpis{grid-template-columns:repeat(2,1fr)!important}.gcl-row{grid-template-columns:1fr}.action-list-head{display:none}.action-row{grid-template-columns:1fr;gap:4px;padding:10px 16px}.action-cell{padding:0}
@@ -1118,14 +1111,7 @@ function renderDashboard(){
         <div class="gkpi"><div class="gkpi-lbl">Contatos</div><div class="gkpi-val" style="color:var(--teal)">${gReun}</div><div class="gkpi-sub">este mês</div></div>
         <div class="gkpi"><div class="gkpi-lbl">LTV Médio</div><div class="gkpi-val" style="color:var(--blue)">${gLtv}m</div><div class="gkpi-sub">${gcd.length} c/ data</div></div>
       </div>
-      <div class="gest-churn-limit">
-        <div class="gcl-title">Churn Máximo do Mês</div>
-        <div class="gcl-row">
-          <div><div class="gcl-lbl">Limite clientes</div><input class="gcl-input" placeholder="Ex: 2 clientes"></div>
-          <div><div class="gcl-lbl">Limite MRR</div><input class="gcl-input" placeholder="Ex: R$ 4.000"></div>
-          <div><div class="gcl-lbl">Ação se ultrapassar</div><input class="gcl-input" placeholder="Ex: Reunião emergencial COO"></div>
-        </div>
-      </div>
+
       <div class="gest-body">
         ${gCh.length>0?`<div class="g-sec">Churn Confirmado</div><table class="gtable"><thead><tr><th>Cliente</th><th>Status</th><th>MRR Perdido</th></tr></thead><tbody>${chRows}</tbody></table>`:''}
         ${gIn.length>0?`<div class="g-sec">Inadimplência</div><table class="gtable"><thead><tr><th>Cliente</th><th>Status</th><th>MRR em Risco</th></tr></thead><tbody>${inRows}</tbody></table>`:''}
@@ -1167,39 +1153,61 @@ function updateSquadMedia(){
   window._squadData={squads,diasDecorridos};
 }
 
-function setDiasFilter(dias, btn){
+function setDiasFilter(dias,btn){
   window._diasFilter=dias;
   document.querySelectorAll('.dias-filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  renderContactTableFiltered();
+  renderContactRows();
 }
 
-function renderContactTableFiltered(){
-  // Re-filter existing rows without re-fetching
-  const allRows=document.querySelectorAll('#contact-tbody .action-row');
+function renderContactRows(){
+  const tbody=document.getElementById('contact-tbody');
+  if(!tbody)return;
+  const rows=window._allContactRows||[];
   const f=window._diasFilter||0;
-  allRows.forEach(row=>{
-    const diasEl=row.querySelector('.dias-badge');
-    const diasTxt=diasEl?diasEl.textContent.trim():'';
-    let dias=null;
-    if(diasTxt==='Hoje')dias=0;
-    else if(diasTxt.endsWith('d'))dias=parseInt(diasTxt);
-    let show=true;
-    if(f===-1)show=(dias===null&&diasTxt==='—');
-    else if(f>0)show=(dias===null&&diasTxt==='—')||dias>=f;
-    row.style.display=show?'':'none';
+  const q=(document.getElementById('contact-search')?.value||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+
+  const filtered=rows.filter(r=>{
+    // Dias filter
+    if(f===-1&&r.dias!==null)return false;
+    if(f>0&&r.dias!==null&&r.dias<f)return false;
+    // Search filter
+    if(q){
+      const name=(r.client.name||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+      if(!name.includes(q))return false;
+    }
+    return true;
   });
-  // search filter
-  filterContactTable();
+
+  if(!filtered.length){
+    tbody.innerHTML='<div style="text-align:center;padding:24px;font-size:12px;color:var(--text3)">Nenhum cliente neste filtro</div>';
+    return;
+  }
+
+  tbody.innerHTML=filtered.map(r=>{
+    const diasStr=r.dias===null?'—':r.dias===0?'Hoje':r.dias+'d';
+    const diasClass=r.dias===null?'dias-none':r.dias===0?'dias-ok':r.dias<=3?'dias-ok':r.dias<=7?'dias-warn':'dias-alert';
+    const dataStr=r.contact?new Date(r.contact.date).toLocaleDateString('pt-BR'):'Sem contato';
+    const gestor=r.contact?(r.contact.gestor.split(',')[0].trim()):(r.client.gestor||'—');
+    const tipo=r.contact?r.contact.tipo:'—';
+    const saude=r.client.saude||'—';
+    const saudeColor=saude.toLowerCase().includes('saud')||saude.toLowerCase().includes('result')?'var(--green)':saude.toLowerCase().includes('crít')||saude.toLowerCase().includes('crit')?'var(--red)':saude.toLowerCase().includes('aten')?'var(--yellow)':saude.toLowerCase().includes('churn')?'var(--purple)':'var(--text3)';
+    return`<div class="action-row" style="grid-template-columns:2.5fr 1.2fr 80px 1fr 1fr 1fr">
+      <div class="action-cell"><span class="action-name">${r.client.name}</span></div>
+      <div class="action-cell"><span class="action-gestor">${gestor}</span></div>
+      <div class="action-cell" style="justify-content:center"><span class="dias-badge ${diasClass}">${diasStr}</span></div>
+      <div class="action-cell" style="font-size:11px;color:var(--text2)">${dataStr}</div>
+      <div class="action-cell"><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(88,166,255,.1);color:var(--blue);border:1px solid rgba(88,166,255,.2)">${tipo}</span></div>
+      <div class="action-cell"><span style="font-size:10px;font-weight:600;color:${saudeColor}">${saude}</span></div>
+    </div>`;
+  }).join('');
 }
 
 function filterContactTable(){
-  const q=(document.getElementById('contact-search')?.value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  document.querySelectorAll('#contact-tbody .action-row').forEach(row=>{
-    const name=(row.querySelector('.action-name')?.textContent||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-    row.style.display=(!q||name.includes(q))?'':'none';
-  });
+  renderContactRows();
 }
+
+
 
 function toggleCrmList(){
   const list=document.getElementById('crm-list');
