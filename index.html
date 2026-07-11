@@ -9,12 +9,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#061a0e;
-  --bg2:#0a2416;
-  --bg3:#0f2e1c;
-  --bg4:#143822;
-  --border:#1e4d2e;
-  --border2:#2a6b40;
+  --bg:#0d1a12;
+  --bg2:#111f16;
+  --bg3:#162a1c;
+  --bg4:#1a3022;
+  --border:#243d2c;
+  --border2:#2e5238;
   --text:#e6edf3;
   --text2:#8b949e;
   --text3:#484f58;
@@ -43,7 +43,7 @@ body{background:linear-gradient(160deg,#020d06 0%,#061a0e 30%,#0a2416 60%,#030d0
 .load-sub{font-size:12px;color:var(--text3)}
 
 /* TOP NAV */
-.topnav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(rgba(6,26,14,.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .topnav-left{display:flex;flex-direction:column;gap:2px}
 .topnav-eyebrow{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
 .topnav-title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
@@ -281,7 +281,8 @@ body{background:linear-gradient(160deg,#020d06 0%,#061a0e 30%,#0a2416 60%,#030d0
 .footer{font-size:10px;color:var(--text3);text-align:center;margin-top:32px;padding-top:14px;border-top:1px solid var(--border)}
 
 /* MOBILE */
-@media(max-width:1100px){.metrics-grid{grid-template-columns:repeat(4,1fr)}.stat-cards{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.gest-kpis{grid-template-columns:repeat(4,1fr)!important}.gcl-row{grid-template-columns:1fr 1fr}}
+@media(max-width:1300px){.focus-grid{grid-template-columns:1fr 1fr 1fr!important}}
+@media(max-width:1100px){.metrics-grid{grid-template-columns:repeat(4,1fr)}.stat-cards{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.gest-kpis{grid-template-columns:repeat(4,1fr)!important}.gcl-row{grid-template-columns:1fr 1fr}.focus-grid{grid-template-columns:1fr 1fr!important}}
 @media(max-width:768px){
   .content{padding:16px}.topnav{padding:12px 16px;flex-direction:column;align-items:flex-start;gap:8px;position:relative}.topnav-right{width:100%;justify-content:space-between}
   .estrat-bar{padding:10px 16px}.tab-bar{padding:0 16px}.metrics-grid{grid-template-columns:repeat(2,1fr)!important}.stat-cards{grid-template-columns:1fr}.charts-row{grid-template-columns:1fr}.ring-card{flex-direction:column;align-items:flex-start;gap:10px}.ring-info-bar{width:100%}.week-grid{grid-template-columns:1fr!important}.gest-kpis{grid-template-columns:repeat(2,1fr)!important}.gcl-row{grid-template-columns:1fr}.action-list-head{display:none}.action-row{grid-template-columns:1fr;gap:4px;padding:10px 16px}.action-cell{padding:0}
@@ -341,7 +342,7 @@ body{background:linear-gradient(160deg,#020d06 0%,#061a0e 30%,#0a2416 60%,#030d0
 <div class="tab-pane active" id="tab-overview">
 
   <div class="sec">Foco do mês</div>
-  <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+  <div style="display:grid;grid-template-columns:minmax(220px,1.4fr) 1fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px" class="focus-grid">
     <!-- MRR Projetado - destaque -->
     <div class="focus-card" style="grid-row:span 1">
       <div class="focus-eyebrow">NRR Projetado</div>
