@@ -756,9 +756,9 @@ function renderDashboard(){
   document.getElementById('c-meta').textContent=fmt(meta);
   document.getElementById('c-meta2').textContent=fmt(meta);
   document.getElementById('c-total').textContent=clients.length;
-  document.getElementById('c-risco-n').textContent=emRisco.length;
-  document.getElementById('c-sem-contato').textContent=clients.length-clientsComContato.length;
-  document.getElementById('c-churn-total').textContent=churnsC.length+solCh.length;
+  const crn=document.getElementById('c-risco-n');if(crn)crn.textContent=emRisco.length;
+  const csc=document.getElementById('c-sem-contato');if(csc)csc.textContent=clients.length-clientsComContato.length;
+  const cct=document.getElementById('c-churn-total');if(cct)cct.textContent=churnsC.length+solCh.length;
   // Hero cards
   const rv2=document.getElementById('ring-val2');if(rv2)rv2.textContent=fmt(tRec);
   const rp2=document.getElementById('ring-pct2');if(rp2){rp2.textContent=pct+'%';rp2.style.color=pc;}
