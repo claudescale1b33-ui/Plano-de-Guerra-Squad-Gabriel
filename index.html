@@ -338,38 +338,53 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 <div class="tab-pane active" id="tab-overview">
 
   <div class="sec">Foco do mês</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-    <div class="focus-card">
-      <div class="focus-eyebrow">NRR do Mês</div>
+  <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+    <!-- MRR Projetado - destaque -->
+    <div class="focus-card" style="grid-row:span 1">
+      <div class="focus-eyebrow">NRR Projetado</div>
       <div class="focus-number" id="c-proj">—</div>
-      <div class="focus-text">MRR Projetado <strong id="focus-estrat">—</strong></div>
-      <div class="focus-meta"><span id="c-proj-sub">—</span> · Meta: <span id="c-meta">—</span></div>
+      <div class="focus-text"><strong id="focus-estrat">—</strong></div>
+      <div class="focus-meta"><span id="c-proj-sub">—</span></div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(43,191,170,.2)">
+        <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Meta NRR 87,5%</div>
+        <div style="font-size:20px;font-weight:800;color:var(--yellow)" id="c-meta">—</div>
+      </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="stat-card">
-        <div class="stat-card-accent" style="background:var(--teal)"></div>
-        <div class="stat-number" id="c-total" style="color:var(--teal)">—</div>
-        <div class="stat-label">Clientes Ativos</div>
-        <div class="stat-sub">grupo ativo</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-accent" style="background:var(--red)"></div>
-        <div class="stat-number" id="c-risco-n" style="color:var(--red)">—</div>
-        <div class="stat-label">Em risco</div>
-        <div class="stat-sub">crítico, atenção ou churn</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-accent" style="background:var(--yellow)"></div>
-        <div class="stat-number" id="c-sem-contato" style="color:var(--yellow)">—</div>
-        <div class="stat-label">Sem contato</div>
-        <div class="stat-sub">neste mês</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-accent" style="background:var(--orange)"></div>
-        <div class="stat-number" id="c-churn-total" style="color:var(--orange)">—</div>
-        <div class="stat-label">Churn</div>
-        <div class="stat-sub">confirmado + solicitado</div>
-      </div>
+    <!-- Clientes Ativos -->
+    <div class="hero-card" style="background:linear-gradient(135deg,#0d2044,#0d1117);border:1px solid #1f3d6e;border-radius:12px;padding:20px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:#58a6ff10;border-radius:50%"></div>
+      <div style="font-size:9px;font-weight:700;color:#58a6ff;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Clientes Ativos</div>
+      <div style="font-size:44px;font-weight:800;color:#58a6ff;letter-spacing:-2px;line-height:1" id="c-total">—</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">carteira ativa</div>
+    </div>
+    <!-- NRR Recebido -->
+    <div class="hero-card" style="background:linear-gradient(135deg,var(--teal-bg),#0d1117);border:1px solid var(--teal-dim);border-radius:12px;padding:20px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:var(--teal)10;border-radius:50%"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">NRR Recebido</div>
+      <div style="font-size:28px;font-weight:800;color:var(--teal);letter-spacing:-1px;line-height:1" id="ring-val2">—</div>
+      <div style="font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-top:4px" id="ring-pct2" style="color:var(--teal)">—%</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">do projetado</div>
+    </div>
+    <!-- Churn Confirmado -->
+    <div class="hero-card" style="background:linear-gradient(135deg,var(--red-bg),#0d1117);border:1px solid var(--red-dim);border-radius:12px;padding:20px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:var(--red)08;border-radius:50%"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Churn Confirmado</div>
+      <div style="font-size:44px;font-weight:800;color:var(--red);letter-spacing:-2px;line-height:1" id="c-churn-n2">—</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px" id="c-churn-mrr-hero">—</div>
+    </div>
+    <!-- Churn Solicitado -->
+    <div class="hero-card" style="background:linear-gradient(135deg,var(--orange-bg),#0d1117);border:1px solid var(--orange-dim);border-radius:12px;padding:20px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:var(--orange)08;border-radius:50%"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--orange);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Sol. de Churn</div>
+      <div style="font-size:44px;font-weight:800;color:var(--orange);letter-spacing:-2px;line-height:1" id="c-sol-n2">—</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">solicitaram churn</div>
+    </div>
+    <!-- Expansão -->
+    <div class="hero-card" style="background:linear-gradient(135deg,var(--green-bg),#0d1117);border:1px solid var(--green-dim);border-radius:12px;padding:20px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:var(--green)08;border-radius:50%"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Expansão do Mês</div>
+      <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;line-height:1" id="exp-total2">R$ 0</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">soma das semanas</div>
     </div>
   </div>
 
@@ -565,6 +580,7 @@ function updateTotals(){
   let te=0;document.querySelectorAll('.wk-exp-input').forEach(el=>te+=parseVal(el.value));
   let tc=0;document.querySelectorAll('.wk-churn-input').forEach(el=>tc+=parseVal(el.value));
   const ee=document.getElementById('exp-total');if(ee)ee.textContent=fmt(te);
+  const ee2=document.getElementById('exp-total2');if(ee2)ee2.textContent=fmt(te);
   const ce=document.getElementById('c-churn-mrr-val');if(ce)ce.textContent=fmt(tc);
   const cs=document.getElementById('c-churn-mrr-sub');if(cs)cs.textContent=tc>0?'soma das semanas':'preencha no semanal';
   calcExpTotal();
@@ -736,13 +752,21 @@ function renderDashboard(){
 
   // Cards
   document.getElementById('c-proj').textContent=fmt(tProj);
-  document.getElementById('c-proj-sub').textContent=clients.length+' clientes ativos';
-  document.getElementById('c-meta').textContent='Meta: '+fmt(meta);
+  document.getElementById('c-proj-sub').textContent=clients.length+' clientes';
+  document.getElementById('c-meta').textContent=fmt(meta);
   document.getElementById('c-meta2').textContent=fmt(meta);
   document.getElementById('c-total').textContent=clients.length;
   document.getElementById('c-risco-n').textContent=emRisco.length;
   document.getElementById('c-sem-contato').textContent=clients.length-clientsComContato.length;
   document.getElementById('c-churn-total').textContent=churnsC.length+solCh.length;
+  // Hero cards
+  const rv2=document.getElementById('ring-val2');if(rv2)rv2.textContent=fmt(tRec);
+  const rp2=document.getElementById('ring-pct2');if(rp2){rp2.textContent=pct+'%';rp2.style.color=pc;}
+  const cn2=document.getElementById('c-churn-n2');if(cn2)cn2.textContent=churnsC.length;
+  const cm2=document.getElementById('c-churn-mrr-hero');if(cm2)cm2.textContent=fmt(churnsC.reduce((a,c)=>a+c.proj,0))+' MRR perdido';
+  const cs2=document.getElementById('c-sol-n2');if(cs2)cs2.textContent=solCh.length;
+  const et2=document.getElementById('exp-total2');
+  // exp-total2 is updated by updateTotals()
   document.getElementById('c-churn-n').textContent=churnsC.length;
   document.getElementById('c-inadim-n').textContent=inadims.length;
   document.getElementById('c-inadim-mrr').textContent=fmt(inadimMrr)+' em risco';
@@ -783,8 +807,15 @@ function renderDashboard(){
   const wRecs=weeks.map(w=>clients.filter(c=>c.day&&c.day>=w.start&&c.day<=w.end).reduce((a,c)=>a+c.rec,0));
 
   // Saude data
-  const saudeD={Saudável:0,Atenção:0,Crítico:0,Churn:0,Outros:0};
-  clients.forEach(c=>{const s=(c.saude||'').toLowerCase();if(s.includes('saud'))saudeD['Saudável']++;else if(s.includes('aten'))saudeD['Atenção']++;else if(s.includes('crít')||s.includes('crit'))saudeD['Crítico']++;else if(s.includes('churn'))saudeD['Churn']++;else saudeD['Outros']++;});
+  const saudeD={'Saudável / Resultado':0,'Atenção':0,'Crítico':0,'Onboarding / Campanhas':0,'Churn':0};
+  clients.forEach(c=>{
+    const s=(c.saude||'').toLowerCase();
+    if(s.includes('saud')||s.includes('resultado'))saudeD['Saudável / Resultado']++;
+    else if(s.includes('aten'))saudeD['Atenção']++;
+    else if(s.includes('crít')||s.includes('crit'))saudeD['Crítico']++;
+    else if(s.includes('onboarding')||s.includes('campanha'))saudeD['Onboarding / Campanhas']++;
+    else if(s.includes('churn'))saudeD['Churn']++;
+  });
 
   // Charts
   cNrr=dChart(cNrr);
@@ -794,7 +825,7 @@ function renderDashboard(){
   ]},options:{...chartDefaults,responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false}}});
 
   cSaude=dChart(cSaude);
-  cSaude=mkChart('chart-saude',{type:'doughnut',data:{labels:Object.keys(saudeD),datasets:[{data:Object.values(saudeD),backgroundColor:['#2BBFAA','#d29922','#f85149','#bc8cff','#484f58'],borderWidth:2,borderColor:'#161b22',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'right',labels:{color:'#8b949e',font:{family:'Inter',size:11},boxWidth:8,boxHeight:8,padding:10}},tooltip:{backgroundColor:'#21262d',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:6,callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}`}}}}});
+  cSaude=mkChart('chart-saude',{type:'doughnut',data:{labels:Object.keys(saudeD),datasets:[{data:Object.values(saudeD),backgroundColor:['#2BBFAA','#d29922','#f85149','#58a6ff','#bc8cff'],borderWidth:2,borderColor:'#161b22',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'right',labels:{color:'#8b949e',font:{family:'Inter',size:11},boxWidth:8,boxHeight:8,padding:10}},tooltip:{backgroundColor:'#21262d',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:6,callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}`}}}}});
 
   cSemanal=dChart(cSemanal);
   cSemanal=mkChart('chart-semanal',{type:'line',data:{labels:wLabels,datasets:[
