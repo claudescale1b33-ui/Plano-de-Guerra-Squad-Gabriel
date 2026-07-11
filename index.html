@@ -1168,15 +1168,15 @@ function renderContactRows(){
   const q=(document.getElementById('contact-search')?.value||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 
   const filtered=rows.filter(r=>{
-    // Dias filter
-    if(f===-1&&r.dias!==null)return false;
-    if(f>0&&r.dias!==null&&r.dias<f)return false;
     // Search filter
     if(q){
       const name=(r.client.name||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
       if(!name.includes(q))return false;
     }
-    return true;
+    // Dias filter
+    if(f===-1)return r.dias===null; // Sem contato = nunca tiveram
+    if(f===0)return true; // Todos
+    return r.dias===null||r.dias>=f; // +N dias = sem contato ou N+ dias
   });
 
   if(!filtered.length){
