@@ -192,12 +192,14 @@ body{
 .contact-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
 .contact-head{display:grid;grid-template-columns:2.5fr 1.2fr 90px 1fr 1fr 1fr;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
 .contact-th{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:10px 14px}
-.contact-row{display:grid;grid-template-columns:2.5fr 1.2fr 90px 1fr 1fr 1fr;border-bottom:1px solid var(--border);transition:background .1s}
+.contact-row,.action-row{display:grid;grid-template-columns:2.5fr 1.2fr 90px 1fr 1fr 1fr;border-bottom:1px solid var(--border);transition:background .1s}
+.contact-row:last-child,.action-row:last-child{border-bottom:none}
+.contact-row:hover,.action-row:hover{background:rgba(43,191,170,.04)}
 .contact-row:last-child{border-bottom:none}
-.contact-row:hover{background:rgba(43,191,170,.04)}
-.contact-cell{padding:11px 14px;display:flex;align-items:center;font-size:12px;color:var(--text)}
-.contact-name{font-weight:600}
-.contact-gsub{font-size:11px;color:var(--text2)}
+
+.contact-cell,.action-cell{padding:11px 14px;display:flex;align-items:center;font-size:12px;color:var(--text)}
+.contact-name,.action-name{font-weight:600;color:var(--text)}
+.contact-gsub,.action-gestor{font-size:11px;color:var(--text2)}
 .dias-badge{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;min-width:52px}
 .dias-ok{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.2)}
 .dias-warn{background:rgba(210,153,34,.12);color:var(--yellow);border:1px solid rgba(210,153,34,.2)}
