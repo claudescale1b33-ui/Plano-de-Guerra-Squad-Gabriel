@@ -2,230 +2,259 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Plano de Guerra · MO 2.0</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#020804;
-  --bg2:#060f08;
-  --bg3:#0a1a0d;
-  --bg4:#0d2010;
-  --border:#152a18;
-  --border2:#1e3d22;
-  --text:#e6edf3;
-  --text2:#8b949e;
-  --text3:#484f58;
-  --green:#3fb950;--green-dim:#196c2e;--green-bg:#0d2818;
-  --yellow:#d29922;--yellow-dim:#7d5a00;--yellow-bg:#2d2000;
-  --red:#f85149;--red-dim:#8e1a14;--red-bg:#2d0f0e;
-  --blue:#58a6ff;--blue-dim:#1f3d6e;--blue-bg:#0d2044;
-  --purple:#bc8cff;--purple-dim:#5a3d8a;--purple-bg:#1a0d33;
-  --orange:#e3b341;--orange-dim:#7d5a00;--orange-bg:#2d2000;
-  --teal:#2BBFAA;--teal-dim:#0e5c53;--teal-bg:#061a18;
-  --pink:#f778ba;--pink-dim:#7d2b5c;--pink-bg:#2d0f22;
+  --mo:#2BBFAA;
+  --mo2:rgba(43,191,170,.6);
+  --red:#f85149;
+  --yellow:#d29922;
+  --green:#3fb950;
+  --bg:#0b1d13;
+  --card:rgba(255,255,255,.04);
+  --card-hover:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.92);
+  --text2:rgba(255,255,255,.45);
+  --text3:rgba(255,255,255,.22);
   --sans:'Inter',sans-serif;
-  --radius:8px;
-  --radius-lg:12px;
+  --r:12px;
 }
+
 html{scroll-behavior:smooth}
-
-/* GLOW EFFECTS */
-.glow-teal{box-shadow:0 0 20px rgba(43,191,170,.12),0 0 40px rgba(43,191,170,.06)}
-.glow-red{box-shadow:0 0 20px rgba(248,81,73,.12),0 0 40px rgba(248,81,73,.06)}
-.glow-green{box-shadow:0 0 20px rgba(63,185,80,.12)}
-.glow-yellow{box-shadow:0 0 20px rgba(210,153,34,.12)}
-
-/* GLASS MORPHISM */
-.glass{background:rgba(255,255,255,.03);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06)}
-.glass-strong{background:rgba(255,255,255,.05);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid rgba(255,255,255,.08)}
-
-/* NOISE TEXTURE */
-.noise::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;border-radius:inherit;z-index:0}
-body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#000300 70%,#010402 100%);background-attachment:fixed;color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+body{
+  background:radial-gradient(ellipse 100% 60% at 50% -5%,rgba(43,191,170,.1) 0%,transparent 55%),linear-gradient(180deg,#0b1d13 0%,#070f09 60%,#040a06 100%);background-attachment:fixed;
+  color:var(--text);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
 
 /* LOADING */
-#loading{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s}
+#loading{position:fixed;inset:0;background:#0b1d13;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s}
 #loading.out{opacity:0;pointer-events:none}
-.load-logo{font-size:32px;font-weight:800;color:var(--teal);letter-spacing:-1px}
-.load-bar{width:160px;height:2px;background:var(--border);border-radius:2px;overflow:hidden}
-.load-bar-f{height:100%;background:var(--teal);animation:lb 1.5s ease forwards;border-radius:2px}
-@keyframes lb{0%{width:0}100%{width:100%}}
-.load-sub{font-size:12px;color:var(--text3)}
+.load-ring{width:48px;height:48px;border:2px solid rgba(43,191,170,.15);border-top-color:var(--mo);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-sub{font-size:12px;color:var(--text3);letter-spacing:.5px}
 
-/* TOP NAV */
-.topnav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:rgba(2,8,4,.85);border-bottom:1px solid rgba(43,191,170,.1);position:sticky;top:0;z-index:100;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
-.topnav-left{display:flex;flex-direction:column;gap:2px}
-.topnav-eyebrow{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
-.topnav-title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
-.topnav-sub{font-size:11px;color:var(--text3)}
-.topnav-right{display:flex;align-items:center;gap:10px}
-.live-dot{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
-.live-dot::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.upd-pill{font-size:11px;color:var(--text2);padding:0}
-.refresh-btn{display:flex;align-items:center;gap:7px;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:12px;font-weight:600;padding:8px 16px;cursor:pointer;transition:all .15s}
-.refresh-btn:hover{background:var(--bg3);border-color:var(--teal);color:var(--teal)}
-.ri{transition:transform .4s}
-.refresh-btn:hover .ri{transform:rotate(180deg)}
+/* TOPNAV */
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;
+  background:rgba(11,29,19,.92);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
+.nav-brand{display:flex;align-items:center;gap:14px}
+.nav-logo{height:30px;width:auto;filter:brightness(0) invert(1);opacity:.85}
+.nav-divider{width:1px;height:28px;background:var(--border)}
+.nav-info{display:flex;flex-direction:column;gap:2px}
+.nav-eyebrow{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:2px;text-transform:uppercase}
+.nav-title{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1}
+.nav-sub{font-size:11px;color:var(--text3)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-live{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3)}
+.nav-live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--mo);display:inline-block;animation:pulse 2s infinite;opacity:1}
+@keyframes pulse{0%{opacity:1}70%{box-shadow:0 0 0 6px rgba(43,191,170,0)}100%{box-shadow:0 0 0 0 rgba(43,191,170,0)}}
+.nav-ts{font-size:11px;color:var(--text3)}
+.nav-btn{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(43,191,170,.12);
+  border:1px solid rgba(43,191,170,.3);
+  border-radius:8px;color:var(--mo);
+  font-size:12px;font-weight:600;
+  padding:8px 16px;cursor:pointer;
+  transition:all .2s;font-family:var(--sans);
+}
+.nav-btn:hover{background:rgba(43,191,170,.2);border-color:var(--mo);transform:translateY(-1px)}
+.nav-btn .ri{transition:transform .5s}
+.nav-btn:hover .ri{transform:rotate(180deg)}
 
-/* ESTRAT FILTER */
-.estrat-bar{display:flex;align-items:center;gap:6px;padding:10px 28px;background:rgba(2,8,4,.7);border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap}
-.estrat-lbl{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-right:6px}
-.estrat-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:12px;font-weight:500;padding:5px 14px;cursor:pointer;transition:all .15s}
-.estrat-btn:hover{border-color:var(--teal);color:var(--teal)}
-.estrat-btn.active{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);font-weight:600}
-.estrat-avatar{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0}
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:8px;padding:10px 28px;background:rgba(11,29,19,.8);border-bottom:1px solid rgba(255,255,255,.06);flex-wrap:wrap}
+.filter-lbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-right:4px}
+.filter-btn{
+  display:flex;align-items:center;gap:6px;
+  background:transparent;border:1px solid var(--border);
+  border-radius:20px;color:var(--text2);
+  font-size:12px;font-weight:500;
+  padding:5px 14px;cursor:pointer;
+  transition:all .15s;font-family:var(--sans);
+}
+.filter-btn:hover{border-color:var(--mo);color:var(--mo)}
+.filter-btn.active{background:rgba(43,191,170,.12);border-color:rgba(43,191,170,.35);color:var(--mo);font-weight:600}
+.filter-avatar{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff}
 
 /* TABS */
-.tab-bar{display:flex;gap:0;padding:0 28px;background:rgba(2,8,4,.7);border-bottom:1px solid rgba(255,255,255,.04);overflow-x:auto}
-.tab{background:transparent;border:none;border-bottom:2px solid transparent;font-size:13px;font-weight:500;color:var(--text3);padding:12px 16px 10px;cursor:pointer;transition:all .15s;white-space:nowrap}
-.tab:hover{color:var(--text2)}
-.tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--teal);text-shadow:0 0 20px rgba(43,191,170,.4)}
-.tab-pane{display:none;animation:fi .2s ease}
+.tabs{display:flex;gap:0;padding:0 28px;background:rgba(11,29,19,.8);border-bottom:1px solid rgba(255,255,255,.06);overflow-x:auto}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;font-size:13px;font-weight:500;color:var(--text3);padding:12px 18px 10px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:var(--sans)}
+.tab-btn:hover{color:rgba(255,255,255,.7)}
+.tab-btn.active{color:var(--text);font-weight:700;border-bottom-color:var(--mo)}
+.tab-pane{display:none;animation:fadeup .25s ease}
 .tab-pane.active{display:block}
-@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 /* CONTENT */
-.content{padding:24px;max-width:1400px;margin:0 auto}
+.content{padding:24px 28px;max-width:1440px;margin:0 auto}
 
 /* SECTION */
-.sec{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;margin-top:28px;display:flex;align-items:center;gap:10px}
+.sec{display:flex;align-items:center;gap:12px;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:2.5px;text-transform:uppercase;margin:24px 0 14px}
 .sec:first-child{margin-top:0}
 .sec::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* FOCUS CARD */
-.focus-card{background:linear-gradient(135deg,rgba(43,191,170,.08) 0%,rgba(2,8,4,.6) 100%);border:1px solid rgba(43,191,170,.2);border-radius:var(--radius-lg);padding:28px 32px;position:relative;overflow:hidden;margin-bottom:12px;backdrop-filter:blur(20px)}
-.focus-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--teal),transparent)}
-.focus-card::after{content:'';position:absolute;top:-80px;right:-80px;width:200px;height:200px;background:radial-gradient(circle,rgba(43,191,170,.08) 0%,transparent 70%);pointer-events:none}
-.focus-eyebrow{font-size:10px;font-weight:700;color:var(--teal);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
-.focus-number{font-size:64px;font-weight:800;line-height:1;color:var(--text);letter-spacing:-2px;margin-bottom:4px}
-.focus-text{font-size:18px;color:var(--text2);font-weight:400}
-.focus-text strong{color:var(--orange);font-weight:700}
-.focus-meta{font-size:12px;color:var(--text3);margin-top:14px}
-.focus-meta span{color:var(--blue)}
+/* FOCUS SECTION */
+.focus-grid{display:grid;grid-template-columns:minmax(240px,1.5fr) repeat(5,1fr);gap:10px;margin-bottom:10px}
 
-/* STAT CARDS ROW */
-.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;position:relative;overflow:hidden;transition:border-color .15s}
-.stat-card:hover{border-color:var(--border2)}
-.stat-card-accent{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px}
-.stat-number{font-size:42px;font-weight:800;line-height:1;letter-spacing:-1px;margin-bottom:4px}
-.stat-label{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
-.stat-sub{font-size:11px;color:var(--text3)}
-.stat-bar{height:2px;background:var(--border);border-radius:2px;margin-top:14px;overflow:hidden}
-.stat-bar-f{height:100%;border-radius:2px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+.focus-main{
+  background:linear-gradient(135deg,rgba(43,191,170,.1) 0%,rgba(43,191,170,.02) 100%);
+  border:1px solid rgba(43,191,170,.2);
+  border-radius:16px;padding:26px 28px;position:relative;overflow:hidden;
+}
+.focus-main::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--mo),rgba(43,191,170,.3),transparent);
+}
+.focus-main::after{
+  content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;
+  display:none;
+}
+.focus-label{font-size:9px;font-weight:700;color:var(--mo);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;opacity:.8}
+.focus-value{font-size:48px;font-weight:900;color:var(--text);letter-spacing:-2px;line-height:1}
+.focus-sub{font-size:12px;color:var(--text2);margin-top:8px}
+.focus-meta{display:flex;align-items:center;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(43,191,170,.12)}
+.focus-meta-lbl{font-size:10px;color:var(--text3)}
+.focus-meta-val{font-size:13px;font-weight:700;color:rgba(255,255,255,.6)}
 
-/* METRIC GRID */
-.metrics-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:rgba(21,42,24,.4);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:12px}
-.mcard{background:rgba(6,15,8,.6);padding:16px 18px;transition:all .2s;position:relative;backdrop-filter:blur(10px)}
-.mcard:hover{background:rgba(10,26,13,.8);transform:translateY(-1px)}
-.mcard-accent{position:absolute;top:0;left:0;right:0;height:2px}
-.mcard-lbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-.mcard-val{font-size:20px;font-weight:800;letter-spacing:-0.5px;line-height:1;margin-bottom:3px}
-.mcard-sub{font-size:10px;color:var(--text3);line-height:1.4}
-.mcard-bar{height:2px;background:var(--border);border-radius:2px;margin-top:10px;overflow:hidden}
-.mcard-bar-f{height:100%;border-radius:2px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+/* MINI HERO CARDS */
+.hero-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;padding:20px;
+  position:relative;overflow:hidden;
+  transition:background .2s,border-color .2s,transform .2s;
+}
+.hero-card:hover{background:var(--card-hover);transform:translateY(-2px)}
+.hero-card-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.hero-card-value{font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1}
+.hero-card-sub{font-size:11px;color:var(--text3);margin-top:7px;line-height:1.4}
+.hero-card-glow{position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;pointer-events:none;opacity:.4}
 
-/* RING */
-.ring-card{background:rgba(6,15,8,.6);padding:16px 18px;display:flex;align-items:center;gap:14px;transition:all .2s;backdrop-filter:blur(10px)}
-.ring-card:hover{background:rgba(10,26,13,.8)}
-.ring-wrap{position:relative;width:68px;height:68px;flex-shrink:0}
-.ring-svg{transform:rotate(-90deg)}
-.ring-bg-c{fill:none;stroke:var(--border);stroke-width:6}
-.ring-fill-c{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)}
-.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring-pct{font-size:14px;font-weight:800;line-height:1}
-.ring-lbl{font-size:7px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase}
-.ring-info-lbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
-.ring-info-val{font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:2px}
-.ring-info-sub{font-size:10px;color:var(--text3)}
-.ring-info-bar{height:2px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden;width:100%}
-.ring-info-bar-f{height:100%;border-radius:2px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+/* METRIC ROWS */
+.mrow{display:grid;gap:8px;margin-bottom:8px}
 
-/* EXP/SOL CARDS */
-.exp-card,.sol-card{background:rgba(6,15,8,.6);padding:16px 18px;transition:all .2s;backdrop-filter:blur(10px)}
-.exp-card:hover,.sol-card:hover{background:var(--bg3)}
-.exp-lbl,.sol-lbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-.exp-val{font-size:20px;font-weight:800;color:var(--green);letter-spacing:-0.5px;line-height:1;margin-bottom:3px}
-.sol-val{font-size:20px;font-weight:800;color:var(--orange);letter-spacing:-0.5px;line-height:1;margin-bottom:3px}
-.exp-sub,.sol-sub{font-size:10px;color:var(--text3)}
+/* NRR CARD (ring) */
+.nrr-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:18px 16px;
+  display:flex;align-items:center;gap:14px;
+  transition:background .2s;
+}
+.nrr-card:hover{background:var(--card-hover)}
+
+/* STAT CARDS */
+.stat{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:16px;
+  transition:background .2s,border-color .2s;
+  position:relative;overflow:hidden;
+}
+.stat:hover{background:var(--card-hover)}
+.stat-top{position:absolute;top:0;left:0;right:0;height:1px}
+.stat-lbl{font-size:8px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.stat-val{font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1}
+.stat-sub{font-size:10px;color:var(--text3);margin-top:5px;line-height:1.4}
+.stat-bar{height:2px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:12px;overflow:hidden}
+.stat-bar-f{height:100%;border-radius:2px;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+
+/* SOL CHURN */
 .sol-list{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .sol-list.open{display:block}
 .sol-item{font-size:11px;color:var(--text2);padding:3px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
 .sol-item:last-child{border-bottom:none}
-.sol-dot{width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0}
-.sol-btn{font-size:10px;color:var(--blue);cursor:pointer;background:none;border:none;padding:0;font-weight:600;margin-top:5px;display:block}
-
-/* BADGE */
-.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.3px}
-.badge-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(63,185,80,.25)}
-.badge-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-dim)}
-.badge-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(248,81,73,.25)}
-.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-dim)}
-.badge-teal{background:var(--teal-bg);color:var(--teal);border:1px solid rgba(43,191,170,.25)}
-.badge-orange{background:var(--orange-bg);color:var(--orange);border:1px solid rgba(227,179,65,.25)}
-.badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-dim)}
 
 /* CHART CARDS */
-.chart-card{background:rgba(6,15,8,.7);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);padding:22px;margin-bottom:12px;backdrop-filter:blur(20px);transition:border-color .2s}
-.chart-card:hover{border-color:rgba(43,191,170,.15)}
-.chart-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
-.chart-sub{font-size:11px;color:var(--text3);margin-bottom:16px}
-.charts-row{display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:12px}
+.chart-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:22px;
+  transition:border-color .2s;
+}
+.chart-card:hover{border-color:#d0f0eb}
+.chart-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.chart-sub{font-size:11px;color:var(--text3);margin-bottom:18px}
+.charts-row{display:grid;grid-template-columns:3fr 2fr;gap:10px;margin-bottom:10px}
 
-/* ACTION LIST (contact table) */
-.action-list{background:rgba(6,15,8,.7);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);overflow:hidden;backdrop-filter:blur(20px)}
-.action-list-head{display:grid;grid-template-columns:3fr 1.5fr 80px 1.2fr 1fr;background:rgba(255,255,255,.02);border-bottom:1px solid rgba(255,255,255,.05)}
-.action-th{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:10px 16px}
-.action-row{display:grid;grid-template-columns:3fr 1.5fr 80px 1.2fr 1fr;border-bottom:1px solid var(--border);transition:background .1s;cursor:default}
-.action-row:last-child{border-bottom:none}
-.action-row:hover{background:rgba(43,191,170,.04)}
-.action-cell{padding:11px 16px;display:flex;align-items:center;font-size:12px;color:var(--text)}
-.action-name{font-weight:600;color:var(--text)}
-.action-gestor{font-size:11px;color:var(--text2)}
+/* CONTACT TABLE */
+.contact-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.contact-head{display:grid;grid-template-columns:2.5fr 1.2fr 90px 1fr 1fr 1fr;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+.contact-th{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:10px 14px}
+.contact-row{display:grid;grid-template-columns:2.5fr 1.2fr 90px 1fr 1fr 1fr;border-bottom:1px solid var(--border);transition:background .1s}
+.contact-row:last-child{border-bottom:none}
+.contact-row:hover{background:rgba(43,191,170,.04)}
+.contact-cell{padding:11px 14px;display:flex;align-items:center;font-size:12px;color:var(--text)}
+.contact-name{font-weight:600}
+.contact-gsub{font-size:11px;color:var(--text2)}
 .dias-badge{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;min-width:52px}
-.dias-ok{background:var(--green-bg);color:var(--green);border:1px solid rgba(63,185,80,.25)}
-.dias-warn{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-dim)}
-.dias-alert{background:var(--red-bg);color:var(--red);border:1px solid rgba(248,81,73,.25)}
-.dias-none{background:var(--bg4);color:var(--text3);border:1px solid var(--border)}
+.dias-ok{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.2)}
+.dias-warn{background:rgba(210,153,34,.12);color:var(--yellow);border:1px solid rgba(210,153,34,.2)}
+.dias-alert{background:rgba(248,81,73,.12);color:var(--red);border:1px solid rgba(248,81,73,.2)}
+.dias-none{background:rgba(255,255,255,.04);color:var(--text3);border:1px solid var(--border)}
 
 /* RANKING */
-.rank-card{background:rgba(6,15,8,.7);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);overflow:hidden;backdrop-filter:blur(20px)}
-.rank-item{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);transition:background .1s}
+.rank-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.rank-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);transition:background .1s}
 .rank-item:last-child{border-bottom:none}
-.rank-item:hover{background:rgba(43,191,170,.05)}
-.rank-pos{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
-.rank-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0}
-.rank-name{font-size:12px;font-weight:600;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rank-count{font-size:20px;font-weight:800;color:var(--teal);min-width:32px;text-align:right}
+.rank-item:hover{background:rgba(43,191,170,.04)}
+.rank-pos{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.rank-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;background:rgba(43,191,170,.15);border:1px solid rgba(43,191,170,.25)}
+.rank-name{font-size:12px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-n{font-size:20px;font-weight:800;color:var(--mo)}
 .rank-sub{font-size:10px;color:var(--text3)}
 
-/* WEEKLY */
-.week-grid{display:grid;gap:1px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:12px}
-.wk{background:rgba(6,15,8,.7);backdrop-filter:blur(10px)}
-.wk-head{padding:11px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.05)}
+/* DIAS FILTER BTNS */
+.dias-filter-btn{background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--text3);font-size:11px;font-weight:600;padding:5px 12px;cursor:pointer;transition:all .15s;font-family:var(--sans)}
+.dias-filter-btn:hover{color:var(--mo);border-color:#b2ece5}
+.dias-filter-btn.active{background:rgba(43,191,170,.1);border-color:rgba(43,191,170,.3);color:var(--mo)}
+
+/* CONTACT SEARCH */
+.contact-search{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;padding:6px 10px;outline:none;width:180px;transition:border-color .15s;font-family:var(--sans)}
+.contact-search:focus{border-color:var(--mo)}
+.contact-search::placeholder{color:var(--text3)}
+
+/* CONTATO PCT CARD */
+.contato-pct-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:10px}
+
+/* SAUDE CARD */
+.saude-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.saude-sub-card{border-radius:10px;padding:20px;position:relative;overflow:hidden}
+
+/* WEEKS */
+.week-grid{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px}
+.wk{background:#f9fafb}
+.wk-head{padding:11px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
 .wk-tag{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
 .wk-dates{font-size:11px;font-weight:700;margin-left:auto}
-.wk-body{padding:12px 16px;display:flex;flex-direction:column;gap:10px}
-.wk-mlbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.wk-mval{font-size:15px;font-weight:800;letter-spacing:-0.5px;line-height:1}
-.wk-bar{height:2px;background:var(--border);border-radius:2px;margin-top:4px;overflow:hidden}
+.wk-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.wk-lbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
+.wk-val{font-size:15px;font-weight:800;letter-spacing:-0.5px;line-height:1}
+.wk-bar{height:2px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:4px;overflow:hidden}
 .wk-bar-f{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
 .wk-pct{font-size:9px;padding:2px 6px;border-radius:3px;display:inline-block;margin-left:5px;vertical-align:middle;font-weight:700}
 .wk-sep{border:none;border-top:1px solid var(--border)}
 .wk-flbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.wk-churn-val{font-size:13px;font-weight:700;color:var(--red);padding:2px 0}
-.wk-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;padding:6px 8px;outline:none;transition:border-color .15s}
-.wk-input:focus{border-color:var(--teal)}
+.wk-churn{font-size:13px;font-weight:700;color:var(--red);padding:2px 0}
+.wk-input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text);font-size:11px;padding:6px 8px;outline:none;transition:border-color .15s;font-family:var(--sans)}
+.wk-input:focus{border-color:var(--mo)}
 .wk-input::placeholder{color:var(--text3)}
-.wk-foot{padding:9px 16px;background:var(--bg3);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.wk-foot{padding:9px 16px;background:rgba(255,255,255,.02);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .wk-gap-lbl{font-size:10px;color:var(--text3)}
 .wk-gap-val{font-size:13px;font-weight:800;letter-spacing:-0.5px}
-.expand-btn{background:var(--bg4);border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;padding:3px 9px;transition:all .15s}
-.expand-btn:hover{color:var(--teal);border-color:var(--teal)}
+.expand-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;padding:3px 9px;transition:all .15s;font-family:var(--sans)}
+.expand-btn:hover{color:var(--mo);border-color:#b2ece5}
 .cl-list{display:none;margin-top:6px;border-top:1px solid var(--border);padding-top:6px}
 .cl-item{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-bottom:1px solid var(--border);align-items:center}
 .cl-item:last-child{border-bottom:none}
@@ -235,19 +264,19 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
 
 /* GESTORES */
 .gest-wrap{display:flex;flex-direction:column;gap:10px}
-.gest-block{background:rgba(6,15,8,.7);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);overflow:hidden;backdrop-filter:blur(20px)}
-.gest-head{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
-.gest-avatar{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
-.gest-name{font-size:14px;font-weight:700;color:var(--text)}
+.gest-block{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.gest-head{padding:16px 22px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.gest-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+.gest-name{font-size:14px;font-weight:700}
 .gest-role{font-size:11px;color:var(--text3);margin-top:1px}
-.gest-kpis{display:grid;background:var(--bg3);border-bottom:1px solid var(--border)}
+.gest-kpis{display:grid;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
 .gkpi{padding:14px 18px;border-right:1px solid var(--border)}
 .gkpi:last-child{border-right:none}
 .gkpi-lbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
 .gkpi-val{font-size:18px;font-weight:800;letter-spacing:-0.5px}
 .gkpi-sub{font-size:10px;color:var(--text3);margin-top:2px}
-.gest-body{padding:16px 20px}
-.g-sec{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.gest-body{padding:16px 22px}
+.g-sec{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;margin-top:4px}
 .gtable{width:100%;border-collapse:collapse;margin-bottom:16px}
 .gtable:last-child{margin-bottom:0}
 .gtable th{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;text-align:left;padding:0 0 8px;border-bottom:1px solid var(--border)}
@@ -258,404 +287,337 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
 .st-pill{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600;display:inline-block}
 .empty-ok{font-size:12px;color:var(--text3);text-align:center;padding:16px 0}
 
-/* EXPANSION */
-.exp-tab-card{background:rgba(6,15,8,.7);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);overflow:hidden;backdrop-filter:blur(20px)}
-.exp-tab-head{display:grid;grid-template-columns:3fr 1.5fr 1fr 1.2fr 36px;background:var(--bg3);border-bottom:1px solid var(--border)}
+/* EXP TAB */
+.exp-tab-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.exp-tab-head{display:grid;grid-template-columns:3fr 1.5fr 1fr 1.2fr 36px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
 .exp-tab-th{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;padding:10px 14px}
 .exp-row{display:grid;grid-template-columns:3fr 1.5fr 1fr 1.2fr 36px;border-bottom:1px solid var(--border)}
 .exp-row:last-child{border-bottom:none}
-.exp-row:hover{background:var(--bg3)}
+.exp-row:hover{background:rgba(255,255,255,.03)}
 .exp-cell{padding:8px 14px;display:flex;align-items:center}
 .exp-input{width:100%;background:transparent;border:none;color:var(--text);font-size:12px;outline:none;font-family:var(--sans)}
 .exp-input::placeholder{color:var(--text3)}
-.exp-input:focus{background:var(--bg4);border-radius:4px;padding:2px 4px}
 .exp-select{width:100%;background:transparent;border:none;color:var(--text);font-size:12px;outline:none;cursor:pointer;font-family:var(--sans)}
-.exp-select option{background:var(--bg3)}
+.exp-select option{background:#f9fafb}
 .exp-empty{text-align:center;padding:28px;font-size:12px;color:var(--text3)}
-.exp-footer{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--bg3);border-top:1px solid var(--border)}
+.exp-footer{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:rgba(255,255,255,.02);border-top:1px solid var(--border)}
 
-/* FORMS */
-.flbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;margin-top:12px}
-.flbl:first-child{margin-top:0}
-.finput,.fta{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;padding:8px 10px;outline:none;transition:border-color .15s;resize:none;line-height:1.6;font-family:var(--sans)}
-.finput::placeholder,.fta::placeholder{color:var(--text3)}
-.finput:focus,.fta:focus{border-color:var(--teal)}
-
-/* CONTACT SEARCH */
-.contact-search{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text);font-size:11px;padding:6px 10px;outline:none;width:180px;transition:border-color .15s;font-family:var(--sans)}
-.contact-search:focus{border-color:var(--teal)}
-.contact-search::placeholder{color:var(--text3)}
-.dias-filter-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text3);font-size:11px;font-weight:600;padding:5px 12px;cursor:pointer;transition:all .15s;font-family:var(--sans)}
-.dias-filter-btn:hover{color:var(--teal);border-color:rgba(43,191,170,.3)}
-.dias-filter-btn.active{background:rgba(43,191,170,.1);border-color:rgba(43,191,170,.3);color:var(--teal)}
+/* CRM CARD */
+.crm-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;margin-bottom:10px}
+.crm-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;display:none}
+.crm-card:hover{background:var(--card-hover);border-color:#d0f0eb}
 
 .footer{font-size:10px;color:var(--text3);text-align:center;margin-top:32px;padding-top:14px;border-top:1px solid var(--border)}
 
-/* MOBILE */
-@media(max-width:1300px){.focus-grid{grid-template-columns:1fr 1fr 1fr!important}}
-@media(max-width:1100px){.metrics-grid{grid-template-columns:repeat(4,1fr)}.stat-cards{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.gest-kpis{grid-template-columns:repeat(4,1fr)!important}.focus-grid{grid-template-columns:1fr 1fr!important}}
-@media(max-width:768px){
-  .content{padding:16px}.topnav{padding:12px 16px;flex-direction:column;align-items:flex-start;gap:8px;position:relative}.topnav-right{width:100%;justify-content:space-between}
-  .estrat-bar{padding:10px 16px}.tab-bar{padding:0 16px}.metrics-grid{grid-template-columns:repeat(2,1fr)!important}.stat-cards{grid-template-columns:1fr}.charts-row{grid-template-columns:1fr}.ring-card{flex-direction:column;align-items:flex-start;gap:10px}.ring-info-bar{width:100%}.week-grid{grid-template-columns:1fr!important}.gest-kpis{grid-template-columns:repeat(2,1fr)!important}.gcl-row{grid-template-columns:1fr}.action-list-head{display:none}.action-row{grid-template-columns:1fr;gap:4px;padding:10px 16px}.action-cell{padding:0}
+/* BADGE */
+.badge{display:inline-flex;align-items:center;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px}
+.badge-mo{background:rgba(43,191,170,.12);color:var(--mo);border:1px solid rgba(43,191,170,.2),.2)}
+.badge-red{background:rgba(248,81,73,.1);color:var(--red);border:1px solid rgba(248,81,73,.15)}
+.badge-yellow{background:rgba(210,153,34,.1);color:var(--yellow);border:1px solid rgba(210,153,34,.15)}
+.badge-green{background:rgba(63,185,80,.1);color:var(--green);border:1px solid rgba(63,185,80,.15)}
+
+
+
+/* RESPONSIVE */
+@media(max-width:1200px){.focus-grid{grid-template-columns:1fr 1fr 1fr}.gest-kpis{grid-template-columns:repeat(4,1fr)!important}}
+@media(max-width:900px){.focus-grid{grid-template-columns:1fr 1fr}.charts-row{grid-template-columns:1fr}.mrow.r7{grid-template-columns:repeat(4,1fr)!important}}
+@media(max-width:600px){
+  .content{padding:16px}.nav{padding:12px 16px;flex-direction:column;align-items:flex-start;gap:10px;position:static}
+  .focus-grid,.mrow{grid-template-columns:1fr 1fr!important}.week-grid{grid-template-columns:1fr!important}
+  .gest-kpis{grid-template-columns:1fr 1fr!important}.charts-row{grid-template-columns:1fr}
+  .contact-head{display:none}.contact-row{grid-template-columns:1fr;padding:10px 14px}.contact-cell{padding:2px 0}
 }
-@media(max-width:480px){.metrics-grid{grid-template-columns:1fr!important}}
 </style>
 </head>
 <body>
 
 <div id="loading">
-  <div class="load-logo">MO 2.0</div>
-  <div class="load-bar"><div class="load-bar-f"></div></div>
+  <div class="load-ring"></div>
   <div class="load-sub">Carregando dados do Monday...</div>
 </div>
 
 <div id="app" style="display:none">
 
-<div class="topnav">
-  <div class="topnav-left" style="display:flex;align-items:center;gap:16px">
-    <img src="data:image/png;base64,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" alt="Mundo Ótico" style="height:36px;width:auto;filter:brightness(0) invert(1);opacity:.9">
-    <div>
-      <div class="topnav-eyebrow">Plano de Guerra · MO 2.0</div>
-      <div class="topnav-title" id="hdr-title">—</div>
-      <div class="topnav-sub" id="hdr-sub">Squad MO 2.0</div>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">
+    <img src="data:image/png;base64,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" alt="MO" class="nav-logo">
+    <div class="nav-divider"></div>
+    <div class="nav-info">
+      <div class="nav-eyebrow">Plano de Guerra · MO 2.0</div>
+      <div class="nav-title" id="hdr-title">—</div>
+      <div class="nav-sub" id="hdr-sub">Squad MO 2.0</div>
     </div>
   </div>
-  <div class="topnav-right">
-    <div class="live-dot">dados ao vivo</div>
-    <div class="upd-pill" id="updated-at">—</div>
-    <button class="refresh-btn" onclick="loadData()"><span class="ri">↺</span> Recarregar</button>
+  <div class="nav-right">
+    <div class="nav-live">dados ao vivo</div>
+    <div class="nav-ts" id="updated-at">—</div>
+    <button class="nav-btn" onclick="loadData()"><span class="ri">↺</span> Recarregar</button>
   </div>
+</nav>
+
+<!-- FILTER -->
+<div class="filter-bar">
+  <span class="filter-lbl">Carteira</span>
+  <button class="filter-btn active" onclick="setEstrat('ambos',this)">
+    <div class="filter-avatar" style="background:var(--mo)">MO</div>Mundo Ótico
+  </button>
+  <button class="filter-btn" onclick="setEstrat('gabriel',this)">
+    <div class="filter-avatar" style="background:rgba(255,255,255,.3)">G</div>Gabriel dos Santos
+  </button>
+  <button class="filter-btn" onclick="setEstrat('gustavo',this)">
+    <div class="filter-avatar" style="background:rgba(255,255,255,.2)">G</div>Gustavo Carmo
+  </button>
 </div>
 
-<div class="estrat-bar">
-  <span class="estrat-lbl">Carteira</span>
-  <button class="estrat-btn active" onclick="setEstrat('ambos',this)">
-    <div class="estrat-avatar" style="background:var(--teal)">MO</div>Mundo Ótico
-  </button>
-  <button class="estrat-btn" onclick="setEstrat('gabriel',this)">
-    <div class="estrat-avatar" style="background:#58a6ff">G</div>Gabriel dos Santos
-  </button>
-  <button class="estrat-btn" onclick="setEstrat('gustavo',this)">
-    <div class="estrat-avatar" style="background:#bc8cff">G</div>Gustavo Carmo
-  </button>
-</div>
-
-<div class="tab-bar">
-  <button class="tab active" onclick="switchTab('overview',this)">Overview</button>
-  <button class="tab" onclick="switchTab('semanal',this)">Controle Semanal</button>
-  <button class="tab" onclick="switchTab('gestores',this)">Gestores</button>
-  <button class="tab" onclick="switchTab('expansao',this)">Expansão</button>
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('overview',this)">Overview</button>
+  <button class="tab-btn" onclick="switchTab('semanal',this)">Controle Semanal</button>
+  <button class="tab-btn" onclick="switchTab('gestores',this)">Gestores</button>
+  <button class="tab-btn" onclick="switchTab('expansao',this)">Expansão</button>
 </div>
 
 <div class="content">
 
-<!-- OVERVIEW -->
+<!-- ═══════════════════════ OVERVIEW ═══════════════════════ -->
 <div class="tab-pane active" id="tab-overview">
 
   <div class="sec">Foco do mês</div>
-  <div style="display:grid;grid-template-columns:minmax(220px,1.4fr) 1fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px" class="focus-grid">
-    <!-- MRR Projetado - destaque -->
-    <div class="focus-card" style="grid-row:span 1">
-      <div class="focus-eyebrow">NRR Projetado</div>
-      <div class="focus-number" id="c-proj">—</div>
-      <div class="focus-text"><strong id="focus-estrat">—</strong></div>
-      <div class="focus-meta"><span id="c-proj-sub">—</span></div>
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(43,191,170,.2)">
-        <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Meta NRR 87,5%</div>
-        <div style="font-size:20px;font-weight:800;color:var(--yellow)" id="c-meta">—</div>
-      </div>
-    </div>
-    <!-- Clientes Ativos -->
-    <div class="hero-card" style="background:linear-gradient(135deg,rgba(88,166,255,.1) 0%,rgba(2,8,4,.8) 100%);backdrop-filter:blur(20px);border:1px solid rgba(88,166,255,.25);border-radius:12px;padding:20px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:#58a6ff10;border-radius:50%"></div>
-      <div style="font-size:9px;font-weight:700;color:#58a6ff;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Clientes Ativos</div>
-      <div style="font-size:44px;font-weight:800;color:#58a6ff;letter-spacing:-2px;line-height:1" id="c-total">—</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:6px">carteira ativa</div>
-    </div>
-    <!-- NRR Recebido com ring -->
-    <div class="hero-card" style="background:linear-gradient(135deg,rgba(43,191,170,.12) 0%,rgba(2,8,4,.8) 100%);backdrop-filter:blur(20px);border:1px solid rgba(43,191,170,.25);border-radius:12px;padding:16px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center">
-      <div style="font-size:9px;font-weight:700;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;align-self:flex-start">NRR Recebido</div>
-      <div style="position:relative;width:100px;height:100px">
-        <svg style="transform:rotate(-90deg);overflow:visible" width="100" height="100" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(43,191,170,0.12)" stroke-width="8"/>
-          <circle id="hero-ring-fill" cx="50" cy="50" r="42" fill="none" stroke="#2BBFAA" stroke-width="8" stroke-linecap="round"
-            stroke-dasharray="263.9" stroke-dashoffset="263.9" style="transition:stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 6px #2BBFAA)"/>
-        </svg>
-        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-          <div id="ring-pct2" style="font-size:22px;font-weight:800;color:var(--teal);line-height:1;letter-spacing:-0.5px">—%</div>
-          <div style="font-size:9px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-top:2px">NRR</div>
+
+  <!-- FOCUS CARDS -->
+  <div class="focus-grid" style="margin-bottom:10px">
+
+    <!-- MRR Projetado — destaque principal -->
+    <div class="focus-main">
+      <div class="focus-label">MRR Projetado</div>
+      <div class="focus-value" id="c-proj">—</div>
+      <div class="focus-sub" id="c-proj-sub">—</div>
+      <div class="focus-meta">
+        <div>
+          <div class="focus-meta-lbl">Meta 87,5%</div>
+          <div class="focus-meta-val" id="c-meta">—</div>
+        </div>
+        <div style="width:1px;height:28px;background:transparent"></div>
+        <div>
+          <div class="focus-meta-lbl">Estrategista</div>
+          <div class="focus-meta-val" id="focus-estrat">—</div>
         </div>
       </div>
-      <div id="ring-val2" style="font-size:16px;font-weight:800;color:var(--teal);letter-spacing:-0.5px;margin-top:8px">—</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:2px">recebido</div>
     </div>
+
+    <!-- Clientes Ativos -->
+    <div class="hero-card">
+      <div class="hero-card-glow" style="display:none"></div>
+      <div class="hero-card-label">Clientes Ativos</div>
+      <div class="hero-card-value" id="c-total" style="color:var(--text)">—</div>
+      <div class="hero-card-sub">carteira ativa</div>
+    </div>
+
+    <!-- NRR Recebido com ring -->
+    <div class="hero-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-color:rgba(43,191,170,.15)">
+      <div class="hero-card-label" style="align-self:flex-start">NRR Recebido</div>
+      <div style="position:relative;width:90px;height:90px">
+        <svg style="transform:rotate(-90deg)" width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" fill="none" stroke="rgba(43,191,170,.1)" stroke-width="7"/>
+          <circle id="hero-ring-fill" cx="45" cy="45" r="38" fill="none" stroke="var(--mo)" stroke-width="7" stroke-linecap="round" stroke-dasharray="238.8" stroke-dashoffset="238.8" style="transition:stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 8px rgba(43,191,170,.5))"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div id="ring-pct2" style="font-size:20px;font-weight:900;color:var(--mo);line-height:1">—%</div>
+          <div style="font-size:8px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-top:2px">NRR</div>
+        </div>
+      </div>
+      <div id="ring-val2" style="font-size:15px;font-weight:700;color:var(--mo);letter-spacing:-0.3px">—</div>
+    </div>
+
     <!-- Churn Confirmado -->
-    <div class="hero-card" style="background:linear-gradient(135deg,rgba(248,81,73,.1) 0%,rgba(2,8,4,.8) 100%);backdrop-filter:blur(20px);border:1px solid rgba(248,81,73,.25);border-radius:12px;padding:20px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:var(--red)08;border-radius:50%"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Churn Confirmado</div>
-      <div style="font-size:44px;font-weight:800;color:var(--red);letter-spacing:-2px;line-height:1" id="c-churn-n2">—</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:6px" id="c-churn-mrr-hero">—</div>
+    <div class="hero-card" style="border-color:rgba(255,255,255,.08)">
+      <div class="hero-card-glow" style="display:none"></div>
+      <div class="hero-card-label">Churn Confirmado</div>
+      <div class="hero-card-value" id="c-churn-n2" style="color:var(--red)">—</div>
+      <div class="hero-card-sub" id="c-churn-mrr-hero">—</div>
     </div>
-    <!-- Churn Solicitado -->
-    <div class="hero-card" style="background:linear-gradient(135deg,rgba(227,179,65,.1) 0%,rgba(2,8,4,.8) 100%);backdrop-filter:blur(20px);border:1px solid rgba(227,179,65,.25);border-radius:12px;padding:20px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:var(--orange)08;border-radius:50%"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--orange);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Sol. de Churn</div>
-      <div style="font-size:44px;font-weight:800;color:var(--orange);letter-spacing:-2px;line-height:1" id="c-sol-n2">—</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:6px">solicitaram churn</div>
+
+    <!-- Sol. de Churn -->
+    <div class="hero-card" style="border-color:rgba(255,255,255,.08)">
+      <div class="hero-card-glow" style="display:none"></div>
+      <div class="hero-card-label">Sol. de Churn</div>
+      <div class="hero-card-value" id="c-sol-n2" style="color:var(--yellow)">—</div>
+      <div class="hero-card-sub">solicitaram churn</div>
     </div>
+
     <!-- Expansão -->
-    <div class="hero-card" style="background:linear-gradient(135deg,rgba(63,185,80,.1) 0%,rgba(2,8,4,.8) 100%);backdrop-filter:blur(20px);border:1px solid rgba(63,185,80,.25);border-radius:12px;padding:20px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:var(--green)08;border-radius:50%"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Expansão do Mês</div>
-      <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;line-height:1" id="exp-total2">R$ 0</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:6px">soma das semanas</div>
+    <div class="hero-card" style="border-color:rgba(255,255,255,.08)">
+      <div class="hero-card-glow" style="display:none"></div>
+      <div class="hero-card-label">Expansão do Mês</div>
+      <div class="hero-card-value" id="exp-total2" style="color:var(--green)">R$ 0</div>
+      <div class="hero-card-sub">soma das semanas</div>
     </div>
   </div>
 
+  <!-- METRICS NRR -->
   <div class="sec">Métricas NRR</div>
-
-  <!-- ROW 1: NRR principais -->
-  <div style="display:grid;grid-template-columns:1.2fr repeat(6,1fr);gap:10px;margin-bottom:10px">
-
-    <!-- NRR % — card destaque com ring -->
-    <div style="background:linear-gradient(135deg,rgba(43,191,170,.1),rgba(2,8,4,.9));border:1px solid rgba(43,191,170,.25);border-radius:14px;padding:20px;position:relative;overflow:hidden;display:flex;align-items:center;gap:16px">
-      <div style="position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(43,191,170,.1),transparent 70%)"></div>
-      <div style="position:relative">
-        <svg style="transform:rotate(-90deg)" width="72" height="72" viewBox="0 0 72 72">
-          <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(43,191,170,.1)" stroke-width="6"/>
-          <circle id="ring-fill" cx="36" cy="36" r="30" fill="none" stroke="#2BBFAA" stroke-width="6" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" style="transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 8px rgba(43,191,170,.6))"/>
+  <div class="mrow r7" style="grid-template-columns:1.2fr repeat(6,1fr)">
+    <!-- Ring NRR -->
+    <div class="nrr-card">
+      <div style="position:relative;flex-shrink:0">
+        <svg style="transform:rotate(-90deg)" width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(43,191,170,.1)" stroke-width="5"/>
+          <circle id="ring-fill" cx="32" cy="32" r="26" fill="none" stroke="var(--mo)" stroke-width="5" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4" style="transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 5px rgba(43,191,170,.4))"/>
         </svg>
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-          <div id="ring-pct" style="font-size:14px;font-weight:800;color:var(--teal);line-height:1">—</div>
-          <div style="font-size:7px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase">NRR</div>
+          <div id="ring-pct" style="font-size:13px;font-weight:800;color:var(--mo);line-height:1">—</div>
+          <div style="font-size:6px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase">NRR</div>
         </div>
       </div>
       <div>
-        <div style="font-size:9px;font-weight:700;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">MRR Recebido</div>
-        <div id="ring-val" style="font-size:20px;font-weight:800;color:var(--teal);letter-spacing:-0.5px;line-height:1">—</div>
+        <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px">MRR Recebido</div>
+        <div id="ring-val" style="font-size:18px;font-weight:800;color:var(--mo);letter-spacing:-0.5px;line-height:1">—</div>
         <div id="ring-sub" style="font-size:10px;color:var(--text3);margin-top:3px">do projetado</div>
-        <div style="height:2px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:8px;overflow:hidden;width:100px">
-          <div id="ring-bar" style="height:100%;border-radius:2px;background:var(--teal);width:0%;transition:width 1.4s cubic-bezier(.4,0,.2,1)"></div>
+        <div style="height:2px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:8px;overflow:hidden;width:80px">
+          <div id="ring-bar" style="height:100%;border-radius:2px;background:var(--mo);width:0%;transition:width 1.5s cubic-bezier(.4,0,.2,1)"></div>
         </div>
       </div>
     </div>
-
-    <!-- Meta NRR -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(210,153,34,.2);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--yellow),transparent)"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Meta NRR</div>
-      <div id="c-meta2" style="font-size:22px;font-weight:800;color:var(--yellow);letter-spacing:-0.5px;line-height:1">—</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:5px">87,5% do projetado</div>
-      <div style="height:3px;background:rgba(255,255,255,.04);border-radius:3px;margin-top:12px;overflow:hidden">
-        <div style="height:100%;width:87.5%;background:linear-gradient(90deg,var(--yellow),rgba(210,153,34,.4));border-radius:3px"></div>
-      </div>
+    <!-- Meta -->
+    <div class="stat">
+      <div class="stat-lbl">Meta NRR</div>
+      <div id="c-meta2" class="stat-val" style="color:rgba(255,255,255,.75)">—</div>
+      <div class="stat-sub">87,5% do projetado</div>
+      <div class="stat-bar"><div class="stat-bar-f" style="width:87.5%;background:rgba(255,255,255,.2)"></div></div>
     </div>
-
     <!-- Inadimplentes -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(210,153,34,.15);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--yellow),transparent)"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Inadimplentes</div>
-      <div id="c-inadim-n" style="font-size:36px;font-weight:800;color:var(--yellow);letter-spacing:-1px;line-height:1">—</div>
-      <div id="c-inadim-mrr" style="font-size:10px;color:var(--text3);margin-top:5px">—</div>
-      <div style="height:3px;background:rgba(255,255,255,.04);border-radius:3px;margin-top:12px;overflow:hidden">
-        <div id="bar-inadim" style="height:100%;width:0%;background:linear-gradient(90deg,var(--yellow),rgba(210,153,34,.4));border-radius:3px;transition:width 1.3s cubic-bezier(.4,0,.2,1)"></div>
-      </div>
+    <div class="stat">
+      <div class="stat-lbl">Inadimplentes</div>
+      <div id="c-inadim-n" class="stat-val" style="color:var(--yellow)">—</div>
+      <div id="c-inadim-mrr" class="stat-sub">—</div>
+      <div class="stat-bar"><div id="bar-inadim" class="stat-bar-f" style="width:0%;background:var(--yellow)"></div></div>
     </div>
-
-    <!-- Churn MRR Perdido -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(248,81,73,.15);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),transparent)"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Churn · MRR Perdido</div>
-      <div id="c-churn-mrr-val" style="font-size:22px;font-weight:800;color:var(--red);letter-spacing:-0.5px;line-height:1">R$ 0</div>
-      <div id="c-churn-mrr-sub" style="font-size:10px;color:var(--text3);margin-top:5px">Preencha no semanal</div>
+    <!-- Churn MRR -->
+    <div class="stat">
+      <div class="stat-lbl">Churn · MRR Perdido</div>
+      <div id="c-churn-mrr-val" class="stat-val" style="color:var(--red)">R$ 0</div>
+      <div id="c-churn-mrr-sub" class="stat-sub">Preencha no semanal</div>
     </div>
-
-    <!-- Churn NRR Recebido -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(248,81,73,.12);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,rgba(248,81,73,.6),transparent)"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Churn · NRR Recebido</div>
-      <div id="c-churn-rec" style="font-size:22px;font-weight:800;color:var(--red);letter-spacing:-0.5px;line-height:1">—</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:5px">já recebido em churn</div>
+    <!-- Churn NRR Rec -->
+    <div class="stat">
+      <div class="stat-lbl">Churn · NRR Recebido</div>
+      <div id="c-churn-rec" class="stat-val" style="color:var(--red)">—</div>
+      <div class="stat-sub">já recebido em churn</div>
     </div>
-
     <!-- Expansão -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(63,185,80,.2);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),transparent)"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Expansão do Mês</div>
-      <div id="exp-total" style="font-size:22px;font-weight:800;color:var(--green);letter-spacing:-0.5px;line-height:1">R$ 0</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:5px">soma das semanas</div>
+    <div class="stat">
+      <div class="stat-lbl">Expansão do Mês</div>
+      <div id="exp-total" class="stat-val" style="color:var(--mo)">R$ 0</div>
+      <div class="stat-sub">soma das semanas</div>
     </div>
-
-    <!-- Sol de Churn -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(227,179,65,.15);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),transparent)"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--orange);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;opacity:.8">Sol. de Churn</div>
-      <div id="c-sol-churn-n" style="font-size:36px;font-weight:800;color:var(--orange);letter-spacing:-1px;line-height:1">—</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:5px">solicitaram churn</div>
-      <button id="c-sol-btn" onclick="document.getElementById('c-sol-list').classList.toggle('open');this.textContent=document.getElementById('c-sol-list').classList.contains('open')?'▾ Ocultar':'▸ Ver clientes'" style="font-size:10px;color:var(--orange);background:none;border:none;cursor:pointer;padding:0;margin-top:6px;font-weight:600;font-family:var(--sans)">▸ Ver clientes</button>
+    <!-- Sol Churn -->
+    <div class="stat">
+      <div class="stat-lbl">Sol. de Churn</div>
+      <div id="c-sol-churn-n" class="stat-val" style="color:var(--yellow)">—</div>
+      <div class="stat-sub">solicitaram churn</div>
+      <button id="c-sol-btn" onclick="document.getElementById('c-sol-list').classList.toggle('open');this.textContent=document.getElementById('c-sol-list').classList.contains('open')?'▾ Ocultar':'▸ Ver'" style="font-size:10px;color:var(--mo);background:none;border:none;cursor:pointer;padding:0;margin-top:6px;font-weight:600;font-family:var(--sans)">▸ Ver</button>
       <div id="c-sol-list" class="sol-list"></div>
     </div>
   </div>
 
-  <!-- ROW 2: Carteira -->
-  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:10px">
-
-    <!-- Nº Churn Conf -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(248,81,73,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--red),transparent)"></div>
-      <div style="font-size:8px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">Nº Churn Conf.</div>
-      <div id="c-churn-n" style="font-size:30px;font-weight:800;color:var(--red);letter-spacing:-1px;line-height:1">—</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:4px">churn confirmado</div>
-    </div>
-
-    <!-- % TCV -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(188,140,255,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--purple),transparent)"></div>
-      <div style="font-size:8px;font-weight:700;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">% TCV</div>
-      <div id="c-tcv-pct" style="font-size:30px;font-weight:800;color:var(--purple);letter-spacing:-1px;line-height:1">—</div>
-      <div id="c-tcv-sub" style="font-size:10px;color:var(--text3);margin-top:4px">—</div>
-    </div>
-
-    <!-- LTV Médio -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(88,166,255,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--blue),transparent)"></div>
-      <div style="font-size:8px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">LTV Médio</div>
-      <div id="c-ltv" style="font-size:30px;font-weight:800;color:var(--blue);letter-spacing:-1px;line-height:1">—</div>
-      <div id="c-ltv-sub" style="font-size:10px;color:var(--text3);margin-top:4px">—</div>
-    </div>
-
-    <!-- % Base em Risco -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(210,153,34,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--yellow),transparent)"></div>
-      <div style="font-size:8px;font-weight:700;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">% Base em Risco</div>
-      <div id="c-risco-pct" style="font-size:30px;font-weight:800;color:var(--yellow);letter-spacing:-1px;line-height:1">—</div>
-      <div id="c-risco-sub" style="font-size:10px;color:var(--text3);margin-top:4px">Crítico + Atenção</div>
-    </div>
-
-    <!-- % com Cobrança -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(63,185,80,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--green),transparent)"></div>
-      <div style="font-size:8px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">% com Cobrança</div>
-      <div id="c-pag-pct" style="font-size:30px;font-weight:800;color:var(--green);letter-spacing:-1px;line-height:1">—</div>
-      <div id="c-pag-sub" style="font-size:10px;color:var(--text3);margin-top:4px">—</div>
-    </div>
-
-    <!-- % c/ Contato -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(43,191,170,.15);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--teal),transparent)"></div>
-      <div style="font-size:8px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">% c/ Contato Mês</div>
-      <div id="c-contato-pct" style="font-size:30px;font-weight:800;color:var(--teal);letter-spacing:-1px;line-height:1">—</div>
-      <div id="c-contato-sub" style="font-size:10px;color:var(--text3);margin-top:4px">tiveram contato</div>
-    </div>
-
-    <!-- Contatos no Mês -->
-    <div style="background:rgba(6,15,8,.7);border:1px solid rgba(43,191,170,.12);border-radius:14px;padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(43,191,170,.6),transparent)"></div>
-      <div style="font-size:8px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.8">Contatos no Mês</div>
-      <div id="c-contatos-n" style="font-size:30px;font-weight:800;color:var(--teal);letter-spacing:-1px;line-height:1">—</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:4px">reuniões + ligações</div>
-    </div>
+  <!-- METRICS CARTEIRA -->
+  <div class="sec" style="margin-top:10px">Carteira</div>
+  <div class="mrow r7" style="grid-template-columns:repeat(7,1fr)">
+    <div class="stat"><div class="stat-lbl">Nº Churn Conf.</div><div id="c-churn-n" class="stat-val" style="color:var(--red)">—</div><div class="stat-sub">churn confirmado</div></div>
+    <div class="stat"><div class="stat-lbl">% TCV</div><div id="c-tcv-pct" class="stat-val" style="color:rgba(255,255,255,.7)">—</div><div id="c-tcv-sub" class="stat-sub">—</div></div>
+    <div class="stat"><div class="stat-lbl">LTV Médio</div><div id="c-ltv" class="stat-val" style="color:rgba(255,255,255,.7)">—</div><div id="c-ltv-sub" class="stat-sub">—</div></div>
+    <div class="stat"><div class="stat-lbl">% Base em Risco</div><div id="c-risco-pct" class="stat-val" style="color:var(--yellow)">—</div><div id="c-risco-sub" class="stat-sub">Crítico + Atenção</div></div>
+    <div class="stat"><div class="stat-lbl">% com Cobrança</div><div id="c-pag-pct" class="stat-val" style="color:rgba(255,255,255,.7)">—</div><div id="c-pag-sub" class="stat-sub">—</div></div>
+    <div class="stat"><div class="stat-lbl">% c/ Contato Mês</div><div id="c-contato-pct" class="stat-val" style="color:var(--mo)">—</div><div id="c-contato-sub" class="stat-sub">tiveram contato</div></div>
+    <div class="stat"><div class="stat-lbl">Contatos no Mês</div><div id="c-contatos-n" class="stat-val" style="color:var(--mo)">—</div><div class="stat-sub">reuniões + ligações</div></div>
   </div>
 
-  <!-- CRM + IA CARD -->
-  <div style="margin-bottom:12px">
-    <div onclick="toggleCrmList()" style="background:rgba(6,15,8,.7);border:1px solid rgba(188,140,255,.2);border-radius:var(--radius-lg);padding:18px 22px;cursor:pointer;transition:all .2s;backdrop-filter:blur(20px);position:relative;overflow:hidden" id="crm-card">
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),transparent)"></div>
-      <div style="position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(188,140,255,.06) 0%,transparent 70%);pointer-events:none"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:9px;font-weight:700;color:var(--purple);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">CRM + IA</div>
-          <div style="display:flex;align-items:baseline;gap:10px">
-            <div style="font-size:36px;font-weight:800;color:var(--purple);letter-spacing:-1px;line-height:1" id="c-crm-n">—</div>
-            <div style="font-size:13px;color:var(--text3)">clientes ativos</div>
-            <div style="font-size:16px;font-weight:700;color:var(--purple);opacity:.7" id="c-crm-pct">—</div>
-          </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:6px">Clique para ver a lista · <span id="crm-toggle-txt" style="color:var(--purple)">▸ expandir</span></div>
+  <!-- CRM + IA -->
+  <div class="crm-card" id="crm-card" onclick="toggleCrmList()">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:9px;font-weight:700;color:var(--mo);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;opacity:.7">CRM + IA</div>
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <div id="c-crm-n" style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-1.5px;line-height:1">—</div>
+          <div style="font-size:13px;color:var(--text3)">clientes ativos</div>
+          <div id="c-crm-pct" style="font-size:14px;font-weight:700;color:var(--mo);opacity:.7">—</div>
         </div>
-        <div style="width:56px;height:56px;border-radius:50%;background:rgba(188,140,255,.1);border:1px solid rgba(188,140,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px">🤖</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px"><span id="crm-toggle-txt" style="color:var(--mo)">▸ expandir lista</span></div>
       </div>
-      <div id="crm-list" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)">
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px" id="crm-list-inner"></div>
-      </div>
+      <div style="width:52px;height:52px;border-radius:14px;background:rgba(43,191,170,.08);border:1px solid rgba(43,191,170,.15);display:flex;align-items:center;justify-content:center;font-size:22px">🤖</div>
+    </div>
+    <div id="crm-list" style="display:none;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px" id="crm-list-inner"></div>
     </div>
   </div>
 
-  <div class="sec" style="margin-top:24px">Análise Visual</div>
+  <!-- CHARTS -->
+  <div class="sec">Análise Visual</div>
   <div class="charts-row">
     <div class="chart-card">
-      <div class="chart-title">NRR por Semana — Projetado vs Recebido</div>
-      <div class="chart-sub" id="chart-mes-lbl">—</div>
+      <div class="chart-title">NRR por Semana</div>
+      <div class="chart-sub" id="chart-mes-lbl">Projetado vs Recebido</div>
       <div style="height:200px"><canvas id="chart-nrr"></canvas></div>
     </div>
-    <div class="chart-card" style="display:flex;flex-direction:column;gap:0">
+    <div class="chart-card">
       <div class="chart-title">Saúde da Carteira</div>
-      <div class="chart-sub" style="margin-bottom:20px">Visão geral da carteira ativa</div>
-      <!-- Two big metrics -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1">
-        <div style="background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.15);border-radius:10px;padding:20px 22px;position:relative;overflow:hidden">
-          <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(88,166,255,.08) 0%,transparent 70%)"></div>
-          <div style="font-size:9px;font-weight:700;color:var(--blue);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">LTV Médio</div>
-          <div id="ltv-donut" style="font-size:48px;font-weight:800;color:var(--blue);letter-spacing:-2px;line-height:1">—</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:8px" id="ltv-saude">meses de contrato</div>
-          <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(88,166,255,.1)">
-            <div style="font-size:10px;color:var(--text3)">média de <span id="ltv-count" style="color:var(--text2);font-weight:600">—</span> clientes</div>
-          </div>
+      <div class="chart-sub">LTV Médio: <span id="ltv-saude" style="color:rgba(255,255,255,.6);font-weight:600">—</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px">
+          <div style="font-size:8px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">LTV Médio</div>
+          <div id="ltv-donut" style="font-size:32px;font-weight:900;color:var(--text);letter-spacing:-1px;line-height:1">—</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.25);margin-top:6px" id="ltv-count-lbl">meses</div>
         </div>
-        <div style="background:rgba(210,153,34,.06);border:1px solid rgba(210,153,34,.15);border-radius:10px;padding:20px 22px;position:relative;overflow:hidden">
-          <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(210,153,34,.08) 0%,transparent 70%)"></div>
-          <div style="font-size:9px;font-weight:700;color:var(--yellow);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">% Base em Risco</div>
-          <div id="risco-pct-card" style="font-size:48px;font-weight:800;color:var(--yellow);letter-spacing:-2px;line-height:1">—</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:8px">Crítico + Atenção</div>
-          <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(210,153,34,.1)">
-            <div style="font-size:10px;color:var(--text3)"><span id="risco-n-card" style="color:var(--text2);font-weight:600">—</span> clientes em risco</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="chart-card" style="position:relative;overflow:hidden">
-    <div style="position:absolute;top:0;right:0;width:300px;height:300px;background:radial-gradient(circle,rgba(43,191,170,.04) 0%,transparent 70%);pointer-events:none"></div>
-    <div style="display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center">
-      <div>
-        <div class="chart-title">% da Base com Contato no Mês</div>
-        <div class="chart-sub" style="margin-bottom:20px">Clientes que tiveram pelo menos 1 reunião ou ligação registrada</div>
-        <!-- Progress bar visual -->
-        <div style="margin-bottom:16px">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
-            <span style="font-size:11px;color:var(--text2);font-weight:600">Com contato</span>
-            <span style="font-size:13px;font-weight:700;color:var(--teal)" id="contato-bar-n">—</span>
-          </div>
-          <div style="height:8px;background:rgba(255,255,255,.04);border-radius:8px;overflow:hidden;position:relative">
-            <div id="contato-bar-fill" style="height:100%;background:linear-gradient(90deg,var(--teal),rgba(43,191,170,.6));border-radius:8px;width:0%;transition:width 1.4s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px rgba(43,191,170,.4)"></div>
-          </div>
-        </div>
-        <div style="margin-bottom:0">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
-            <span style="font-size:11px;color:var(--text2);font-weight:600">Sem contato</span>
-            <span style="font-size:13px;font-weight:700;color:var(--red)" id="sem-contato-bar-n">—</span>
-          </div>
-          <div style="height:8px;background:rgba(255,255,255,.04);border-radius:8px;overflow:hidden">
-            <div id="sem-contato-bar-fill" style="height:100%;background:linear-gradient(90deg,var(--red),rgba(248,81,73,.5));border-radius:8px;width:0%;transition:width 1.4s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px rgba(248,81,73,.3)"></div>
-          </div>
-        </div>
-      </div>
-      <!-- Big % number -->
-      <div style="text-align:center;padding:24px 32px;background:rgba(43,191,170,.05);border:1px solid rgba(43,191,170,.12);border-radius:12px;min-width:140px">
-        <div id="contato-pct-big" style="font-size:56px;font-weight:800;color:var(--teal);letter-spacing:-2px;line-height:1">—</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:6px;letter-spacing:.5px;text-transform:uppercase">com contato</div>
-        <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(43,191,170,.1)">
-          <div id="contato-total-label" style="font-size:11px;color:var(--text3)">de <span id="contato-total-n" style="color:var(--text2);font-weight:600">—</span> clientes</div>
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px">
+          <div style="font-size:8px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Base em Risco</div>
+          <div id="risco-pct-card" style="font-size:32px;font-weight:900;color:var(--yellow);letter-spacing:-1px;line-height:1">—</div>
+          <div id="risco-n-card" style="font-size:10px;color:rgba(255,255,255,.25);margin-top:6px">clientes</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="sec" style="margin-top:24px">Último contato com clientes</div>
+  <!-- % CONTATO CARD -->
+  <div class="contato-pct-card">
+    <div style="display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center">
+      <div>
+        <div class="chart-title">% da Base com Contato no Mês</div>
+        <div class="chart-sub">Clientes que tiveram pelo menos 1 reunião ou ligação</div>
+        <div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:11px;color:var(--text3)">Com contato</span>
+            <span id="contato-bar-n" style="font-size:12px;font-weight:700;color:var(--mo)">—</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden">
+            <div id="contato-bar-fill" style="height:100%;background:linear-gradient(90deg,var(--mo),rgba(43,191,170,.5));border-radius:6px;width:0%;transition:width 1.4s cubic-bezier(.4,0,.2,1)"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:11px;color:var(--text3)">Sem contato</span>
+            <span id="sem-contato-bar-n" style="font-size:12px;font-weight:700;color:var(--red)">—</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden">
+            <div id="sem-contato-bar-fill" style="height:100%;background:linear-gradient(90deg,var(--red),rgba(248,81,73,.4));border-radius:6px;width:0%;transition:width 1.4s cubic-bezier(.4,0,.2,1)"></div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;min-width:130px;padding:20px;background:rgba(43,191,170,.05);border:1px solid rgba(43,191,170,.15);border-radius:12px">
+        <div id="contato-pct-big" style="font-size:52px;font-weight:900;color:var(--mo);letter-spacing:-2px;line-height:1">—</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:5px;text-transform:uppercase;letter-spacing:.5px">com contato</div>
+        <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(43,191,170,.1);font-size:11px;color:var(--text3)">de <span id="contato-total-n" style="color:rgba(255,255,255,.5);font-weight:600">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAST CONTACT -->
+  <div class="sec">Último contato com clientes</div>
   <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px">
     <div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-right:4px">Filtrar</span>
+          <span style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-right:4px">Filtrar</span>
           <button class="dias-filter-btn active" onclick="setDiasFilter(0,this)">Todos</button>
           <button class="dias-filter-btn" onclick="setDiasFilter(7,this)">+7 dias</button>
           <button class="dias-filter-btn" onclick="setDiasFilter(14,this)">+14 dias</button>
@@ -663,16 +625,16 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
           <button class="dias-filter-btn" onclick="setDiasFilter(31,this)">+31 dias</button>
           <button class="dias-filter-btn" onclick="setDiasFilter(-1,this)">Sem contato</button>
         </div>
-        <input class="contact-search" id="contact-search" placeholder="Buscar cliente..." oninput="filterContactTable()">
+        <input class="contact-search" id="contact-search" placeholder="Buscar cliente..." oninput="renderContactRows()">
       </div>
-      <div class="action-list">
-        <div class="action-list-head" style="grid-template-columns:2.5fr 1.2fr 80px 1fr 1fr 1fr">
-          <div class="action-th">Cliente</div>
-          <div class="action-th">Gestor</div>
-          <div class="action-th" style="text-align:center">Dias s/ contato</div>
-          <div class="action-th">Último contato</div>
-          <div class="action-th">Tipo de Contato</div>
-          <div class="action-th">Saúde</div>
+      <div class="contact-wrap">
+        <div class="contact-head">
+          <div class="contact-th">Cliente</div>
+          <div class="contact-th">Gestor</div>
+          <div class="contact-th" style="text-align:center">Dias s/ contato</div>
+          <div class="contact-th">Último contato</div>
+          <div class="contact-th">Tipo</div>
+          <div class="contact-th">Saúde</div>
         </div>
         <div id="contact-tbody"></div>
       </div>
@@ -684,55 +646,54 @@ body{background:radial-gradient(ellipse at 15% 10%,#051a0a 0%,#010502 35%,#00030
   </div>
 </div>
 
-<!-- SEMANAL -->
+<!-- ═══════════════════════ SEMANAL ═══════════════════════ -->
 <div class="tab-pane" id="tab-semanal">
   <div class="sec" id="sec-semanal">Controle Semanal</div>
   <div class="week-grid" id="weeks-wrap"></div>
-  <div class="chart-card" style="margin-top:12px">
-    <div class="chart-title">Projetado vs Recebido — Linha do Tempo</div>
+  <div class="chart-card" style="margin-top:10px">
+    <div class="chart-title">Projetado vs Recebido</div>
     <div class="chart-sub">Evolução financeira semanal do mês</div>
     <div style="height:200px"><canvas id="chart-semanal"></canvas></div>
   </div>
 </div>
 
-<!-- GESTORES -->
+<!-- ═══════════════════════ GESTORES ═══════════════════════ -->
 <div class="tab-pane" id="tab-gestores">
   <div class="sec">Gestores de Resultados</div>
-  <div class="chart-card" style="margin-bottom:12px">
-    <div class="chart-title">NRR por Gestor — Projetado vs Recebido</div>
-    <div class="chart-sub">Comparativo de performance</div>
+  <div class="chart-card" style="margin-bottom:10px">
+    <div class="chart-title">NRR por Gestor</div>
+    <div class="chart-sub">Comparativo Projetado vs Recebido</div>
     <div style="height:200px"><canvas id="chart-gestores"></canvas></div>
   </div>
   <div class="gest-wrap" id="gestor-wrap"></div>
 </div>
 
-<!-- EXPANSÃO -->
+<!-- ═══════════════════════ EXPANSÃO ═══════════════════════ -->
 <div class="tab-pane" id="tab-expansao">
   <div class="sec">Pipeline de Expansão · <span id="exp-month-label">—</span></div>
-  <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
-    <button onclick="addExpRow()" style="background:var(--teal-bg);border:1px solid rgba(43,191,170,.25);border-radius:var(--radius);color:var(--teal);font-size:12px;font-weight:600;padding:8px 16px;cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--teal-bg)'">+ Adicionar cliente</button>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+    <button onclick="addExpRow()" style="background:var(--mo);border:1px solid var(--mo);border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;cursor:pointer;transition:all .15s;font-family:var(--sans)" onmouseover="this.style.background='rgba(43,191,170,.18)'" onmouseout="this.style.background='rgba(43,191,170,.1)'">+ Adicionar cliente</button>
   </div>
   <div class="exp-tab-card">
     <div class="exp-tab-head">
-      <div class="exp-tab-th">Cliente</div>
-      <div class="exp-tab-th">Produto</div>
-      <div class="exp-tab-th">Valor</div>
-      <div class="exp-tab-th">Status</div>
-      <div class="exp-tab-th"></div>
+      <div class="exp-tab-th">Cliente</div><div class="exp-tab-th">Produto</div>
+      <div class="exp-tab-th">Valor</div><div class="exp-tab-th">Status</div><div class="exp-tab-th"></div>
     </div>
     <div id="exp-tbody"><div class="exp-empty">Nenhum cliente adicionado.</div></div>
   </div>
   <div class="exp-footer">
-    <div style="font-size:12px;font-weight:600;color:var(--text2)">Total Pipeline</div>
-    <div style="font-size:22px;font-weight:800;color:var(--green);letter-spacing:-0.5px" id="exp-pipeline-total">R$ 0</div>
+    <div style="font-size:12px;font-weight:600;color:var(--text3)">Total Pipeline</div>
+    <div id="exp-pipeline-total" style="font-size:22px;font-weight:900;color:var(--mo);letter-spacing:-0.5px">R$ 0</div>
   </div>
 </div>
 
-<div class="footer" id="footer-txt">Monday.com · Controle Clientes MO 2.0 · Squad MO 2.0</div>
-</div><!-- content -->
-</div><!-- app -->
+<div class="footer" id="footer-txt">Monday.com · Controle Clientes MO 2.0</div>
+</div>
+</div>
 
 <script>
+Chart.defaults.color='rgba(255,255,255,.3)';
+Chart.defaults.font.family='Inter';
 const TOKEN='eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjY2NDU5NTIyMiwiYWFpIjoxMSwidWlkIjo2MDc0MzQ5NiwiaWFkIjoiMjAyNi0wNS0yOVQxNDowMzo0Ny45MjVaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTYxOTU1NjYsInJnbiI6InVzZTEifQ.u35YRjIc8AwN0fMQso44-RnphvwOACXR1XV4IStgnXk';
 const BOARD='5619363426',GROUP='duplicate_of_clientes_ativos___mkkzpmkx',BOARD_REUN='6690913711';
 const GESTORES_NAMES={gabriel:'Gabriel dos Santos',gustavo:'Gustavo Carmo'};
@@ -776,17 +737,22 @@ const dayFrom=l=>{if(!l)return null;const m=l.match(/\d+/);return m?parseInt(m[0
 const stDot=s=>{if(!s)return'#484f58';s=s.toLowerCase();if(s.includes('pago')||s.includes('recorrente'))return'#3fb950';if(s.includes('churn')||s.includes('perda'))return'#f85149';if(s.includes('inadim'))return'#d29922';return'#484f58'};
 const dChart=c=>{if(c){try{c.destroy()}catch(e){}}return null};
 const mkChart=(id,cfg)=>{const el=document.getElementById(id);return el?new Chart(el,cfg):null};
-const chartDefaults={color:'#8b949e',plugins:{legend:{labels:{color:'#8b949e',font:{family:'Inter',size:11},boxWidth:8,boxHeight:8,padding:14}},tooltip:{backgroundColor:'#21262d',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:6,padding:10}},scales:{x:{grid:{color:'#21262d'},border:{display:false},ticks:{color:'#484f58',font:{family:'Inter',size:10}}},y:{grid:{color:'#21262d'},border:{display:false},ticks:{color:'#484f58',font:{family:'Inter',size:10},callback:v=>fmtK(v)}}}};
+const chartDefaults={responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',align:'end',labels:{color:'rgba(255,255,255,.35)',font:{family:'Inter',size:11},boxWidth:8,boxHeight:8,padding:14}},tooltip:{backgroundColor:'rgba(11,29,19,.97)',titleColor:'rgba(255,255,255,.92)',bodyColor:'rgba(255,255,255,.45)',borderColor:'rgba(255,255,255,.08)',borderWidth:1,cornerRadius:8,padding:10}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},border:{display:false},ticks:{color:'rgba(255,255,255,.2)',font:{family:'Inter',size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},border:{display:false},ticks:{color:'rgba(255,255,255,.2)',font:{family:'Inter',size:10},callback:v=>fmtK(v)}}}};
 
 function getWeeksOfMonth(y,m){
+  // Semana: Domingo → Sábado
   const weeks=[],last=new Date(y,m+1,0);
   let cur=new Date(y,m,1);
   while(cur<=last){
-    const ws=new Date(cur),dow=cur.getDay(),due=dow===0?0:7-dow;
-    let we=new Date(cur);we.setDate(we.getDate()+due);if(we>last)we=new Date(last);
+    const ws=new Date(cur);
+    // Fim da semana = próximo sábado (dia 6)
+    const dow=cur.getDay(); // 0=Dom, 6=Sáb
+    const daysToSat=dow===6?0:6-dow;
+    let we=new Date(cur);we.setDate(we.getDate()+daysToSat);
+    if(we>last)we=new Date(last);
     weeks.push({start:ws.getDate(),end:we.getDate(),label:`S${weeks.length+1}`,dates:`${String(ws.getDate()).padStart(2,'0')}–${String(we.getDate()).padStart(2,'0')}`});
+    // Próxima semana começa no domingo seguinte
     cur=new Date(we);cur.setDate(cur.getDate()+1);
-    if(cur.getDay()!==1&&cur<=last){while(cur.getDay()!==1&&cur<=last)cur.setDate(cur.getDate()+1);}
     if(cur>last)break;
   }
   return weeks;
@@ -835,7 +801,7 @@ async function monday(q){
 
 function setEstrat(e,btn){
   currentEstrat=e;
-  document.querySelectorAll('.estrat-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderDashboard();
 }
@@ -1316,7 +1282,7 @@ function toggleCrmList(){
 }
 
 function switchTab(id,btn){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
