@@ -237,24 +237,24 @@ body{
 /* WEEKS */
 .week-grid{display:grid;gap:1px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;margin-bottom:10px}
 .wk{background:#0d2018}
-.wk-head{padding:11px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06)}
-.wk-tag{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
-.wk-dates{font-size:11px;font-weight:700;margin-left:auto}
-.wk-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
-.wk-lbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.wk-val{font-size:15px;font-weight:800;letter-spacing:-0.5px;line-height:1}
+.wk-head{padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06)}
+.wk-tag{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:2px;text-transform:uppercase}
+.wk-dates{font-size:11px;font-weight:600;margin-left:auto}
+.wk-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.wk-lbl{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.wk-val{font-size:15px;font-weight:700;letter-spacing:-0.3px;line-height:1}
 .wk-bar{height:2px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:4px;overflow:hidden}
 .wk-bar-f{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
-.wk-pct{font-size:9px;padding:2px 6px;border-radius:3px;display:inline-block;margin-left:5px;vertical-align:middle;font-weight:700}
+.wk-pct{font-size:9px;padding:2px 7px;border-radius:4px;display:inline-block;margin-left:6px;vertical-align:middle;font-weight:700;letter-spacing:.3px}
 .wk-sep{border:none;border-top:1px solid var(--border)}
-.wk-flbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.wk-churn{font-size:13px;font-weight:700;color:var(--red);padding:2px 0}
+.wk-flbl{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.wk-churn{font-size:14px;font-weight:600;color:var(--red);padding:2px 0}
 .wk-input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text);font-size:11px;padding:6px 8px;outline:none;transition:border-color .15s;font-family:var(--sans)}
 .wk-input:focus{border-color:var(--mo)}
 .wk-input::placeholder{color:var(--text3)}
 .wk-foot{padding:9px 16px;background:rgba(255,255,255,.03);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.wk-gap-lbl{font-size:10px;color:var(--text3)}
-.wk-gap-val{font-size:13px;font-weight:800;letter-spacing:-0.5px}
+.wk-gap-lbl{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.wk-gap-val{font-size:14px;font-weight:700;letter-spacing:-0.5px}
 .expand-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;padding:3px 9px;transition:all .15s;font-family:var(--sans)}
 .expand-btn:hover{color:var(--mo);border-color:#b2ece5}
 .cl-list{display:none;margin-top:6px;border-top:1px solid var(--border);padding-top:6px}
@@ -1108,8 +1108,8 @@ function renderDashboard(){
     const el=document.createElement('div');el.className='wk';
     el.innerHTML=`<div class="wk-head" style="border-top:2px solid ${col}"><div class="wk-tag">${w.label}</div><div class="wk-dates" style="color:${col}">${w.dates} ${mn.slice(0,3)}</div></div>
     <div class="wk-body">
-      <div><div class="wk-mlbl">Projetado</div><div class="wk-mval" style="color:${col}">${fmt(proj)}</div><div class="wk-bar"><div class="wk-bar-f" style="width:100%;background:${col}40"></div></div></div>
-      <div><div class="wk-mlbl">Recebido <span class="wk-pct" style="background:${pc2}20;color:${pc2}">${p2}%</span></div><div class="wk-mval" style="color:${pc2}">${fmt(rec)}</div><div class="wk-bar"><div class="wk-bar-f" style="width:${Math.min(p2,100)}%;background:${pc2}"></div></div></div>
+      <div><div class="wk-lbl">Projetado</div><div class="wk-val" style="color:${col}">${fmt(proj)}</div><div class="wk-bar"><div class="wk-bar-f" style="width:100%;background:${col}40"></div></div></div>
+      <div><div class="wk-lbl">Recebido <span class="wk-pct" style="background:${pc2}20;color:${pc2}">${p2}%</span></div><div class="wk-val" style="color:${pc2}">${fmt(rec)}</div><div class="wk-bar"><div class="wk-bar-f" style="width:${Math.min(p2,100)}%;background:${pc2}"></div></div></div>
       <hr class="wk-sep">
       <div><div class="wk-flbl">Receita perdida (churn)</div><div class="wk-churn-val">${chS.length>0?fmt(chP):'R$ 0'}</div>${chS.length>0?`<div style="font-size:9px;color:var(--text3)">${chS.map(c=>c.name).join(', ')}</div>`:''}</div>
       <div><div class="wk-flbl">Expansão</div><input class="wk-input wk-exp-input" placeholder="R$ 0" oninput="fmtEI(this);updateTotals()"></div>
