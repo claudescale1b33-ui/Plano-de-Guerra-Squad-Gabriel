@@ -630,13 +630,13 @@ body{
         <input class="contact-search" id="contact-search" placeholder="Buscar cliente..." oninput="renderContactRows()">
       </div>
       <div class="contact-wrap">
-        <div class="contact-head">
-          <div class="contact-th">Cliente</div>
-          <div class="contact-th">Gestor</div>
-          <div class="contact-th" style="text-align:center">Dias s/ contato</div>
-          <div class="contact-th">Último contato</div>
-          <div class="contact-th">Tipo</div>
-          <div class="contact-th">Saúde</div>
+        <div style="display:grid;grid-template-columns:2.5fr 1.2fr 90px 1fr 1fr 1fr;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.08)">
+          <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:10px 14px">Cliente</div>
+          <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:10px 14px">Gestor</div>
+          <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:10px 14px;text-align:center">Dias s/ contato</div>
+          <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:10px 14px">Último contato</div>
+          <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:10px 14px">Tipo</div>
+          <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:10px 14px">Saúde</div>
         </div>
         <div id="contact-tbody"></div>
       </div>
@@ -1231,15 +1231,13 @@ function renderContactRows(){
   const q=(document.getElementById('contact-search')?.value||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 
   const filtered=rows.filter(r=>{
-    // Search filter
     if(q){
       const name=(r.client.name||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
       if(!name.includes(q))return false;
     }
-    // Dias filter
-    if(f===-1)return r.dias===null; // Sem contato = nunca tiveram
-    if(f===0)return true; // Todos
-    return r.dias===null||r.dias>=f; // +N dias = sem contato ou N+ dias
+    if(f===-1)return r.dias===null;
+    if(f===0)return true;
+    return r.dias===null||r.dias>=f;
   });
 
   if(!filtered.length){
@@ -1247,6 +1245,7 @@ function renderContactRows(){
     return;
   }
 
+  const COLS='2.5fr 1.2fr 90px 1fr 1fr 1fr';
   tbody.innerHTML=filtered.map(r=>{
     const diasStr=r.dias===null?'—':r.dias===0?'Hoje':r.dias+'d';
     const diasClass=r.dias===null?'dias-none':r.dias===0?'dias-ok':r.dias<=3?'dias-ok':r.dias<=7?'dias-warn':'dias-alert';
@@ -1254,14 +1253,15 @@ function renderContactRows(){
     const gestor=r.contact?(r.contact.gestor.split(',')[0].trim()):(r.client.gestor||'—');
     const tipo=r.contact?r.contact.tipo:'—';
     const saude=r.client.saude||'—';
-    const saudeColor=saude.toLowerCase().includes('saud')||saude.toLowerCase().includes('result')?'var(--green)':saude.toLowerCase().includes('crít')||saude.toLowerCase().includes('crit')?'var(--red)':saude.toLowerCase().includes('aten')?'var(--yellow)':saude.toLowerCase().includes('churn')?'var(--purple)':'var(--text3)';
-    return`<div class="action-row" style="grid-template-columns:2.5fr 1.2fr 80px 1fr 1fr 1fr">
-      <div class="action-cell"><span class="action-name">${r.client.name}</span></div>
-      <div class="action-cell"><span class="action-gestor">${gestor}</span></div>
-      <div class="action-cell" style="justify-content:center"><span class="dias-badge ${diasClass}">${diasStr}</span></div>
-      <div class="action-cell" style="font-size:11px;color:var(--text2)">${dataStr}</div>
-      <div class="action-cell"><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(88,166,255,.1);color:var(--blue);border:1px solid rgba(88,166,255,.2)">${tipo}</span></div>
-      <div class="action-cell"><span style="font-size:10px;font-weight:600;color:${saudeColor}">${saude}</span></div>
+    const sc=saude.toLowerCase();
+    const saudeColor=sc.includes('saud')||sc.includes('result')?'var(--green)':sc.includes('crít')||sc.includes('crit')?'var(--red)':sc.includes('aten')?'var(--yellow)':sc.includes('churn')?'#bc8cff':'var(--text3)';
+    return`<div style="display:grid;grid-template-columns:${COLS};border-bottom:1px solid rgba(255,255,255,.06);transition:background .1s" onmouseover="this.style.background='rgba(43,191,170,.04)'" onmouseout="this.style.background='transparent'">
+      <div style="padding:11px 14px;display:flex;align-items:center;font-size:12px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.client.name}</div>
+      <div style="padding:11px 14px;display:flex;align-items:center;font-size:11px;color:var(--text2)">${gestor}</div>
+      <div style="padding:11px 14px;display:flex;align-items:center;justify-content:center"><span class="dias-badge ${diasClass}">${diasStr}</span></div>
+      <div style="padding:11px 14px;display:flex;align-items:center;font-size:11px;color:var(--text2)">${dataStr}</div>
+      <div style="padding:11px 14px;display:flex;align-items:center"><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(88,166,255,.1);color:#58a6ff;border:1px solid rgba(88,166,255,.15)">${tipo}</span></div>
+      <div style="padding:11px 14px;display:flex;align-items:center;font-size:11px;font-weight:600;color:${saudeColor}">${saude}</div>
     </div>`;
   }).join('');
 }
@@ -1269,8 +1269,6 @@ function renderContactRows(){
 function filterContactTable(){
   renderContactRows();
 }
-
-
 
 function toggleCrmList(){
   const list=document.getElementById('crm-list');
