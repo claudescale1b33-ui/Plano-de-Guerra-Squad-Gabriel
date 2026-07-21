@@ -865,12 +865,16 @@ async function loadData(){
   const eml=document.getElementById('exp-month-label');if(eml)eml.textContent=`${mn} ${y}`;
   const cml=document.getElementById('chart-mes-lbl');if(cml)cml.textContent=`${mn} ${y}`;
   try{
-    const q=`{boards(ids:[${BOARD}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"dup__of_gestor",compare_value:["${GESTORES_IDS.gabriel}","${GESTORES_IDS.gustavo}"],operator:any_of},{column_id:"group",compare_value:["${GROUP}"],operator:any_of}]}){items{name column_values(ids:["numeric_mkzmzj33","numeric_mm121vht","color_mm0ejcfw","color_mkwr8dhs","pessoas","status","dup__of_gestor","data_1","color_mm0qnpg","data6__1"]){id text}}}}}`;
+    const q=`{boards(ids:[${BOARD}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"dup__of_gestor",compare_value:["${GESTORES_IDS.gabriel}","${GESTORES_IDS.gustavo}"],operator:any_of},{column_id:"group",compare_value:["${GROUP}"],operator:any_of}]}){items{name column_values(ids:["numeric_mkzmzj33","numeric_mm121vht","color_mm0ejcfw","color_mkwr8dhs","pessoas","status","dup__of_gestor","data_1","color_mm0qnpg","data6__1"]){id text value}}}}}`;
     const d=await monday(q);
     const items=d?.data?.boards?.[0]?.items_page?.items||[];
     allClients=items.map(item=>{
-      const cv={};item.column_values.forEach(c=>{cv[c.id]=c.text});
-      return{name:item.name,proj:parseFloat(cv['numeric_mkzmzj33'])||0,rec:parseFloat(cv['numeric_mm121vht'])||0,st:cv['color_mm0ejcfw']||'',venc:cv['color_mkwr8dhs']||'',gestor:cv['pessoas']||'',saude:cv['status']||'',estrategistaId:cv['dup__of_gestor']||'',day:dayFrom(cv['color_mkwr8dhs']),dataInicio:cv['data_1']||null,crmia:(cv['color_mm0qnpg']||'').toUpperCase().trim()==='SIM',dataRec:cv['data6__1']||null};
+      const cv={};const cvRaw={};item.column_values.forEach(c=>{
+      cv[c.id]=c.text;
+      // For date columns, extract ISO date from value JSON
+      if(c.value){try{const v=JSON.parse(c.value);if(v&&v.date)cvRaw[c.id]=v.date;}catch(e){}}
+    });
+      return{name:item.name,proj:parseFloat(cv['numeric_mkzmzj33'])||0,rec:parseFloat(cv['numeric_mm121vht'])||0,st:cv['color_mm0ejcfw']||'',venc:cv['color_mkwr8dhs']||'',gestor:cv['pessoas']||'',saude:cv['status']||'',estrategistaId:cv['dup__of_gestor']||'',day:dayFrom(cv['color_mkwr8dhs']),dataInicio:cv['data_1']||null,crmia:(cv['color_mm0qnpg']||'').toUpperCase().trim()==='SIM',dataRec:(function(){var raw=cvRaw['data6__1'];var txt=cv['data6__1'];if(raw)return raw;if(!txt||!txt.trim())return null;var yr=new Date().getFullYear();var attempts=[txt, txt+' '+yr, yr+' '+txt];for(var i=0;i<attempts.length;i++){var p=new Date(attempts[i]);if(!isNaN(p.getTime())){return p.getFullYear()+'-'+String(p.getMonth()+1).padStart(2,'0')+'-'+String(p.getDate()).padStart(2,'0');}}return null;})()};
     });
     const rg=REUN_GROUPS[m];
     if(rg){
@@ -1319,8 +1323,10 @@ function renderRecebimento(clients, weeks, mn){
       const d=new Date(c.dataRec);
       const day=d.getDate();
       const m=d.getMonth();
+      const y=d.getFullYear();
       const curMonth=now.getMonth();
-      return m===curMonth && day>=w.start && day<=w.end;
+      const curYear=now.getFullYear();
+      return y===curYear && m===curMonth && day>=w.start && day<=w.end;
     });
     const totalRec=wc.reduce((a,c)=>a+c.rec,0);
     const totalProj=wc.reduce((a,c)=>a+c.proj,0);
@@ -1376,14 +1382,14 @@ function renderRecebimento(clients, weeks, mn){
       return clients.filter(c=>{
         if(!c.dataRec)return false;
         const d=new Date(c.dataRec);
-        return d.getMonth()===now.getMonth()&&d.getDate()>=w.start&&d.getDate()<=w.end;
+        return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()>=w.start&&d.getDate()<=w.end;
       }).reduce((a,c)=>a+c.rec,0);
     });
     const wkCounts=weeks.map(w=>{
       return clients.filter(c=>{
         if(!c.dataRec)return false;
         const d=new Date(c.dataRec);
-        return d.getMonth()===now.getMonth()&&d.getDate()>=w.start&&d.getDate()<=w.end;
+        return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()>=w.start&&d.getDate()<=w.end;
       }).length;
     });
     cRecebimento=new Chart(canvas,{
