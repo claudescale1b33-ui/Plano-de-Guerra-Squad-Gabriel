@@ -876,6 +876,8 @@ async function loadData(){
     });
       return{name:item.name,proj:parseFloat(cv['numeric_mkzmzj33'])||0,rec:parseFloat(cv['numeric_mm121vht'])||0,st:cv['color_mm0ejcfw']||'',venc:cv['color_mkwr8dhs']||'',gestor:cv['pessoas']||'',saude:cv['status']||'',estrategistaId:cv['dup__of_gestor']||'',day:dayFrom(cv['color_mkwr8dhs']),dataInicio:cv['data_1']||null,crmia:(cv['color_mm0qnpg']||'').toUpperCase().trim()==='SIM',dataRec:(function(){var raw=cvRaw['data6__1'];var txt=cv['data6__1'];if(raw)return raw;if(!txt||!txt.trim())return null;var yr=new Date().getFullYear();var attempts=[txt, txt+' '+yr, yr+' '+txt];for(var i=0;i<attempts.length;i++){var p=new Date(attempts[i]);if(!isNaN(p.getTime())){return p.getFullYear()+'-'+String(p.getMonth()+1).padStart(2,'0')+'-'+String(p.getDate()).padStart(2,'0');}}return null;})()};
     });
+    // DEBUG dataRec
+    console.log('Sample dataRec values:', allClients.slice(0,5).map(c=>({n:c.name,raw:c.dataRec})));
     const rg=REUN_GROUPS[m];
     if(rg){
       const qr=`{boards(ids:[${BOARD_REUN}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"group",compare_value:["${rg}"],operator:any_of}]}){items{name column_values(ids:["person","status","data","status1","color"]){id text}}}}}`;
@@ -1307,6 +1309,9 @@ function toggleCrmList(){
 
 function renderRecebimento(clients, weeks, mn){
   const now=new Date();
+  // DEBUG
+  const withRec=clients.filter(c=>c.dataRec);
+  console.log('dataRec clients:',withRec.length, withRec.slice(0,5).map(c=>({n:c.name,d:c.dataRec})));
   const wrap=document.getElementById('recebimento-wrap');
   if(!wrap)return;
   wrap.innerHTML='';
