@@ -734,6 +734,14 @@ const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agos
 const WEEK_COLORS=['#2BBFAA','#e3b341','#8b949e','#3fb950','#bc8cff'];
 const SKIP_ALWAYS=['Primeiro Pagamento','1º Pagamento'];
 const isSkip=c=>{const st=(c.st||'').toLowerCase();if(SKIP_ALWAYS.some(s=>st.includes(s.toLowerCase())))return true;if(st.includes('tcv')&&(!c.proj||c.proj===0))return true;return false;};
+const EXP_PRODUCTS=['TCV','CRM + IA','Cross Sell','Indicação','Upgrade de Plano','Outro'];
+const REUN_GROUPS={0:'group_mkza86wx',1:'group_mm069rsn',2:'group_mm0et3p',3:'group_mm20k687',4:'group_mm31p8rp',5:'group_mm485w2d',6:'group_mm4vb9zk'};
+
+let currentEstrat='ambos',allClients=[],reunData={},allReunItems=[];
+let cNrr=null,cSaude=null,cSemanal=null,cGestores=null,cContatoPct=null,cRecebimento=null;
+
+const fmt=v=>'R$ '+Math.round(v||0).toLocaleString('pt-BR');
+const fmtK=v=>{v=Math.round(v||0);return v>=1000?'R$ '+(v/1000).toFixed(1)+'k':'R$ '+v};
 const isChurnConf=c=>(c.saude||'').toLowerCase().includes('churn confirmado');
 const isSolChurn=c=>(c.saude||'').toLowerCase().includes('solicitou churn');
 const isInadim=c=>c.st.toLowerCase().includes('inadim');
