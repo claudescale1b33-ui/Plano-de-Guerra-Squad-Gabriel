@@ -732,16 +732,8 @@ const GEST_COLORS=['#2BBFAA','#58a6ff','#e3b341','#3fb950','#f778ba','#bc8cff','
 const GEST_BG=['#061a18','#0d2044','#2d2000','#0d2818','#2d0f22','#1a0d33','#2d0f0e'];
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const WEEK_COLORS=['#2BBFAA','#e3b341','#8b949e','#3fb950','#bc8cff'];
-const SKIP=['TCV','Primeiro Pagamento','1º Pagamento'];
-const EXP_PRODUCTS=['TCV','CRM + IA','Cross Sell','Indicação','Upgrade de Plano','Outro'];
-const REUN_GROUPS={0:'group_mkza86wx',1:'group_mm069rsn',2:'group_mm0et3p',3:'group_mm20k687',4:'group_mm31p8rp',5:'group_mm485w2d',6:'group_mm4vb9zk'};
-
-let currentEstrat='ambos',allClients=[],reunData={},allReunItems=[];
-let cNrr=null,cSaude=null,cSemanal=null,cGestores=null,cContatoPct=null,cRecebimento=null;
-
-const fmt=v=>'R$ '+Math.round(v||0).toLocaleString('pt-BR');
-const fmtK=v=>{v=Math.round(v||0);return v>=1000?'R$ '+(v/1000).toFixed(1)+'k':'R$ '+v};
-const isSkip=c=>SKIP.some(s=>c.st.toLowerCase().includes(s.toLowerCase()));
+const SKIP_ALWAYS=['Primeiro Pagamento','1º Pagamento'];
+const isSkip=c=>{const st=(c.st||'').toLowerCase();if(SKIP_ALWAYS.some(s=>st.includes(s.toLowerCase())))return true;if(st.includes('tcv')&&(!c.proj||c.proj===0))return true;return false;};
 const isChurnConf=c=>(c.saude||'').toLowerCase().includes('churn confirmado');
 const isSolChurn=c=>(c.saude||'').toLowerCase().includes('solicitou churn');
 const isInadim=c=>c.st.toLowerCase().includes('inadim');
@@ -876,8 +868,6 @@ async function loadData(){
     });
       return{name:item.name,proj:parseFloat(cv['numeric_mkzmzj33'])||0,rec:parseFloat(cv['numeric_mm121vht'])||0,st:cv['color_mm0ejcfw']||'',venc:cv['color_mkwr8dhs']||'',gestor:cv['pessoas']||'',saude:cv['status']||'',estrategistaId:cv['dup__of_gestor']||'',day:dayFrom(cv['color_mkwr8dhs']),dataInicio:cv['data_1']||null,crmia:(cv['color_mm0qnpg']||'').toUpperCase().trim()==='SIM',dataRec:(function(){var raw=cvRaw['data6__1'];var txt=cv['data6__1'];if(raw)return raw;if(!txt||!txt.trim())return null;var yr=new Date().getFullYear();var attempts=[txt, txt+' '+yr, yr+' '+txt];for(var i=0;i<attempts.length;i++){var p=new Date(attempts[i]);if(!isNaN(p.getTime())){return p.getFullYear()+'-'+String(p.getMonth()+1).padStart(2,'0')+'-'+String(p.getDate()).padStart(2,'0');}}return null;})()};
     });
-    // DEBUG dataRec
-    console.log('Sample dataRec values:', allClients.slice(0,5).map(c=>({n:c.name,raw:c.dataRec})));
     const rg=REUN_GROUPS[m];
     if(rg){
       const qr=`{boards(ids:[${BOARD_REUN}]){items_page(limit:500,query_params:{operator:and,rules:[{column_id:"group",compare_value:["${rg}"],operator:any_of}]}){items{name column_values(ids:["person","status","data","status1","color"]){id text}}}}}`;
@@ -1309,9 +1299,6 @@ function toggleCrmList(){
 
 function renderRecebimento(clients, weeks, mn){
   const now=new Date();
-  // DEBUG
-  const withRec=clients.filter(c=>c.dataRec);
-  console.log('dataRec clients:',withRec.length, withRec.slice(0,5).map(c=>({n:c.name,d:c.dataRec})));
   const wrap=document.getElementById('recebimento-wrap');
   if(!wrap)return;
   wrap.innerHTML='';
@@ -1319,19 +1306,13 @@ function renderRecebimento(clients, weeks, mn){
 
   const WEEK_COLORS=['#2BBFAA','#d29922','#8b949e','#3fb950','#bc8cff'];
 
-  // Group clients by dataRec week
+  // Group clients by "Dia X" (c.day = day of month from color_mkwr8dhs)
+  // Only clients that are NOT skip (not TCV/primeiro pagamento)
   weeks.forEach((w,wi)=>{
     const col=WEEK_COLORS[wi%WEEK_COLORS.length];
-    // Clients with dataRec in this week
     const wc=clients.filter(c=>{
-      if(!c.dataRec)return false;
-      const d=new Date(c.dataRec);
-      const day=d.getDate();
-      const m=d.getMonth();
-      const y=d.getFullYear();
-      const curMonth=now.getMonth();
-      const curYear=now.getFullYear();
-      return y===curYear && m===curMonth && day>=w.start && day<=w.end;
+      if(!c.day)return false;
+      return c.day>=w.start && c.day<=w.end;
     });
     const totalRec=wc.reduce((a,c)=>a+c.rec,0);
     const totalProj=wc.reduce((a,c)=>a+c.proj,0);
@@ -1385,16 +1366,12 @@ function renderRecebimento(clients, weeks, mn){
     const wkLabels=weeks.map(w=>w.dates);
     const wkRecs=weeks.map(w=>{
       return clients.filter(c=>{
-        if(!c.dataRec)return false;
-        const d=new Date(c.dataRec);
-        return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()>=w.start&&d.getDate()<=w.end;
+        return c.day&&c.day>=w.start&&c.day<=w.end;
       }).reduce((a,c)=>a+c.rec,0);
     });
     const wkCounts=weeks.map(w=>{
       return clients.filter(c=>{
-        if(!c.dataRec)return false;
-        const d=new Date(c.dataRec);
-        return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()>=w.start&&d.getDate()<=w.end;
+        return c.day&&c.day>=w.start&&c.day<=w.end;
       }).length;
     });
     cRecebimento=new Chart(canvas,{
